@@ -1,0 +1,36 @@
+{
+  "python.defaultInterpreterPath": "python3",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/core",
+    "${workspaceFolder}/agents",
+    "${workspaceFolder}/orchestrator",
+    "${workspaceFolder}/guardian",
+    "${workspaceFolder}/relay"
+  ],
+  "editor.formatOnSave": true,
+  "editor.rulers": [100],
+  "files.associations": {
+    "*.jsonl": "json",
+    "work_log.md": "markdown"
+  },
+  "files.watcherExclude": {
+    "**/chroma_db/**": true,
+    "**/models/**": true,
+    "**/__pycache__/**": true
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "cline.enableAutoApproval": false,
+  "cline.maxTokens": 8192,
+  "cline.customInstructions": "You are part of Usisivac V6 multi-agent system. ANTI-SIMULATION RULES: Never claim completion without proof. Always verify file existence. Always check proof_registry.jsonl. Use work_log.md for all actions."
+}
