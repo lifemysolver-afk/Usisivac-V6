@@ -1,0 +1,15 @@
+Problem: Predict customer churn for a telecommunications company based on tabular data.
+
+Competition: Kaggle Playground Series S6E3
+
+Evaluation Metric: Area Under the ROC Curve (AUC).
+
+Data: The dataset is synthetically generated from a real customer churn dataset. It includes train.csv, test.csv. The original dataset is also available and can be used for training.
+
+Key Insights from Kernels/Discussions:
+- Blending diverse models (XGBoost, LightGBM, CatBoost, YDF) is a common and effective strategy.
+- YDF (Yggdrasil Decision Forests) provides strong baseline performance with default parameters.
+- Feature engineering is crucial. Techniques like OptimalBinning for Weight of Evidence (WoE) based target encoding are mentioned.
+- There is a class imbalance in the 'Churn' target variable.
+- Some artifacts from the synthetic generation process might exist (e.g., in 'TotalCharges').
+- The original dataset is available and incorporating it might improve model performance.

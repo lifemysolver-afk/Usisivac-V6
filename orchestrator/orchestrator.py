@@ -4,21 +4,19 @@
 ║  Usisivac V6 | Trinity Protocol                                     ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Centralni mozak koji koordinira sve agente u beskonačnoj petlji.
-Pokreće se iz Gemini CLI terminala.
-
 Pipeline:
-  1. ResearchAgent → usisava znanje, izvlači Golden Recipe
-  2. CriticAgent   → kritikuje plan i nalaze
-  3. CoderAgent    → piše kod na osnovu research-a + kritike
-  4. CriticAgent   → kritikuje kod (second pass)
-  5. CleanerAgent  → generiše i izvršava cleaning
-  6. FeatureAgent  → izvršava feature engineering
-  7. Guardian      → audit drift_score + verifikacija
-  8. → LOOP (nazad na 1 sa novim znanjem)
+  0. DiscussionEngine → Pre-ingest debate (Proponent vs Opponent vs Moderator)
+  1. ResearchAgent    → usisava znanje, izvlači Golden Recipe
+  2. CriticAgent      → kritikuje plan i nalaze
+  3. CoderAgent       → piše kod na osnovu research-a + kritike
+  4. CriticAgent      → kritikuje kod (second pass)
+  5. CleanerAgent     → generiše i izvršava cleaning
+  6. FeatureAgent     → izvršava feature engineering
+  7. Guardian         → audit drift_score + verifikacija
+  8. → LOOP
 """
 
-import sys, json, time, datetime, signal, os
+import sys, json, time, datetime, signal, os, traceback
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
@@ -27,8 +25,9 @@ sys.path.insert(0, str(BASE))
 from core.anti_simulation import enforce, log_work
 from core import state_manager as SM
 from core.rag_engine import stats as rag_stats
+from core.discussion_engine import DiscussionEngine
+from agents.discussion_agents import Proponent, Opponent, Moderator
 
-# Import agenata
 from agents.research_agent import run as research_run
 from agents.critic_agent import run as critic_run
 from agents.coder_agent import run as coder_run
@@ -37,6 +36,12 @@ from agents.feature_agent import run as feature_run
 
 AGENT = "Orchestrator"
 RUNNING = True
+
+# Inicijalizacija Discussion Engine-a
+discussion_engine = DiscussionEngine()
+proponent = Proponent()
+opponent = Opponent()
+moderator = Moderator()
 
 
 def signal_handler(sig, frame):
@@ -49,20 +54,79 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 
+def run_discussion(problem: str) -> dict:
+    """
+    Pokreće Neural Discussion Engine.
+    Proponent (Groq) brani, Opponent (Mistral) napada, Moderator (Groq) presuda.
+    Sve se čuva u discussion_db (ChromaDB) i discussion_log.jsonl.
+    """
+    log_work(AGENT, "STEP_0", "Neural Discussion Engine → Pre-ingest debate")
+    print(f"  [Discussion] Starting debate on: {problem[:60]}...")
+
+    # 1. Proponent argues FOR
+    print(f"  [Discussion] Proponent (Groq/Llama) arguing FOR...")
+    prop_arg = proponent.argue(problem, "Initial problem statement")
+    print(f"  [Discussion] Proponent done ({len(prop_arg)} chars)")
+
+    # 2. Opponent argues AGAINST
+    print(f"  [Discussion] Opponent (Mistral) arguing AGAINST...")
+    opp_arg = opponent.argue(problem, prop_arg)
+    print(f"  [Discussion] Opponent done ({len(opp_arg)} chars)")
+
+    # 3. Moderator decides
+    print(f"  [Discussion] Moderator (Groq/Llama) deciding...")
+    verdict = moderator.decide(problem, prop_arg, opp_arg)
+    print(f"  [Discussion] Verdict: {verdict.get('decision', 'N/A')} "
+          f"(relevance: {verdict.get('relevance_score', 'N/A')}, "
+          f"confidence: {verdict.get('confidence', 'N/A')})")
+
+    # 4. Save to shared memory (ChromaDB + JSONL)
+    transcript = (
+        f"=== PROPONENT (Groq/Llama 3.3 70B) ===\n{prop_arg}\n\n"
+        f"=== OPPONENT (Mistral Small) ===\n{opp_arg}\n\n"
+        f"=== MODERATOR VERDICT ===\n{json.dumps(verdict, indent=2)}"
+    )
+    disc_id = discussion_engine.save_discussion(
+        topic=problem,
+        participants=["Proponent:Groq", "Opponent:Mistral", "Moderator:Groq"],
+        transcript=transcript,
+        verdict=verdict.get("decision", "INGEST")
+    )
+    log_work(AGENT, "DISCUSSION_SAVED", f"id={disc_id} verdict={verdict.get('decision')}")
+
+    return {
+        "proponent": prop_arg,
+        "opponent": opp_arg,
+        "verdict": verdict,
+        "discussion_id": disc_id,
+    }
+
+
 def run_pipeline(problem: str, domain: str = "universal",
                  data_description: str = "", data_path: str = None) -> dict:
-    """
-    Jedan prolaz kroz kompletan pipeline.
-    Svaki korak loguje u work_log.md.
-    """
+    """Jedan prolaz kroz kompletan pipeline."""
     log_work(AGENT, "PIPELINE_START", f"problem='{problem[:80]}' domain='{domain}'")
     results = {}
+
+    # ── STEP 0: Neural Discussion ─────────────────────────────────────────────
+    try:
+        disc_result = run_discussion(problem)
+        results["discussion"] = disc_result
+        verdict = disc_result.get("verdict", {})
+
+        if verdict.get("decision") == "REJECT":
+            print(f"  [Pipeline] Topic REJECTED by discussion. Reason: {verdict.get('reasoning', 'N/A')[:100]}")
+            log_work(AGENT, "DISCUSSION_REJECT", verdict.get("reasoning", "")[:200])
+            return results
+    except Exception as e:
+        print(f"  [Discussion] Error (non-fatal): {e}")
+        log_work(AGENT, "DISCUSSION_ERROR", str(e))
+        results["discussion"] = {"verdict": {"decision": "INGEST", "reasoning": f"Discussion failed: {e}"}}
 
     # ── STEP 1: Research ──────────────────────────────────────────────────────
     log_work(AGENT, "STEP_1", "ResearchAgent → knowledge ingest + research")
     SM.set_status("RESEARCHER_INGESTING", "ResearchAgent")
 
-    # Prvo ingestuj ako baza prazna
     kb_stats = rag_stats()
     if kb_stats.get("knowledge_base", {}).get("count", 0) == 0:
         results["ingest"] = research_run({"action": "ingest"})
@@ -73,7 +137,6 @@ def run_pipeline(problem: str, domain: str = "universal",
         "domain": domain,
     })
 
-    # Golden Recipe
     results["recipe"] = research_run({
         "action": "golden_recipe",
         "problem": problem,
@@ -101,7 +164,6 @@ def run_pipeline(problem: str, domain: str = "universal",
         "critic_output": results.get("critique_plan", {}),
     })
 
-    # Feature engineering
     if data_description:
         results["features_code"] = coder_run({
             "action": "generate_features",
@@ -161,11 +223,7 @@ def run_pipeline(problem: str, domain: str = "universal",
 def run_non_stop(problem: str, domain: str = "universal",
                  data_description: str = "", data_path: str = None,
                  max_iterations: int = None, delay: int = 30):
-    """
-    Non-stop petlja — pokreće pipeline iznova i iznova.
-    Svaka iteracija uči iz prethodne.
-    Zaustavlja se sa Ctrl+C ili max_iterations.
-    """
+    """Non-stop petlja."""
     global RUNNING
 
     max_iter = max_iterations or int(os.getenv("MAX_LOOP_ITERATIONS", "100"))
@@ -177,10 +235,11 @@ def run_non_stop(problem: str, domain: str = "universal",
              f"max_iter={max_iter}, delay={delay}s, domain={domain}")
 
     print(f"\n{'='*60}")
-    print(f"  USISIVAC V6 — NON-STOP MODE")
+    print(f"  USISIVAC V6 — NON-STOP MODE + DISCUSSION ENGINE")
     print(f"  Problem: {problem[:50]}")
     print(f"  Domain:  {domain}")
     print(f"  Max iterations: {max_iter}")
+    print(f"  Providers: Groq (Proponent+Moderator) + Mistral (Opponent)")
     print(f"  Press Ctrl+C to stop gracefully")
     print(f"{'='*60}\n")
 
@@ -192,11 +251,12 @@ def run_non_stop(problem: str, domain: str = "universal",
         try:
             results = run_pipeline(problem, domain, data_description, data_path)
 
-            # Prikaži sažetak
             drift = results.get("audit", {}).get("drift_score", "N/A")
             code_file = results.get("code", {}).get("filename", "N/A")
             research_n = results.get("research", {}).get("total_found", 0)
+            disc_verdict = results.get("discussion", {}).get("verdict", {}).get("decision", "N/A")
 
+            print(f"  Discussion: {disc_verdict}")
             print(f"  Research docs: {research_n}")
             print(f"  Code: {code_file}")
             print(f"  Drift score: {drift}")
@@ -211,6 +271,7 @@ def run_non_stop(problem: str, domain: str = "universal",
         except Exception as e:
             log_work(AGENT, "ITERATION_ERROR", str(e))
             print(f"  ERROR: {e}")
+            traceback.print_exc()
 
         if RUNNING and iteration < max_iter:
             print(f"  Sleeping {delay}s before next iteration...")
@@ -227,17 +288,16 @@ def run_non_stop(problem: str, domain: str = "universal",
     print(f"{'='*60}")
 
 
-# ─── CLI Entry Point ─────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Usisivac V6 Orchestrator")
     parser.add_argument("problem", help="Problem description")
-    parser.add_argument("--domain", default="universal", help="Domain (universal, nlp, cv, tabular)")
-    parser.add_argument("--data", default="", help="Data description")
-    parser.add_argument("--data-path", default=None, help="Path to data CSV")
-    parser.add_argument("--max-iter", type=int, default=None, help="Max iterations")
-    parser.add_argument("--delay", type=int, default=30, help="Delay between iterations (sec)")
-    parser.add_argument("--once", action="store_true", help="Run once, no loop")
+    parser.add_argument("--domain", default="universal")
+    parser.add_argument("--data", default="")
+    parser.add_argument("--data-path", default=None)
+    parser.add_argument("--max-iter", type=int, default=None)
+    parser.add_argument("--delay", type=int, default=30)
+    parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
 
     if args.once:
