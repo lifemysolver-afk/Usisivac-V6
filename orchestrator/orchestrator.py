@@ -33,6 +33,16 @@ from agents.critic_agent import run as critic_run
 from agents.coder_agent import run as coder_run
 from agents.cleaner_agent import run as cleaner_run
 from agents.feature_agent import run as feature_run
+from loptica.loptica_module import LopticaModule
+
+# Globalni LopticaModule (inicijalizuje se jednom)
+_loptica = None
+
+def get_loptica(mission_name: str = "usisivac_v6") -> LopticaModule:
+    global _loptica
+    if _loptica is None:
+        _loptica = LopticaModule(mission_name=mission_name)
+    return _loptica
 
 AGENT = "Orchestrator"
 RUNNING = True
@@ -107,6 +117,23 @@ def run_pipeline(problem: str, domain: str = "universal",
     """Jedan prolaz kroz kompletan pipeline."""
     log_work(AGENT, "PIPELINE_START", f"problem='{problem[:80]}' domain='{domain}'")
     results = {}
+
+    # ── STEP -1: LopticaModule (3-6-2 State Machine + KB) ────────────────────
+    try:
+        loptica = get_loptica()
+        loptica_result = loptica.run_mission(problem, domain)
+        results["loptica"] = loptica_result
+        kb_stats = loptica_result.get("kb_stats", {})
+        log_work(AGENT, "LOPTICA_STEP",
+                 f"phase={loptica_result['engine_summary']['phase']} "
+                 f"techniques={kb_stats.get('techniques', 0)} "
+                 f"avg_conf={kb_stats.get('avg_confidence', 0):.3f}")
+        print(f"  [Loptica] Phase: {loptica_result['engine_summary']['phase']} | "
+              f"KB techniques: {kb_stats.get('techniques', 0)}")
+    except Exception as e:
+        log_work(AGENT, "LOPTICA_ERROR", str(e))
+        print(f"  [Loptica] Error (non-fatal): {e}")
+        results["loptica"] = {"error": str(e)}
 
     # ── STEP 0: Neural Discussion ─────────────────────────────────────────────
     try:

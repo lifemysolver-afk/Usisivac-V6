@@ -1,0 +1,26 @@
+{
+  "total_cells": 31,
+  "code_cells": 29,
+  "markdown_cells": 2,
+  "imports": [
+    "from datetime import datetime",
+    "from difflib import SequenceMatcher",
+    "from pathlib import Path",
+    "import argparse",
+    "import ast",
+    "import functools",
+    "import git",
+    "import json",
+    "import logging",
+    "import nbformat",
+    "import os",
+    "import pandas as pd",
+    "import pandas as pd # Koristimo pandas za pregledniji report",
+    "import shutil",
+    "import sqlite3",
+    "import sys",
+    "import yaml"
+  ],
+  "models_found": [],
+  "metrics_found": []
+}
