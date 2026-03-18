@@ -1,0 +1,13 @@
+{
+  "id": "kiza123123/trinity-v19-ensemble-cpu",
+  "title": "🚀 Trinity Ensemble V19: Diversity Over Pseudo-Labels [0.81+]",
+  "code_file": "trinity-v19-ensemble-cpu.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": ["spaceship-titanic"],
+  "kernel_sources": []
+}

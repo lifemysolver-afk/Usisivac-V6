@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-03-08T16:44:45.310394",
+  "competition": "playground-series-s6e3",
+  "submission": {
+    "date": "2026-03-08 20:39:20",
+    "description": "Usisivac V6: XGB+LGB+CAT+RF ensemble with meta-learner stacking | OOF AUC=0.91610 | 33 features | Anti-Simulation v3",
+    "status": "COMPLETE",
+    "public_score": 0.91351
+  },
+  "model_details": {
+    "xgboost_oof_auc": 0.91606,
+    "lightgbm_oof_auc": 0.91059,
+    "catboost_oof_auc": 0.9155,
+    "randomforest_oof_auc": 0.91323,
+    "final_oof_auc": 0.9161,
+    "strategy": "MetaLearner (LogisticRegression stacking)",
+    "n_features": 33,
+    "n_folds": 5,
+    "train_rows": 594194,
+    "test_rows": 254655
+  },
+  "leaderboard_top5": [
+    {
+      "rank": 1,
+      "team": "Chris Deotte",
+      "score": 0.91745
+    },
+    {
+      "rank": 2,
+      "team": "Stage 2",
+      "score": 0.91735
+    },
+    {
+      "rank": 3,
+      "team": "Mahog",
+      "score": 0.91725
+    },
+    {
+      "rank": 4,
+      "team": "Traiko Dinev",
+      "score": 0.91724
+    },
+    {
+      "rank": 5,
+      "team": "Optimistix",
+      "score": 0.91722
+    }
+  ],
+  "our_score": 0.91351,
+  "gap_to_top": 0.00394
+}
