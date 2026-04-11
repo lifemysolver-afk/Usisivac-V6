@@ -1,0 +1,12 @@
+graph TD
+    A[Start Task] --> B{Task Objective Defined}
+    B --> C[Plan Agent: Generate Plan]
+    C --> D[Implement Agent: Write/Modify Code]
+    D --> E[Test Agent: Execute Tests]
+    E -- Tests Pass --> F[Review Agent: Code Review]
+    E -- Tests Fail --> G[Debug Agent: Analyze Failures]
+    G --> D
+    F --> H[Commit Agent: Commit Changes]
+    H --> I[Reflect Agent: Analyze Iteration]
+    I -- Improvements Needed --> C
+    I -- Task Complete --> J[End Task]

@@ -1,0 +1,1 @@
+{"timestamp": "2026-04-11T20:29:53.473003", "event_type": "LOOP_INIT", "task_id": "loptica_20260411_162953", "iteration": 0, "state": "init", "data": {"task_id": "loptica_20260411_162953", "objective": "Solve problem: Test problem in domain: test_domain", "max_iterations": 5}}
