@@ -120,3 +120,13 @@ def log_work(agent: str, action: str, details: str = ""):
     WORK_LOG.parent.mkdir(parents=True, exist_ok=True)
     with open(WORK_LOG,"a",encoding="utf-8") as f:
         f.write(entry)
+
+
+def log_proof(claim: str, details: dict = None, agent: str = "SYSTEM"):
+    """Convenience function to log a proof to the registry."""
+    if details is None:
+        details = {}
+    # Extract only valid arguments for register_proof
+    valid_keys = {'file_edited', 'script_run', 'script_output', 'ingest_count', 'artifact_path'}
+    filtered_details = {k: v for k, v in details.items() if k in valid_keys}
+    register_proof(agent=agent, claim=claim, **filtered_details)
