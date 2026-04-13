@@ -2,54 +2,18 @@
   "version": "V6",
   "protocol": "Trinity Protocol",
   "global_status": "GUARDIAN_AUDITING",
-  "project": "test_project",
+  "project": "test_project_1be7",
   "goal": "goal",
   "domain": "universal",
   "current_phase": null,
   "current_agent": "Guardian",
   "loop_iteration": 0,
   "max_iterations": 100,
-  "created_at": "2026-04-13T09:53:13.522329",
-  "updated_at": "2026-04-13T09:53:16.476979",
+  "created_at": "2026-04-13T15:30:25.209150",
+  "updated_at": "2026-04-13T15:30:28.313892",
   "phases": {},
   "checklist": [],
   "agent_outputs": {
-    "ResearchAgent": {
-      "data": {
-        "ingest": {
-          "data_science_fundamentals": {
-            "ok": true,
-            "upserted": 3,
-            "total": 1,
-            "collection": "knowledge_base",
-            "backend": "chromadb"
-          },
-          "ml_algorithms": {
-            "ok": true,
-            "upserted": 3,
-            "total": 1,
-            "collection": "knowledge_base",
-            "backend": "chromadb"
-          },
-          "nlp_techniques": {
-            "ok": true,
-            "upserted": 2,
-            "total": 1,
-            "collection": "knowledge_base",
-            "backend": "chromadb"
-          },
-          "anti_patterns": {
-            "ok": true,
-            "upserted": 2,
-            "total": 1,
-            "collection": "knowledge_base",
-            "backend": "chromadb"
-          }
-        },
-        "total": 10
-      },
-      "ts": "2026-04-13T09:53:13.536817"
-    },
     "CriticAgent": {
       "data": {
         "status": "CRITIQUE_DONE",
@@ -62,108 +26,7 @@
         ],
         "pass": false
       },
-      "ts": "2026-04-13T09:53:13.544501"
-    },
-    "CoderAgent": {
-      "data": {
-        "file": "/app/src/generated/generated_solution_20260413_095316.py",
-        "hash": "598c3ac051cde6f5",
-        "lines": 6
-      },
-      "ts": "2026-04-13T09:53:16.460592"
-    },
-    "Guardian": {
-      "data": {
-        "timestamp": "2026-04-13T09:53:16.470908",
-        "drift_score": 0.0,
-        "drift_per_agent": {},
-        "drift_threshold": 0.4,
-        "drift_passed": true,
-        "proof_verification": {
-          "status": "VERIFIED",
-          "total": 147,
-          "valid": 87,
-          "invalid": 60,
-          "invalid_details": [
-            {
-              "agent": "TestAgent",
-              "claim": "test claim",
-              "reason": "INGEST_COUNT_ZERO"
-            },
-            {
-              "agent": "DataLoader",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "FeatureAgent",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "Executor",
-              "claim": null,
-              "reason": null
-            },
-            {
-              "agent": "DataLoader",
-              "claim": null,
-              "reason": null
-            }
-          ]
-        },
-        "artifact_verification": {
-          "status": "VERIFIED",
-          "found": [],
-          "missing": [],
-          "all_present": true
-        },
-        "work_log_audit": {
-          "status": "AUDITED",
-          "entries": 463,
-          "anti_sim_blocks": 13,
-          "errors": 2,
-          "health": "NEEDS_ATTENTION"
-        },
-        "overall_passed": false,
-        "verdict": "REJECTED",
-        "proof": {
-          "timestamp": "2026-04-13T09:53:16.471359",
-          "agent": "Guardian",
-          "claim": "Full audit: REJECTED",
-          "proof_valid": true,
-          "proofs": {
-            "artifact_hash": "3dbf77e49f2d752d"
-          },
-          "blocked_reason": null
-        }
-      },
-      "ts": "2026-04-13T09:53:16.471841"
+      "ts": "2026-04-13T15:30:25.229412"
     }
   },
   "proof_hashes": {},
@@ -173,7 +36,7 @@
       "from": "gemini",
       "to": "claude",
       "message": "msg",
-      "ts": "2026-04-13T09:53:16.476970"
+      "ts": "2026-04-13T15:30:28.313882"
     }
   ],
   "knowledge_stats": {}
