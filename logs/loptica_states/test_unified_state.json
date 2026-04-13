@@ -1,9 +1,9 @@
 {
   "mission_name": "test_unified",
-  "current_phase_idx": 0,
-  "current_phase": "RESEARCH",
+  "current_phase_idx": 1,
+  "current_phase": "DESIGN",
   "step_count": 2,
-  "checkpoint_limit": 3,
+  "checkpoint_limit": 6,
   "history": [
     {
       "timestamp": "2026-03-06T19:34:47.139417",
@@ -24,7 +24,38 @@
         "techniques_found": 0
       },
       "step": "2/3"
+    },
+    {
+      "timestamp": "2026-04-13T09:03:56.316570",
+      "phase": "RESEARCH",
+      "action": "RESEARCH_COMPLETE",
+      "details": {
+        "problem": "Predict customer churn from tabular data",
+        "techniques_found": 0
+      },
+      "step": "3/3",
+      "phase_advanced": "RESEARCH \u2192 DESIGN"
+    },
+    {
+      "timestamp": "2026-04-13T09:03:56.319211",
+      "phase": "DESIGN",
+      "action": "DESIGN_COMPLETE",
+      "details": {
+        "total_techs": 0,
+        "after_resolution": 0
+      },
+      "step": "1/6"
+    },
+    {
+      "timestamp": "2026-04-13T09:08:58.091326",
+      "phase": "DESIGN",
+      "action": "DESIGN_COMPLETE",
+      "details": {
+        "total_techs": 0,
+        "after_resolution": 0
+      },
+      "step": "2/6"
     }
   ],
-  "updated_at": "2026-04-13T07:48:42.865786"
+  "updated_at": "2026-04-13T09:08:58.091338"
 }

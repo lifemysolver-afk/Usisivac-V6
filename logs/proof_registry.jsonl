@@ -109,3 +109,32 @@
 {"timestamp": "2026-04-13T07:48:38.203597", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
 {"timestamp": "2026-04-13T07:48:40.905143", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "75b98ec60b361fea", "file_path": "/app/src/generated/generated_solution_20260413_074840.py"}, "blocked_reason": null}
 {"timestamp": "2026-04-13T07:48:40.909485", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "de2e5d05cbabccca"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:03:18.468557", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:03:18.469481", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:03:45.936101", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:03:51.397414", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:03:53.617755", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "59b52025f5c6faf2", "file_path": "/app/src/generated/generated_solution_20260413_090353.py"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:03:53.631512", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "a2515110e4cd2eba"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:08:33.040843", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:08:33.040977", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:08:49.041260", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:08:53.605760", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:08:55.893523", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "59b52025f5c6faf2", "file_path": "/app/src/generated/generated_solution_20260413_090855.py"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:08:55.902671", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "372b2cc1e95fbef6"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:13:37.185460", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:13:37.185590", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:13:37.216993", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:13:39.687012", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "59b52025f5c6faf2", "file_path": "/app/src/generated/generated_solution_20260413_091339.py"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:13:39.692290", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "81d7f9db72bbe529"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:16:20.920029", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:16:20.920162", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:16:20.950259", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:16:23.387663", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "59b52025f5c6faf2", "file_path": "/app/src/generated/generated_solution_20260413_091623.py"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:16:23.393522", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "bab902abc5154ef0"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:18:53.690106", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:18:53.690250", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-13T09:18:53.720918", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:24:46.749061", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:24:46.777765", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:24:49.108235", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "598c3ac051cde6f5", "file_path": "/app/src/generated/generated_solution_20260413_092449.py"}, "blocked_reason": null}
+{"timestamp": "2026-04-13T09:24:49.117389", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "aa52acc8b1d573a3"}, "blocked_reason": null}

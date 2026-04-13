@@ -2,3 +2,10 @@
 {"timestamp": "2026-04-13T07:36:16.256379", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T07:44:43.994679", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T07:48:40.910946", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:03:53.635302", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:08:55.904361", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:13:39.694049", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:16:23.395252", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:18:56.153032", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:21:48.166189", "from": "gemini", "to": "claude", "message": "Test message", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:24:49.122246", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}

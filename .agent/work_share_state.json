@@ -3,23 +3,52 @@
   "protocol": "Trinity Protocol",
   "global_status": "GUARDIAN_AUDITING",
   "project": "test_project",
-  "goal": "test goal",
+  "goal": "goal",
   "domain": "universal",
   "current_phase": null,
   "current_agent": "Guardian",
   "loop_iteration": 0,
   "max_iterations": 100,
-  "created_at": "2026-04-13T07:48:35.522387",
-  "updated_at": "2026-04-13T07:48:40.911192",
+  "created_at": "2026-04-13T09:24:46.765649",
+  "updated_at": "2026-04-13T09:24:49.122520",
   "phases": {},
   "checklist": [],
   "agent_outputs": {
     "ResearchAgent": {
       "data": {
-        "query": "feature engineering best practices",
-        "results_count": 10
+        "ingest": {
+          "data_science_fundamentals": {
+            "ok": true,
+            "upserted": 3,
+            "total": 1,
+            "collection": "knowledge_base",
+            "backend": "chromadb"
+          },
+          "ml_algorithms": {
+            "ok": true,
+            "upserted": 3,
+            "total": 1,
+            "collection": "knowledge_base",
+            "backend": "chromadb"
+          },
+          "nlp_techniques": {
+            "ok": true,
+            "upserted": 2,
+            "total": 1,
+            "collection": "knowledge_base",
+            "backend": "chromadb"
+          },
+          "anti_patterns": {
+            "ok": true,
+            "upserted": 2,
+            "total": 1,
+            "collection": "knowledge_base",
+            "backend": "chromadb"
+          }
+        },
+        "total": 10
       },
-      "ts": "2026-04-13T07:48:39.433719"
+      "ts": "2026-04-13T09:24:46.778056"
     },
     "CriticAgent": {
       "data": {
@@ -33,28 +62,28 @@
         ],
         "pass": false
       },
-      "ts": "2026-04-13T07:48:39.435149"
+      "ts": "2026-04-13T09:24:46.782055"
     },
     "CoderAgent": {
       "data": {
-        "file": "/app/src/generated/generated_solution_20260413_074840.py",
-        "hash": "75b98ec60b361fea",
+        "file": "/app/src/generated/generated_solution_20260413_092449.py",
+        "hash": "598c3ac051cde6f5",
         "lines": 6
       },
-      "ts": "2026-04-13T07:48:40.905616"
+      "ts": "2026-04-13T09:24:49.108839"
     },
     "Guardian": {
       "data": {
-        "timestamp": "2026-04-13T07:48:40.909291",
+        "timestamp": "2026-04-13T09:24:49.117169",
         "drift_score": 0.0,
         "drift_per_agent": {},
         "drift_threshold": 0.4,
         "drift_passed": true,
         "proof_verification": {
           "status": "VERIFIED",
-          "total": 110,
-          "valid": 58,
-          "invalid": 52,
+          "total": 139,
+          "valid": 79,
+          "invalid": 60,
           "invalid_details": [
             {
               "agent": "TestAgent",
@@ -116,41 +145,35 @@
         },
         "work_log_audit": {
           "status": "AUDITED",
-          "entries": 322,
-          "anti_sim_blocks": 5,
+          "entries": 433,
+          "anti_sim_blocks": 11,
           "errors": 2,
           "health": "NEEDS_ATTENTION"
         },
         "overall_passed": false,
         "verdict": "REJECTED",
         "proof": {
-          "timestamp": "2026-04-13T07:48:40.909485",
+          "timestamp": "2026-04-13T09:24:49.117389",
           "agent": "Guardian",
           "claim": "Full audit: REJECTED",
           "proof_valid": true,
           "proofs": {
-            "artifact_hash": "de2e5d05cbabccca"
+            "artifact_hash": "aa52acc8b1d573a3"
           },
           "blocked_reason": null
         }
       },
-      "ts": "2026-04-13T07:48:40.909778"
+      "ts": "2026-04-13T09:24:49.117742"
     }
   },
   "proof_hashes": {},
-  "drift_scores": {
-    "TestAgent": {
-      "score": 0.25,
-      "passed": true,
-      "ts": "2026-04-13T07:48:35.529826"
-    }
-  },
+  "drift_scores": {},
   "relay_messages": [
     {
       "from": "gemini",
       "to": "claude",
-      "message": "Test message from test suite",
-      "ts": "2026-04-13T07:48:40.911184"
+      "message": "msg",
+      "ts": "2026-04-13T09:24:49.122511"
     }
   ],
   "knowledge_stats": {}
