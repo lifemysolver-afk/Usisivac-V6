@@ -7,13 +7,19 @@ BASE = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE))
 
 # ─── Global Mocks for CI ─────────────────────────────────────────────────────
-# We want to avoid downloading weights or connecting to databases in CI
+def normalize(v):
+    norm = np.linalg.norm(v, axis=-1, keepdims=True)
+    return v / (norm + 1e-9)
+
 @pytest.fixture(autouse=True)
 def mock_external_deps():
     with mock.patch("sentence_transformers.SentenceTransformer") as mock_st:
-        mock_st.return_value.encode.side_effect = lambda texts, **kwargs: \
-            np.random.randn(384).astype(np.float32) if isinstance(texts, str) else \
-            np.random.randn(len(texts), 384).astype(np.float32)
+        def mock_encode(texts, **kwargs):
+            if isinstance(texts, str):
+                return normalize(np.random.randn(384).astype(np.float32))
+            return normalize(np.random.randn(len(texts), 384).astype(np.float32))
+
+        mock_st.return_value.encode.side_effect = mock_encode
 
         with mock.patch("chromadb.PersistentClient") as mock_chroma:
             mock_col = mock.Mock()
@@ -48,9 +54,13 @@ def test_rag():
 def test_neural_filter():
     from core.neural_filter import MLPScorer, filter_knowledge
     scorer = MLPScorer(input_dim=384)
-    assert 0.0 <= scorer.forward(np.random.randn(384)) <= 1.0
+    # Ensure forward works
+    v = normalize(np.random.randn(384).astype(np.float32))
+    assert 0.0 <= scorer.forward(v) <= 1.0
 
     docs = [{"content": "text 1"}, {"content": "text 2"}]
+    # With normalized embeddings, combined score is in roughly [-0.6, 1.4]
+    # Threshold -1.0 should definitely pass
     results = filter_knowledge("query", docs, quality_threshold=-1.0)
     assert len(results) > 0
 
@@ -100,5 +110,4 @@ def test_structure():
         assert (BASE / f).exists()
 
 if __name__ == "__main__":
-    # Compatibility with old runner
     pytest.main([__file__])

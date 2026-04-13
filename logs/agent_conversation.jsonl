@@ -9,3 +9,5 @@
 {"timestamp": "2026-04-13T09:18:56.153032", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T09:21:48.166189", "from": "gemini", "to": "claude", "message": "Test message", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T09:24:49.122246", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:51:41.454620", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T09:53:16.476668", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
