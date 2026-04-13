@@ -53,10 +53,19 @@ class MLPScorer:
     def _relu(self, x): return np.maximum(0, x)
     def _sigmoid(self, x): return 1.0 / (1.0 + np.exp(-np.clip(x, -500, 500)))
 
-    def forward(self, x: np.ndarray) -> float:
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """
+        Forward pass for single vector or batch of vectors.
+        x: (input_dim,) or (batch_size, input_dim)
+        returns: float if single input, (batch_size,) if batch input
+        """
+        is_batch = x.ndim == 2
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
+
+        if is_batch:
+            return out.flatten()
         return float(out[0])
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
@@ -165,30 +174,37 @@ def filter_knowledge(query: str,
     q_emb  = embed(query)
 
     texts   = [d.get("content", "") for d in raw_docs]
-    d_embs  = embed_batch(texts)
+    d_embs  = embed_batch(texts)  # (N, 384)
+
+    # ⚡ Bolt Optimization: Batch processing for efficiency
+    # 1. Vectorized cosine similarity (embeddings are normalized)
+    cos_sims = d_embs @ q_emb
+    # 2. Batch MLP scoring
+    mlp_scores = scorer.forward(d_embs)
+    # 3. Combined score (vectorized)
+    combined_scores = 0.6 * cos_sims + 0.4 * mlp_scores
 
     scored = []
-    for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
-        # Cosine similarity (embeddings su normalized)
-        cos_sim = float(np.dot(q_emb, d_emb))
-        # MLP relevance score
-        mlp_score = scorer.forward(d_emb)
-        # Combined score
-        combined = 0.6 * cos_sim + 0.4 * mlp_score
+    scored_embs_list = []
+    for i, combined in enumerate(combined_scores):
         if combined >= quality_threshold:
-            doc_copy = dict(doc)
-            doc_copy["_score"]     = round(combined, 4)
-            doc_copy["_cos_sim"]   = round(cos_sim, 4)
-            doc_copy["_mlp_score"] = round(mlp_score, 4)
+            doc_copy = dict(raw_docs[i])
+            doc_copy["_score"]     = round(float(combined), 4)
+            doc_copy["_cos_sim"]   = round(float(cos_sims[i]), 4)
+            doc_copy["_mlp_score"] = round(float(mlp_scores[i]), 4)
             scored.append(doc_copy)
+            scored_embs_list.append(d_embs[i])
 
     if not scored:
         return []
 
-    scored.sort(key=lambda x: x["_score"], reverse=True)
+    # Sort by score
+    sorted_indices = np.argsort([-s["_score"] for s in scored])
+    scored = [scored[i] for i in sorted_indices]
+    scored_embs = np.array([scored_embs_list[i] for i in sorted_indices])
 
     if use_mmr and len(scored) > top_k:
-        scored_embs = embed_batch([d.get("content","") for d in scored])
+        # ⚡ Bolt Optimization: Reuse already computed embeddings for MMR
         scored = mmr_select(q_emb, scored_embs, scored, top_k=top_k)
     else:
         scored = scored[:top_k]
