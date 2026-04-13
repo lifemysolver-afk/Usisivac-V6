@@ -1,0 +1,12 @@
+rules:
+  - name: python
+    enabled: true
+  - name: markdown
+    enabled: true
+  - name: json
+    enabled: true
+exclude:
+  - logs/**
+  - data/**
+  - models/**
+  - '*.pyc'

@@ -24,7 +24,7 @@ import catboost as cb
 warnings.filterwarnings('ignore')
 
 # ─── Paths ────────────────────────────────────────────────────────────────────
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 DATA = BASE / "data"
 REPORTS = BASE / "reports"
 LOGS = BASE / "logs"

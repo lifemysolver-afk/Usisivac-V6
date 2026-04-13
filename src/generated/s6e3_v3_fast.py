@@ -18,7 +18,7 @@ import catboost as cat
 import warnings
 warnings.filterwarnings("ignore")
 
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 PROOF_FILE = BASE / "logs/proof_registry.jsonl"
 SUBMISSION_FILE = BASE / "reports/submission.csv"
 

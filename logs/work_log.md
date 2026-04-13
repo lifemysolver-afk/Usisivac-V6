@@ -44,7 +44,7 @@
 
 ### 2026-03-05 01:17:31 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-05 01:17:31 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -280,7 +280,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:12:43 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091233.py
+- **Details**: ./src/generated/generated_features_20260306_091233.py
 
 ### 2026-03-06 09:12:43 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -295,7 +295,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:12:43 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:12:43 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -414,7 +414,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:20 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091310.py
+- **Details**: ./src/generated/generated_features_20260306_091310.py
 
 ### 2026-03-06 09:13:20 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -429,7 +429,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:20 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:13:20 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -548,7 +548,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:56 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091346.py
+- **Details**: ./src/generated/generated_features_20260306_091346.py
 
 ### 2026-03-06 09:13:56 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -563,7 +563,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:57 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:13:57 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -803,7 +803,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:24:37 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092431.py
+- **Details**: ./src/generated/generated_features_20260306_092431.py
 
 ### 2026-03-06 09:24:50 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -818,7 +818,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:24:50 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:24:50 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -937,12 +937,12 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:25:17 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092511.py
+- **Details**: ./src/generated/generated_features_20260306_092511.py
 
 ### 2026-03-06 09:25:21 | FEATUREAGENT
 - **Action**: FEAT_EXEC_FAILED
 - **Details**: exit=1, stderr=Traceback (most recent call last):
-  File "/home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092511.py", line 9, in <module>
+  File "./src/generated/generated_features_20260306_092511.py", line 9, in <module>
     df = pd.read_csv('customer_churn_dataset.csv')
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.11/dist-packages/pandas/i
@@ -956,7 +956,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:25:22 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:25:22 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -1094,7 +1094,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 11:16:11 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 11:16:11 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -1151,3 +1151,171 @@ Final OOF AUC: 0.91647 via Ridge Meta-Learner
 
 ### [2026-03-16 09:25:39 UTC] Submission Generated
 Rows: 254655, Final OOF AUC: 0.91647
+
+### 2026-04-13 07:36:16 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:36:16 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:36:16 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:36:16 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:36:16 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:36:16 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:36:16 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:36:16 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:41:37 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:41:37 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:44:21 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:44:21 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 07:44:42 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=10, top=10
+
+### 2026-04-13 07:44:42 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:44:42 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:44:42 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:44:43 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_074443.py, hash=75b98ec60b361fea, lines=6
+
+### 2026-04-13 07:44:43 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:44:43 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:44:43 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:48:22 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:48:22 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:48:37 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 07:48:38 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 07:48:38 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 07:48:39 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=10, top=10
+
+### 2026-04-13 07:48:39 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:48:39 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:48:39 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:48:40 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_074840.py, hash=75b98ec60b361fea, lines=6
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=110, valid=58, invalid=52
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=58, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 07:48:40 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:48:42 | LOPTICAMODULE
+- **Action**: MISSION_START
+- **Details**: phase=RESEARCH problem='Predict customer churn from tabular data'
+
+### 2026-04-13 07:48:42 | LOPTICAMODULE
+- **Action**: MISSION_STEP
+- **Details**: phase=RESEARCH kb={'solutions': 0, 'techniques': 0, 'avg_confidence': 0.0}

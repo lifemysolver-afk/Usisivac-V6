@@ -2,7 +2,7 @@
   "mission_name": "test_unified",
   "current_phase_idx": 0,
   "current_phase": "RESEARCH",
-  "step_count": 1,
+  "step_count": 2,
   "checkpoint_limit": 3,
   "history": [
     {
@@ -14,7 +14,17 @@
         "techniques_found": 0
       },
       "step": "1/3"
+    },
+    {
+      "timestamp": "2026-04-13T07:48:42.865739",
+      "phase": "RESEARCH",
+      "action": "RESEARCH_COMPLETE",
+      "details": {
+        "problem": "Predict customer churn from tabular data",
+        "techniques_found": 0
+      },
+      "step": "2/3"
     }
   ],
-  "updated_at": "2026-03-06T19:34:47.139429"
+  "updated_at": "2026-04-13T07:48:42.865786"
 }

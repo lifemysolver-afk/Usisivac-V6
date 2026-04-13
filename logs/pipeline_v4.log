@@ -93,7 +93,7 @@ Name: proportion, dtype: float64
 [WORK_LOG] Ridge Meta-Learner Stacking
 
 [6/6] Generating submission.csv...
-  Submission saved: /home/ubuntu/Usisivac-V6/reports/submission.csv
+  Submission saved: ./reports/submission.csv
   Rows: 254655
   Probability range: [0.0000, 0.9951]
   Mean probability: 0.2181
@@ -108,7 +108,7 @@ PIPELINE COMPLETE — ANTI-SIMULATION VERIFIED
   CatBoost OOF AUC: 0.91587
   Ridge Stack AUC:  0.91647
   FINAL OOF AUC:    0.91647 (Ridge Meta-Learner)
-  Submission:       /home/ubuntu/Usisivac-V6/reports/submission.csv
+  Submission:       ./reports/submission.csv
 ============================================================
 
 Fold-by-Fold Results:
