@@ -6,7 +6,7 @@ import pytest
 BASE = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE))
 
-# ─── Mocks ──────────────────────────────────────────────────────────────────
+# ─── Global Mocks for CI ─────────────────────────────────────────────────────
 @pytest.fixture(autouse=True)
 def mock_external_deps():
     # Mock SentenceTransformer

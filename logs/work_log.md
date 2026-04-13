@@ -1917,3 +1917,119 @@ Rows: 254655, Final OOF AUC: 0.91647
 ### 2026-04-13 15:30:28 | RELAY
 - **Action**: RELAY_MSG
 - **Details**: gemini→claude: msg
+
+### 2026-04-13 16:06:58 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 16:06:58 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 16:06:58 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 16:06:58 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 16:06:58 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 16:06:58 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 16:07:03 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_160703.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=155, valid=95, invalid=60
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=95, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 16:07:03 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 16:09:25 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 16:09:25 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 16:09:25 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 16:09:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 16:09:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 16:09:25 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 16:09:28 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_160928.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=159, valid=99, invalid=60
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=99, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 16:09:28 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg

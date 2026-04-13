@@ -12,3 +12,5 @@
 {"timestamp": "2026-04-13T09:51:41.454620", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T09:53:16.476668", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-13T15:30:28.312930", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T16:07:03.627434", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-13T16:09:28.243090", "from": "gemini", "to": "claude", "message": "msg", "type": "text", "protocol": "triway_relay_v1"}
