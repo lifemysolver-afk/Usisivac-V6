@@ -1,0 +1,35 @@
+{
+  "system_parameters": {
+    "cpu_timeout_seconds": 120,
+    "ram_limit_mb": 4096,
+    "model_diversity_threshold": 0.75,
+    "auto_scaling_enabled": true
+  },
+  "validation_thresholds": {
+    "oof_calibration_rule": {
+      "threshold": 0.960,
+      "optimal_range_min": 0.955,
+      "optimal_range_max": 0.957
+    },
+    "ensemble_correlation_threshold": 0.95,
+    "baseline_oof_score": 0.95387
+  },
+  "feature_engineering_tactics": {
+    "tanaka_hr_max_formula_enabled": true
+  },
+  "legacy_integration": {
+    "auto_generate_manifest_makefile": true,
+    "file_extension_analysis_enabled": true,
+    "python_import_analysis_enabled": true
+  },
+  "process_guard": {
+    "enabled": true,
+    "emit_drift_alert_log": true,
+    "markdown_warning_enabled": true,
+    "guard_log_file": "GUARD_LOG.md"
+  },
+  "memory_integrity": {
+    "hash_on_major_phases_only": true,
+    "optimized_binary_format": "parquet"
+  }
+}

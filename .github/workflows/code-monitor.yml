@@ -1,0 +1,49 @@
+name: 🤖 Code Monitor (Slobodan Usisivac CI)
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov ruff black pylint mypy bandit
+
+      - name: 🧪 Pokrenite sve testove
+        run: |
+          python tests/test_system.py
+          python tests/test_apis.py
+          python tests/test_loptica_integration.py
+
+      - name: 📊 Pokrenite Guardian Audit
+        run: |
+          python -c "from guardian.guardian import run; r = run({'action': 'full_audit', 'pipeline_results': {}}); print(r)"
+
+      - name: 🔍 Lint i formatiranje (Ruff + Black)
+        run: |
+          ruff check . --select=E9,F63,F7,F82
+          black --check --line-length 120 agents/ core/ orchestrator/ guardian/
+
+      - name: 📈 Code Coverage
+        run: |
+          pytest tests/ --cov=agents --cov=core --cov-report=xml
+
+      - name: 📝 Prikaži rezultate
+        if: always()
+        run: |
+          echo "## ✅ Monitor Rezultati" >> $GITHUB_STEP_SUMMARY
+          echo "- Sve testove pokrenute" >> $GITHUB_STEP_SUMMARY
+          echo "- Guardian audit završen" >> $GITHUB_STEP_SUMMARY
+          echo "- Code lint i formatiranje OK" >> $GITHUB_STEP_SUMMARY

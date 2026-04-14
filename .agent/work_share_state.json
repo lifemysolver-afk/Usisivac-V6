@@ -1,150 +1,43 @@
 {
   "version": "V6",
   "protocol": "Trinity Protocol",
-  "global_status": "COMPLETED",
-  "project": "Predict customer churn for Kaggle S6E3 competition using AUC metric",
-  "goal": "Non-stop pipeline for: Predict customer churn for Kaggle S6E3 competition using AUC metric",
-  "domain": "tabular",
+  "global_status": "GUARDIAN_AUDITING",
+  "project": "test_project_ce33",
+  "goal": "goal",
+  "domain": "universal",
   "current_phase": null,
   "current_agent": "Guardian",
-  "loop_iteration": 1,
+  "loop_iteration": 0,
   "max_iterations": 100,
-  "created_at": "2026-03-06T11:15:07.930132",
-  "updated_at": "2026-03-06T11:16:11.292101",
+  "created_at": "2026-04-13T16:09:25.917346",
+  "updated_at": "2026-04-13T16:09:28.243306",
   "phases": {},
   "checklist": [],
   "agent_outputs": {
-    "ResearchAgent": {
-      "data": {
-        "query": "Predict customer churn for Kaggle S6E3 competition using AUC metric",
-        "results_count": 10
-      },
-      "ts": "2026-03-06T11:15:58.245207"
-    },
     "CriticAgent": {
       "data": {
         "status": "CRITIQUE_DONE",
-        "static_issues": [],
-        "llm_analysis": "Izgleda da je ovaj dio koda samo uvoz potrebnih biblioteka i nije implementirana nikakva logika ili model. Međutim, mogu dati neke opšte komentare i preporuke za poboljšanje.\n\nJSON lista objekata sa severity (CRITICAL/WARNING/INFO) i description:\n\n```json\n[\n  {\n    \"severity\": \"INFO\",\n    \"description\": \"Nije prisutna nikakva logika ili model u ovom kodu, samo uvoz biblioteka.\"\n  },\n  {\n    \"severity\": \"INFO\",\n    \"description\": \"Preporučljivo je da se uključe komentari ili dokumentacija za objašnjenje svrhe i namjene ovog koda.\"\n  },\n  {\n    \"severity\": \"INFO\",\n    \"description\": \"Treba provjeriti da li su sve uvožene biblioteke potrebne za izvršavanje koda.\"\n  },\n  {\n    \"severity\": \"WARNING\",\n    \"description\": \"Nije prisutno nikakvo rukovanje greškama ili izuzecima, što može dovesti do problema prilikom izvršavanja koda.\"\n  },\n  {\n    \"severity\": \"INFO\",\n    \"description\": \"Preporučljivo je da se koriste konzistentni nazivi varijabli i funkcija kako bi se poboljšala čitljivost koda.\"\n  }\n]\n```\n\nNije prisutan nikakav kritičan problem u ovom kodu, ali je važno da se slijede dobre prakse programiranja i da se uključuju komentari i dokumentacija kako bi se poboljšala čitljivost i održivost koda.",
-        "rag_sources": 3,
-        "pass": true,
-        "severity": "OK",
-        "proof": {
-          "timestamp": "2026-03-06T11:16:09.638975",
-          "agent": "CriticAgent",
-          "claim": "Code critique completed",
-          "proof_valid": true,
-          "proofs": {
-            "ingest_count": 1
-          },
-          "blocked_reason": null
-        }
+        "issues": [
+          "CRITICAL: Plan nema strategiju validacije"
+        ],
+        "warnings": [
+          "WARNING: Plan nema baseline model",
+          "WARNING: Plan ne pominje provjeru data leakage-a"
+        ],
+        "pass": false
       },
-      "ts": "2026-03-06T11:16:09.639320"
-    },
-    "CoderAgent": {
-      "data": {
-        "file": "/home/ubuntu/Usisivac-V6/src/generated/generated_solution_20260306_111606.py",
-        "hash": "c74207acae7bca8b",
-        "lines": 125
-      },
-      "ts": "2026-03-06T11:16:06.746980"
-    },
-    "Guardian": {
-      "data": {
-        "timestamp": "2026-03-06T11:16:11.282858",
-        "drift_score": 0.6853,
-        "drift_per_agent": {
-          "discussion": 0.2466,
-          "research": 0.493,
-          "recipe": 0.8405,
-          "critique_plan": 0.8798,
-          "code": 0.7671,
-          "critique_code": 0.8845
-        },
-        "drift_threshold": 0.4,
-        "drift_passed": false,
-        "proof_verification": {
-          "status": "VERIFIED",
-          "total": 46,
-          "valid": 45,
-          "invalid": 1,
-          "invalid_details": [
-            {
-              "agent": "TestAgent",
-              "claim": "test claim",
-              "reason": "INGEST_COUNT_ZERO"
-            }
-          ]
-        },
-        "artifact_verification": {
-          "status": "VERIFIED",
-          "found": [
-            {
-              "agent": "code",
-              "file": "/home/ubuntu/Usisivac-V6/src/generated/generated_solution_20260306_111606.py",
-              "hash": "c74207acae7bca8b"
-            }
-          ],
-          "missing": [],
-          "all_present": true
-        },
-        "work_log_audit": {
-          "status": "AUDITED",
-          "entries": 271,
-          "anti_sim_blocks": 1,
-          "errors": 2,
-          "health": "NEEDS_ATTENTION"
-        },
-        "overall_passed": false,
-        "verdict": "REJECTED",
-        "proof": {
-          "timestamp": "2026-03-06T11:16:11.282959",
-          "agent": "Guardian",
-          "claim": "Full audit: REJECTED",
-          "proof_valid": true,
-          "proofs": {
-            "artifact_hash": "f5ec91debdc6965e"
-          },
-          "blocked_reason": null
-        }
-      },
-      "ts": "2026-03-06T11:16:11.283188"
+      "ts": "2026-04-13T16:09:25.932900"
     }
   },
   "proof_hashes": {},
-  "drift_scores": {
-    "discussion": {
-      "score": 0.2466,
-      "passed": true,
-      "ts": "2026-03-06T11:16:10.810494"
-    },
-    "research": {
-      "score": 0.493,
-      "passed": false,
-      "ts": "2026-03-06T11:16:10.856034"
-    },
-    "recipe": {
-      "score": 0.8405,
-      "passed": false,
-      "ts": "2026-03-06T11:16:10.909066"
-    },
-    "critique_plan": {
-      "score": 0.8798,
-      "passed": false,
-      "ts": "2026-03-06T11:16:10.940208"
-    },
-    "code": {
-      "score": 0.7671,
-      "passed": false,
-      "ts": "2026-03-06T11:16:11.225088"
-    },
-    "critique_code": {
-      "score": 0.8845,
-      "passed": false,
-      "ts": "2026-03-06T11:16:11.281359"
+  "drift_scores": {},
+  "relay_messages": [
+    {
+      "from": "gemini",
+      "to": "claude",
+      "message": "msg",
+      "ts": "2026-04-13T16:09:28.243298"
     }
-  },
-  "relay_messages": [],
+  ],
   "knowledge_stats": {}
 }

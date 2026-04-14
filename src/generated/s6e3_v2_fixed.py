@@ -21,7 +21,7 @@ import optuna
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 warnings.filterwarnings("ignore")
 
-PROOF_REGISTRY = Path("/home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl")
+PROOF_REGISTRY = Path("./logs/proof_registry.jsonl")
 def log_proof(agent, action, details):
     entry = {"timestamp": datetime.now().isoformat(), "agent": agent,
              "action": action, "details": details,
@@ -30,7 +30,7 @@ def log_proof(agent, action, details):
         f.write(json.dumps(entry) + "\n")
     print(f"  [PROOF] {agent} → {action}: {details[:90]}")
 
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 print("\n" + "="*70)
 print("  USISIVAC V6 — S6E3 PIPELINE v2.1 FIXED")
 print("  45 features | Orig merge | Optuna | 6 models | Rank Blend")

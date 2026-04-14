@@ -32,7 +32,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # ── Anti-Simulation: Proof Registry ──────────────────────────────────────────
-PROOF_REGISTRY = Path("/home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl")
+PROOF_REGISTRY = Path("./logs/proof_registry.jsonl")
 PROOF_REGISTRY.parent.mkdir(parents=True, exist_ok=True)
 
 def log_proof(agent: str, action: str, details: str):
@@ -50,7 +50,7 @@ def log_proof(agent: str, action: str, details: str):
     return entry
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 TRAIN_PATH = BASE / "data/train.csv"
 TEST_PATH  = BASE / "data/test.csv"
 SUB_PATH   = BASE / "reports/submission.csv"

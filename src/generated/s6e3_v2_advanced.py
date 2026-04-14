@@ -30,7 +30,7 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 warnings.filterwarnings("ignore")
 
 # ── Anti-Simulation Proof ─────────────────────────────────────────────────────
-PROOF_REGISTRY = Path("/home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl")
+PROOF_REGISTRY = Path("./logs/proof_registry.jsonl")
 def log_proof(agent, action, details):
     entry = {
         "timestamp": datetime.now().isoformat(),
@@ -41,7 +41,7 @@ def log_proof(agent, action, details):
         f.write(json.dumps(entry) + "\n")
     print(f"  [PROOF] {agent} → {action}: {details[:90]}")
 
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 TRAIN_PATH  = BASE / "data/train.csv"
 TEST_PATH   = BASE / "data/test.csv"
 ORIG_PATH   = BASE / "data/WA_Fn-UseC_-Telco-Customer-Churn.csv"

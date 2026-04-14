@@ -1,0 +1,60 @@
+{
+  "domain": "Cardiology",
+  "tactics": [
+    {
+      "name": "Tanaka Formula for HRmax",
+      "description": "Agent MORA koristiti Tanaka formulu (HRmax = 208 − 0.7 × Age) za izračunavanje maksimalnog srčanog ritma, jer je fiziološki ispravnija i obezbeđuje bolju generalizaciju od tradicionalne Fox formule (220 - Age).",
+      "formula": "HRmax = 208 - 0.7 * Age"
+    },
+    {
+      "name": "OOF Calibration Threshold",
+      "description": "Ako OOF skor prelazi 0.960 na sintetičkom datasetu, to je SIGNAL OVERFITTING-a. Agent MORA zaustaviti treniranje ako OOF prelazi ovaj prag i primeniti fallback na jednostavniji pristup. Optimalni OOF je između 0.955-0.957.",
+      "threshold": 0.960,
+      "optimal_range": "0.955-0.957"
+    },
+    {
+      "name": "Multi-seed Averaging",
+      "description": "Pravilna implementacija uključuje treniranje istog modela sa 5 različitih random seed-ova (npr. 42, 123, 777, 2024, 31337) i usrednjavanje svih OOF vektora za robustniju predikciju sa nižom varijansom.",
+      "seeds": [42, 123, 777, 2024, 31337],
+      "num_seeds": 5
+    },
+    {
+      "name": "ProcessGuard in Ensemble Training",
+      "description": "ProcessGuard se koristi pre treniranja (učitava pragove iz trinity_config.json), posle treniranja (proverava korelaciju između modela < 0.95) i posle blendinga (proverava da li je finalni OOF bolji od baseline-a). Svaki incident se beleži u GUARD_LOG.md.",
+      "correlation_threshold": 0.95,
+      "log_file": "GUARD_LOG.md"
+    },
+    {
+      "name": "Oldpeak Normalization",
+      "description": "Preporučene transformacije uključuju Log1p transformaciju, Z-score standardizaciju i outlier clipping. Za ensemble pristup koristiti obe verzije (raw i normalized) kao feature-e.",
+      "transformations": ["Log1p", "Z-score standardization", "Outlier clipping"]
+    },
+    {
+      "name": "Ischemic Burden Clinical Concept",
+      "description": "Klinički koncept ischemic burden (dubina ST depresije × trajanje epizode) se može aproksimirati formulom Oldpeak × Exercise_Angina. Interakcije Age × Ischemic_Burden i BP × Age su podržane.",
+      "approximation_formula": "Oldpeak * Exercise_Angina",
+      "supported_interactions": ["Age * Ischemic_Burden", "BP * Age"]
+    },
+    {
+      "name": "Clustering Meta-Features",
+      "description": "Unsupervised k-means klastering na EMR podacima može poboljšati ensemble diversitet. Klaster ID ili distanca do centroida kao feature-i imaju nisku korelaciju sa GBDT predikcijama. Klastering trenirati SAMO na train fold-u.",
+      "method": "k-means clustering",
+      "training_restriction": "train fold only"
+    },
+    {
+      "name": "UCI Dataset Usage",
+      "description": "Originalni UCI dataset je mali i stariji. NIKADA ga ne spajati direktno sa sintetičkim podacima zbog distribution shift-a.",
+      "restriction": "Do not combine with synthetic data"
+    },
+    {
+      "name": "Iteration Stop Criteria",
+      "description": "Agent treba da prestane sa iteracijom kada: poslednje 3 submisije ne donose poboljšanje > 0.001, OOF-LB gap počinje da raste, sve dokazane tehnike su isprobane i validirane, ili preostali potencijalni dobitak je manji od šuma u evaluaciji.",
+      "criteria": [
+        "Last 3 submissions no improvement > 0.001",
+        "OOF-LB gap starts to increase",
+        "All proven techniques tested and validated",
+        "Remaining potential gain < evaluation noise"
+      ]
+    }
+  ]
+}

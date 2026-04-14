@@ -44,7 +44,7 @@
 
 ### 2026-03-05 01:17:31 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-05 01:17:31 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -280,7 +280,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:12:43 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091233.py
+- **Details**: ./src/generated/generated_features_20260306_091233.py
 
 ### 2026-03-06 09:12:43 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -295,7 +295,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:12:43 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:12:43 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -414,7 +414,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:20 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091310.py
+- **Details**: ./src/generated/generated_features_20260306_091310.py
 
 ### 2026-03-06 09:13:20 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -429,7 +429,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:20 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:13:20 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -548,7 +548,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:56 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_091346.py
+- **Details**: ./src/generated/generated_features_20260306_091346.py
 
 ### 2026-03-06 09:13:56 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -563,7 +563,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:13:57 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:13:57 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -803,7 +803,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:24:37 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092431.py
+- **Details**: ./src/generated/generated_features_20260306_092431.py
 
 ### 2026-03-06 09:24:50 | FEATUREAGENT
 - **Action**: FEAT_EXEC_DONE
@@ -818,7 +818,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:24:50 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:24:50 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -937,12 +937,12 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:25:17 | FEATUREAGENT
 - **Action**: FEAT_EXEC_START
-- **Details**: /home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092511.py
+- **Details**: ./src/generated/generated_features_20260306_092511.py
 
 ### 2026-03-06 09:25:21 | FEATUREAGENT
 - **Action**: FEAT_EXEC_FAILED
 - **Details**: exit=1, stderr=Traceback (most recent call last):
-  File "/home/ubuntu/Usisivac-V6/src/generated/generated_features_20260306_092511.py", line 9, in <module>
+  File "./src/generated/generated_features_20260306_092511.py", line 9, in <module>
     df = pd.read_csv('customer_churn_dataset.csv')
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.11/dist-packages/pandas/i
@@ -956,7 +956,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 09:25:22 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 09:25:22 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -1094,7 +1094,7 @@ Key Insights from Kernels/Discussions:
 
 ### 2026-03-06 11:16:11 | GUARDIAN
 - **Action**: PROOF_VERIFY_START
-- **Details**: /home/ubuntu/Usisivac-V6/logs/proof_registry.jsonl
+- **Details**: ./logs/proof_registry.jsonl
 
 ### 2026-03-06 11:16:11 | GUARDIAN
 - **Action**: PROOF_VERIFY_DONE
@@ -1151,3 +1151,885 @@ Final OOF AUC: 0.91647 via Ridge Meta-Learner
 
 ### [2026-03-16 09:25:39 UTC] Submission Generated
 Rows: 254655, Final OOF AUC: 0.91647
+
+### 2026-04-13 07:36:16 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:36:16 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:36:16 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:36:16 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:36:16 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:36:16 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:36:16 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:36:16 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:41:37 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:41:37 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:44:21 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:44:21 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 07:44:41 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 07:44:42 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=10, top=10
+
+### 2026-04-13 07:44:42 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:44:42 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:44:42 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:44:43 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_074443.py, hash=75b98ec60b361fea, lines=6
+
+### 2026-04-13 07:44:43 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:44:43 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:44:43 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:48:22 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 07:48:22 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 07:48:37 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 07:48:38 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 07:48:38 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 07:48:39 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=10, top=10
+
+### 2026-04-13 07:48:39 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 07:48:39 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 07:48:39 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 07:48:40 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_074840.py, hash=75b98ec60b361fea, lines=6
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=110, valid=58, invalid=52
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=58, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 07:48:40 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 07:48:40 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 07:48:42 | LOPTICAMODULE
+- **Action**: MISSION_START
+- **Details**: phase=RESEARCH problem='Predict customer churn from tabular data'
+
+### 2026-04-13 07:48:42 | LOPTICAMODULE
+- **Action**: MISSION_STEP
+- **Details**: phase=RESEARCH kb={'solutions': 0, 'techniques': 0, 'avg_confidence': 0.0}
+
+### 2026-04-13 09:03:18 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 09:03:18 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 09:03:24 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:03:45 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:03:45 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 09:03:48 | RESEARCHAGENT
+- **Action**: EMPTY_KB
+- **Details**: Knowledge base prazna, ingestujem...
+
+### 2026-04-13 09:03:48 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:03:51 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=0
+
+### 2026-04-13 09:03:52 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=0, top=0
+
+### 2026-04-13 09:03:52 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 09:03:52 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:03:52 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 09:03:53 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_090353.py, hash=59b52025f5c6faf2, lines=6
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=116, valid=62, invalid=54
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=62, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:03:53 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:03:53 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 09:03:56 | LOPTICAMODULE
+- **Action**: MISSION_START
+- **Details**: phase=RESEARCH problem='Predict customer churn from tabular data'
+
+### 2026-04-13 09:03:56 | LOPTICAMODULE
+- **Action**: MISSION_STEP
+- **Details**: phase=DESIGN kb={'solutions': 0, 'techniques': 0, 'avg_confidence': 0.0}
+
+### 2026-04-13 09:08:33 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 09:08:33 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 09:08:36 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:08:49 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=0
+
+### 2026-04-13 09:08:49 | RESEARCHAGENT
+- **Action**: RESEARCH_START
+- **Details**: query='feature engineering best practices' domain='universal'
+
+### 2026-04-13 09:08:51 | RESEARCHAGENT
+- **Action**: EMPTY_KB
+- **Details**: Knowledge base prazna, ingestujem...
+
+### 2026-04-13 09:08:51 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:08:53 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=0
+
+### 2026-04-13 09:08:54 | RESEARCHAGENT
+- **Action**: RESEARCH_DONE
+- **Details**: found=0, top=0
+
+### 2026-04-13 09:08:54 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 09:08:54 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:08:54 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 09:08:55 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_090855.py, hash=59b52025f5c6faf2, lines=6
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=122, valid=65, invalid=57
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=65, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:08:55 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:08:55 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 09:08:58 | LOPTICAMODULE
+- **Action**: MISSION_START
+- **Details**: phase=DESIGN problem='Predict customer churn from tabular data'
+
+### 2026-04-13 09:08:58 | LOPTICAMODULE
+- **Action**: MISSION_STEP
+- **Details**: phase=DESIGN kb={'solutions': 0, 'techniques': 0, 'avg_confidence': 0.0}
+
+### 2026-04-13 09:13:37 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 09:13:37 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 09:13:37 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:13:37 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:13:37 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 09:13:37 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:13:37 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 09:13:39 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_091339.py, hash=59b52025f5c6faf2, lines=6
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=127, valid=69, invalid=58
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=69, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:13:39 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:13:39 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 09:16:20 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 09:16:20 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 09:16:20 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:16:20 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:16:20 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 09:16:20 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:16:20 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 09:16:23 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_091623.py, hash=59b52025f5c6faf2, lines=6
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=132, valid=73, invalid=59
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=73, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:16:23 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:16:23 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 09:18:53 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen bez dokaza
+
+### 2026-04-13 09:18:53 | TESTAGENT
+- **Action**: TEST
+- **Details**: test entry
+
+### 2026-04-13 09:18:53 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:18:53 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:18:53 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["train model"]}
+
+### 2026-04-13 09:18:53 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:18:53 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: Simple linear regression
+
+### 2026-04-13 09:18:56 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_091856.py, hash=59b52025f5c6faf2, lines=6
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=136, valid=76, invalid=60
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=76, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:18:56 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:18:56 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: Test message from test suite
+
+### 2026-04-13 09:24:46 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 09:24:46 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:24:46 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:24:46 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 09:24:46 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:24:46 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 09:24:49 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_092449.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=139, valid=79, invalid=60
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=79, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:24:49 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:24:49 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 09:51:38 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 09:51:38 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:51:38 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:51:38 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 09:51:38 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:51:38 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 09:51:41 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_095141.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=143, valid=83, invalid=60
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=83, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:51:41 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:51:41 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 09:53:13 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 09:53:13 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 09:53:13 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 09:53:13 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 09:53:13 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 09:53:13 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 09:53:16 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_095316.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=147, valid=87, invalid=60
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=87, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 09:53:16 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 09:53:16 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 15:30:25 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 15:30:25 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 15:30:25 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 15:30:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 15:30:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 15:30:25 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 15:30:28 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_153028.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=151, valid=91, invalid=60
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=91, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 15:30:28 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 15:30:28 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 16:06:58 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 16:06:58 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 16:06:58 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 16:06:58 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 16:06:58 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 16:06:58 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 16:07:03 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_160703.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=155, valid=95, invalid=60
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=95, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 16:07:03 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 16:07:03 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
+
+### 2026-04-13 16:09:25 | TESTAGENT
+- **Action**: ANTI_SIM_BLOCK
+- **Details**: violations=['trening završen'] | text=trening završen
+
+### 2026-04-13 16:09:25 | RESEARCHAGENT
+- **Action**: INGEST_START
+- **Details**: Universal knowledge base
+
+### 2026-04-13 16:09:25 | RESEARCHAGENT
+- **Action**: INGEST_DONE
+- **Details**: categories=4, total_docs=10
+
+### 2026-04-13 16:09:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_START
+- **Details**: {"steps": ["step"]}
+
+### 2026-04-13 16:09:25 | CRITICAGENT
+- **Action**: CRITIQUE_PLAN_DONE
+- **Details**: issues=1, warnings=2
+
+### 2026-04-13 16:09:25 | CODERAGENT
+- **Action**: CODE_GEN_START
+- **Details**: p
+
+### 2026-04-13 16:09:28 | CODERAGENT
+- **Action**: CODE_GEN_DONE
+- **Details**: file=generated_solution_20260413_160928.py, hash=598c3ac051cde6f5, lines=6
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: FULL_AUDIT_START
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_START
+- **Details**: /app/logs/proof_registry.jsonl
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: PROOF_VERIFY_DONE
+- **Details**: total=159, valid=99, invalid=60
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_START
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: ARTIFACT_VERIFY_DONE
+- **Details**: found=0, missing=0
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: FULL_AUDIT_DONE
+- **Details**: drift=0.0000, proofs_ok=99, artifacts_ok=True, verdict=REJECTED
+
+### 2026-04-13 16:09:28 | GUARDIAN
+- **Action**: SELF_HEAL
+- **Details**: issues=1, corrections=1
+
+### 2026-04-13 16:09:28 | RELAY
+- **Action**: RELAY_MSG
+- **Details**: gemini→claude: msg
