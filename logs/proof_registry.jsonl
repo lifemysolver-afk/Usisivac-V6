@@ -96,3 +96,7 @@
 {"timestamp": "2026-04-12T15:57:47.560667", "agent": "SYSTEM", "claim": "PICKLE_RICK_BUILD_SUCCESS", "proof_valid": true, "proofs": {"script_path": "/home/ubuntu/pickle-rick-extension/extension/package.json", "out_hash": "8fe4571ad4e1c8d9"}, "blocked_reason": null}
 {"timestamp": "2026-04-12T15:57:48.816877", "agent": "SYSTEM", "claim": "PICKLE_RICK_TESTS_PASSED", "proof_valid": true, "proofs": {"script_path": "/home/ubuntu/pickle-rick-extension/extension/package.json", "out_hash": "b6d9c9cf54e3a128"}, "blocked_reason": null}
 {"timestamp": "2026-04-12T15:57:48.818687", "agent": "SYSTEM", "claim": "PICKLE_RICK_SESSION_CREATED", "proof_valid": true, "proofs": {"artifact_hash": "5d6c3761f3efe87d"}, "blocked_reason": null}
+{"timestamp": "2026-04-14T16:24:18.335334", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-04-14T16:24:18.335449", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-04-14T16:24:39.583380", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-04-14T16:24:42.271219", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "75b98ec60b361fea", "file_path": "/app/src/generated/generated_solution_20260414_162442.py"}, "blocked_reason": null}

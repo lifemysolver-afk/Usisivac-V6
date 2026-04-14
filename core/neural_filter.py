@@ -53,11 +53,18 @@ class MLPScorer:
     def _relu(self, x): return np.maximum(0, x)
     def _sigmoid(self, x): return 1.0 / (1.0 + np.exp(-np.clip(x, -500, 500)))
 
-    def forward(self, x: np.ndarray) -> float:
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """
+        Forward pass supports both single vectors and batch processing.
+        Returns an array of scores (or a single float if input is 1D).
+        """
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
-        return float(out[0])
+        scores = out.flatten()
+        if x.ndim == 1:
+            return float(scores[0])
+        return scores
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
         """Online learning — ažurira težine na osnovu feedback-a."""
@@ -112,10 +119,13 @@ def mmr_select(query_emb: np.ndarray,
     selected_idx = []
     remaining = list(range(len(docs)))
 
+    # ⚡ Bolt: Pre-calculate relevance to query (vectorized)
+    relevances = doc_embs @ query_emb
+
     for _ in range(min(top_k, len(docs))):
         best_idx, best_score = None, -np.inf
         for i in remaining:
-            rel = float(np.dot(query_emb, doc_embs[i]))
+            rel = float(relevances[i])
             if selected_idx:
                 sel_embs = doc_embs[selected_idx]
                 max_sim  = float(np.max(sel_embs @ doc_embs[i]))
@@ -153,9 +163,9 @@ def filter_knowledge(query: str,
 
     Pipeline:
       1. Embed query + docs
-      2. MLP scorer → relevance score
+      2. MLP scorer → relevance score (vectorized)
       3. Quality gate (score < threshold → odbaci)
-      4. MMR diversity filter
+      4. MMR diversity filter (reusing embeddings)
       5. Vrati rangirane dokumente sa score-ovima
     """
     if not raw_docs:
@@ -167,28 +177,33 @@ def filter_knowledge(query: str,
     texts   = [d.get("content", "") for d in raw_docs]
     d_embs  = embed_batch(texts)
 
+    # ⚡ Bolt: Vectorized scoring
+    cos_sims = d_embs @ q_emb
+    mlp_scores = scorer.forward(d_embs)
+    combined_scores = 0.6 * cos_sims + 0.4 * mlp_scores
+
     scored = []
-    for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
-        # Cosine similarity (embeddings su normalized)
-        cos_sim = float(np.dot(q_emb, d_emb))
-        # MLP relevance score
-        mlp_score = scorer.forward(d_emb)
-        # Combined score
-        combined = 0.6 * cos_sim + 0.4 * mlp_score
-        if combined >= quality_threshold:
-            doc_copy = dict(doc)
-            doc_copy["_score"]     = round(combined, 4)
-            doc_copy["_cos_sim"]   = round(cos_sim, 4)
-            doc_copy["_mlp_score"] = round(mlp_score, 4)
+    keep_indices = []
+    for i, score in enumerate(combined_scores):
+        if score >= quality_threshold:
+            doc_copy = dict(raw_docs[i])
+            doc_copy["_score"]     = round(float(score), 4)
+            doc_copy["_cos_sim"]   = round(float(cos_sims[i]), 4)
+            doc_copy["_mlp_score"] = round(float(mlp_scores[i]), 4)
             scored.append(doc_copy)
+            keep_indices.append(i)
 
     if not scored:
         return []
 
-    scored.sort(key=lambda x: x["_score"], reverse=True)
+    # Sort by score descending
+    sorted_pairs = sorted(zip(scored, keep_indices), key=lambda x: x[0]["_score"], reverse=True)
+    scored = [p[0] for p in sorted_pairs]
+    keep_indices = [p[1] for p in sorted_pairs]
 
     if use_mmr and len(scored) > top_k:
-        scored_embs = embed_batch([d.get("content","") for d in scored])
+        # ⚡ Bolt: Reuse embeddings to avoid redundant embed_batch
+        scored_embs = d_embs[keep_indices]
         scored = mmr_select(q_emb, scored_embs, scored, top_k=top_k)
     else:
         scored = scored[:top_k]
