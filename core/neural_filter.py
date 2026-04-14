@@ -1,17 +1,17 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Neural Knowledge Filter — "Great Filter"                           ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
+========================================================================
+  Neural Knowledge Filter - "Great Filter"
+  Usisivac V6 | Trinity Protocol
+========================================================================
 
 Neural network that filters and ranks knowledge from ChromaDB.
 Goal: extract MAXIMUM relevant knowledge for a given problem.
 
 Architecture:
   1. SentenceTransformer embedding (384-dim)
-  2. 3-layer MLP scorer (384 → 128 → 64 → 1)
-  3. Relevance score [0.0 – 1.0]
-  4. Diversity filter (MMR — Maximal Marginal Relevance)
+  2. 3-layer MLP scorer (384 -> 128 -> 64 -> 1)
+  3. Relevance score [0.0 - 1.0]
+  4. Diversity filter (MMR - Maximal Marginal Relevance)
   5. Quality gate (rejects score < 0.3)
 """
 
@@ -24,7 +24,7 @@ BASE_DIR   = Path(__file__).parent.parent
 MODEL_PATH = BASE_DIR / "models" / "neural_filter_weights.npz"
 
 
-# ─── Lightweight MLP (pure numpy, no GPU needed) ─────────────────────────────
+# --- Lightweight MLP (pure numpy, no GPU needed) -----------------------------
 class MLPScorer:
     """
     3-layer MLP for relevance scoring.
@@ -67,7 +67,7 @@ class MLPScorer:
         return scores
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
-        """Online learning — updates weights based on feedback."""
+        """Online learning - updates weights based on feedback."""
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
@@ -84,7 +84,7 @@ class MLPScorer:
                  W2=self.W2, b2=self.b2, W3=self.W3, b3=self.b3)
 
 
-# ─── Embedding Engine ─────────────────────────────────────────────────────────
+# --- Embedding Engine ---------------------------------------------------------
 _embedder = None
 
 def _get_embedder():
@@ -103,15 +103,15 @@ def embed_batch(texts: List[str]) -> np.ndarray:
     return _get_embedder().encode(texts, normalize_embeddings=True, batch_size=32)
 
 
-# ─── MMR Diversity Filter ─────────────────────────────────────────────────────
+# --- MMR Diversity Filter -----------------------------------------------------
 def mmr_select(query_emb: np.ndarray,
                doc_embs: np.ndarray,
                docs: List[dict],
                top_k: int = 5,
                lambda_mmr: float = 0.7) -> List[dict]:
     """
-    Maximal Marginal Relevance — balances relevance and diversity.
-    lambda_mmr=1.0 → relevance only, 0.0 → diversity only.
+    Maximal Marginal Relevance - balances relevance and diversity.
+    lambda_mmr=1.0 -> relevance only, 0.0 -> diversity only.
     """
     if len(docs) == 0:
         return []
@@ -119,7 +119,7 @@ def mmr_select(query_emb: np.ndarray,
     selected_idx = []
     remaining = list(range(len(docs)))
 
-    # ⚡ Bolt: Pre-calculate relevance to query (vectorized)
+    # Bolt: Pre-calculate relevance to query (vectorized)
     relevances = doc_embs @ query_emb
 
     for _ in range(min(top_k, len(docs))):
@@ -142,7 +142,7 @@ def mmr_select(query_emb: np.ndarray,
     return [docs[i] for i in selected_idx]
 
 
-# ─── Main Filter API ──────────────────────────────────────────────────────────
+# --- Main Filter API ----------------------------------------------------------
 _scorer = None
 
 def get_scorer() -> MLPScorer:
@@ -158,13 +158,13 @@ def filter_knowledge(query: str,
                      quality_threshold: float = 0.25,
                      use_mmr: bool = True) -> List[Dict]:
     """
-    Main filter — receives raw ChromaDB results,
+    Main filter - receives raw ChromaDB results,
     returns top_k most relevant and diverse documents.
 
     Pipeline:
       1. Embed query + docs
-      2. MLP scorer → relevance score (vectorized)
-      3. Quality gate (score < threshold → discard)
+      2. MLP scorer -> relevance score (vectorized)
+      3. Quality gate (score < threshold -> discard)
       4. MMR diversity filter (reusing embeddings)
       5. Return ranked documents with scores
     """
@@ -177,7 +177,7 @@ def filter_knowledge(query: str,
     texts   = [d.get("content", "") for d in raw_docs]
     d_embs  = embed_batch(texts)
 
-    # ⚡ Bolt: Vectorized scoring
+    # Bolt: Vectorized scoring
     cos_sims = d_embs @ q_emb
     mlp_scores = scorer.forward(d_embs)
     combined_scores = 0.6 * cos_sims + 0.4 * mlp_scores
@@ -202,7 +202,7 @@ def filter_knowledge(query: str,
     keep_indices = [p[1] for p in sorted_pairs]
 
     if use_mmr and len(scored) > top_k:
-        # ⚡ Bolt: Reuse embeddings to avoid redundant embed_batch
+        # Bolt: Reuse embeddings to avoid redundant embed_batch
         scored_embs = d_embs[keep_indices]
         scored = mmr_select(q_emb, scored_embs, scored, top_k=top_k)
     else:
@@ -213,7 +213,7 @@ def filter_knowledge(query: str,
 
 def feedback_update(query: str, doc_content: str, was_useful: bool):
     """
-    Online learning — agent provides feedback on whether the document was useful.
+    Online learning - agent provides feedback on whether the document was useful.
     Updates MLP weights.
     """
     scorer = get_scorer()
