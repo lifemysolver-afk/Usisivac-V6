@@ -1,18 +1,18 @@
 """
 ╔══════════════════════════════════════════════════════════════════════╗
-║  Neural Knowledge Filter — "Veliki Filter"                          ║
+║  Neural Knowledge Filter — "Great Filter"                           ║
 ║  Usisivac V6 | Trinity Protocol                                     ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Neuronska mreža koja filtrira i rangira znanje iz ChromaDB-a.
-Cilj: izvući MAKSIMUM relevantnog znanja za dati problem.
+Neural network that filters and ranks knowledge from ChromaDB.
+Goal: extract MAXIMUM relevant knowledge for a given problem.
 
-Arhitektura:
+Architecture:
   1. SentenceTransformer embedding (384-dim)
-  2. 3-slojni MLP scorer (384 → 128 → 64 → 1)
+  2. 3-layer MLP scorer (384 → 128 → 64 → 1)
   3. Relevance score [0.0 – 1.0]
   4. Diversity filter (MMR — Maximal Marginal Relevance)
-  5. Quality gate (odbacuje score < 0.3)
+  5. Quality gate (rejects score < 0.3)
 """
 
 import json
@@ -27,9 +27,9 @@ MODEL_PATH = BASE_DIR / "models" / "neural_filter_weights.npz"
 # ─── Lightweight MLP (pure numpy, no GPU needed) ─────────────────────────────
 class MLPScorer:
     """
-    3-slojni MLP za scoring relevantnosti.
-    Trenira se online na feedback-u agenata.
-    Inicijalizovan sa Xavier inicijalizacijom.
+    3-layer MLP for relevance scoring.
+    Trained online on agent feedback.
+    Initialized with Xavier initialization.
     """
     def __init__(self, input_dim: int = 384):
         self.input_dim = input_dim
@@ -67,7 +67,7 @@ class MLPScorer:
         return scores
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
-        """Online learning — ažurira težine na osnovu feedback-a."""
+        """Online learning — updates weights based on feedback."""
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
@@ -110,8 +110,8 @@ def mmr_select(query_emb: np.ndarray,
                top_k: int = 5,
                lambda_mmr: float = 0.7) -> List[dict]:
     """
-    Maximal Marginal Relevance — balansira relevantnost i raznovrsnost.
-    lambda_mmr=1.0 → samo relevantnost, 0.0 → samo raznovrsnost.
+    Maximal Marginal Relevance — balances relevance and diversity.
+    lambda_mmr=1.0 → relevance only, 0.0 → diversity only.
     """
     if len(docs) == 0:
         return []
@@ -158,15 +158,15 @@ def filter_knowledge(query: str,
                      quality_threshold: float = 0.25,
                      use_mmr: bool = True) -> List[Dict]:
     """
-    Glavni filter — prima sirove ChromaDB rezultate,
-    vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
+    Main filter — receives raw ChromaDB results,
+    returns top_k most relevant and diverse documents.
 
     Pipeline:
       1. Embed query + docs
       2. MLP scorer → relevance score (vectorized)
-      3. Quality gate (score < threshold → odbaci)
+      3. Quality gate (score < threshold → discard)
       4. MMR diversity filter (reusing embeddings)
-      5. Vrati rangirane dokumente sa score-ovima
+      5. Return ranked documents with scores
     """
     if not raw_docs:
         return []
@@ -213,8 +213,8 @@ def filter_knowledge(query: str,
 
 def feedback_update(query: str, doc_content: str, was_useful: bool):
     """
-    Online learning — agent daje feedback da li je dokument bio koristan.
-    Ažurira MLP težine.
+    Online learning — agent provides feedback on whether the document was useful.
+    Updates MLP weights.
     """
     scorer = get_scorer()
     d_emb  = embed(doc_content)

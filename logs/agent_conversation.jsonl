@@ -1,2 +1,4 @@
 {"timestamp": "2026-03-05T01:17:31.875624", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
 {"timestamp": "2026-04-14T16:24:42.274696", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-14T16:40:25.472017", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
+{"timestamp": "2026-04-14T16:44:20.105061", "from": "gemini", "to": "claude", "message": "Test message from test suite", "type": "text", "protocol": "triway_relay_v1"}
