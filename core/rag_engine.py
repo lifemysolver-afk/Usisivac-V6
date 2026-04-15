@@ -12,7 +12,7 @@ Kolekcije:
   domain_specific  — znanje specifično za trenutni problem
 """
 
-import json, datetime
+import json, datetime, functools
 from pathlib import Path
 from typing import List, Dict, Optional
 
@@ -28,10 +28,12 @@ COLLECTIONS = [
 
 
 # ─── ChromaDB Client ──────────────────────────────────────────────────────────
+@functools.lru_cache(maxsize=1)
 def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
+@functools.lru_cache(maxsize=1)
 def _ef():
     from chromadb.utils import embedding_functions
     return embedding_functions.SentenceTransformerEmbeddingFunction(
