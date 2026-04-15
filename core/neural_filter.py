@@ -167,7 +167,7 @@ def filter_knowledge(query: str,
     texts   = [d.get("content", "") for d in raw_docs]
     d_embs  = embed_batch(texts)
 
-    scored = []
+    scored_with_embs = []
     for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
         # Cosine similarity (embeddings su normalized)
         cos_sim = float(np.dot(q_emb, d_emb))
@@ -180,18 +180,21 @@ def filter_knowledge(query: str,
             doc_copy["_score"]     = round(combined, 4)
             doc_copy["_cos_sim"]   = round(cos_sim, 4)
             doc_copy["_mlp_score"] = round(mlp_score, 4)
-            scored.append(doc_copy)
+            scored_with_embs.append((doc_copy, d_emb))
 
-    if not scored:
+    if not scored_with_embs:
         return []
 
-    scored.sort(key=lambda x: x["_score"], reverse=True)
+    # Sort by score
+    scored_with_embs.sort(key=lambda x: x[0]["_score"], reverse=True)
 
-    if use_mmr and len(scored) > top_k:
-        scored_embs = embed_batch([d.get("content","") for d in scored])
-        scored = mmr_select(q_emb, scored_embs, scored, top_k=top_k)
+    if use_mmr and len(scored_with_embs) > top_k:
+        # Re-use already computed embeddings for MMR
+        docs_only = [x[0] for x in scored_with_embs]
+        embs_only = np.array([x[1] for x in scored_with_embs])
+        scored = mmr_select(q_emb, embs_only, docs_only, top_k=top_k)
     else:
-        scored = scored[:top_k]
+        scored = [x[0] for x in scored_with_embs[:top_k]]
 
     return scored
 
