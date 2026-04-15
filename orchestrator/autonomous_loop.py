@@ -45,6 +45,7 @@ class AutonomousLoopManager:
         task_id: str,
         task_objective: str,
         max_iterations: int = 10,
+        max_debug_retries: int = 3,
         agent_callbacks: Optional[Dict[str, Callable]] = None
     ):
         """
@@ -54,11 +55,13 @@ class AutonomousLoopManager:
             task_id: Unique identifier for the task
             task_objective: High-level description of the task
             max_iterations: Maximum number of loop iterations
+            max_debug_retries: Maximum debug retries per iteration when tests fail
             agent_callbacks: Dict of agent names to callback functions
         """
         self.task_id = task_id
         self.task_objective = task_objective
         self.max_iterations = max_iterations
+        self.max_debug_retries = max_debug_retries
         
         # Initialize Loop Controller
         self.controller = LoopController(task_id, task_objective, max_iterations)
@@ -196,33 +199,51 @@ class AutonomousLoopManager:
                 return False
             
             self.controller.record_plan(iteration_id, plan)
-            
-            # Step 2: Implement
-            implementation = self._call_agent("implement_agent", iteration_id, plan)
-            if not implementation:
-                self._log("ERROR", "Implement agent failed")
-                return False
-            
-            self.controller.record_implementation(iteration_id, implementation)
-            
-            # Step 3: Test
-            test_results = self._call_agent("test_agent", iteration_id, implementation)
-            if not test_results:
-                self._log("ERROR", "Test agent failed")
-                return False
-            
-            tests_passed = self.controller.record_test_results(iteration_id, test_results)
-            
-            # Step 4: Debug (if tests failed)
-            if not tests_passed:
+            retry_count = 0
+            implementation = None
+            test_results = None
+
+            # Steps 2-4 loop: implement -> test -> (debug and retry on failure)
+            while True:
+                # Step 2: Implement
+                implementation = self._call_agent("implement_agent", iteration_id, plan)
+                if not implementation:
+                    self._log("ERROR", "Implement agent failed")
+                    return False
+
+                self.controller.record_implementation(iteration_id, implementation)
+
+                # Step 3: Test
+                test_results = self._call_agent("test_agent", iteration_id, implementation)
+                if not test_results:
+                    self._log("ERROR", "Test agent failed")
+                    return False
+
+                tests_passed = self.controller.record_test_results(iteration_id, test_results)
+                if tests_passed:
+                    break
+
+                if retry_count >= self.max_debug_retries:
+                    self._log("ERROR", "Debug retry limit exhausted", {
+                        "iteration_id": iteration_id,
+                        "max_debug_retries": self.max_debug_retries,
+                        "last_test_results": test_results
+                    })
+                    return False
+
+                # Step 4: Debug (tests failed and retry budget remains)
                 debug_info = self._call_agent("debug_agent", iteration_id, test_results)
-                if debug_info:
-                    self.controller.record_debug_info(iteration_id, debug_info)
-                    # Go back to Step 2: Implement
-                    return self._run_iteration(iteration_id)
-                else:
+                if not debug_info:
                     self._log("ERROR", "Debug agent failed")
                     return False
+
+                self.controller.record_debug_info(iteration_id, debug_info)
+                retry_count += 1
+                self._log("INFO", "Retrying implement/test after debug", {
+                    "iteration_id": iteration_id,
+                    "retry_count": retry_count,
+                    "max_debug_retries": self.max_debug_retries
+                })
             
             # Step 5: Review
             review_feedback = self._call_agent("review_agent", iteration_id, implementation)

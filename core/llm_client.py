@@ -4,8 +4,8 @@
 ║  Usisivac V6 | Trinity Protocol                                     ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Prioritet: Groq (najbrži) → Mistral → Gemini → OpenRouter → fallback
-Sve su FREE tier opcije.
+Prioritet: configurable preko PRIMARY_LLM.
+Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
 import os, json, time
@@ -103,15 +103,14 @@ def call(prompt: str,
     Poziva LLM sa automatskim fallback-om između providera.
     Redosled: groq → mistral → gemini → openrouter
     """
+    all_p = ["groq", "mistral", "gemini", "openrouter"]
+    only_primary = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}
+    pref = provider or os.getenv("PRIMARY_LLM", "gemini")
+
     # Build provider order
-    if provider:
-        order = [provider]
-        # Add fallbacks
-        all_p = ["groq", "mistral", "gemini", "openrouter"]
-        order += [p for p in all_p if p != provider]
+    if provider or only_primary:
+        order = [pref]
     else:
-        pref = os.getenv("PRIMARY_LLM", "groq")
-        all_p = ["groq", "mistral", "gemini", "openrouter"]
         order = [pref] + [p for p in all_p if p != pref]
 
     last_err = None
@@ -127,8 +126,11 @@ def call(prompt: str,
         for attempt in range(retries):
             try:
                 kwargs = {"prompt": prompt, "system": system}
-                if model:
-                    kwargs["model"] = model
+                chosen_model = model or os.getenv("PRIMARY_MODEL")
+                if not chosen_model and prov == "gemini":
+                    chosen_model = "gemini-2.5-flash"
+                if chosen_model:
+                    kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)
             except Exception as e:
                 last_err = str(e)
