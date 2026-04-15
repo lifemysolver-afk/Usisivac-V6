@@ -1,0 +1,27 @@
+{"timestamp": "2026-04-15T08:33:23.574360", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.574480", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_1", "retry_count": 1, "max_debug_retries": 2}}
+{"timestamp": "2026-04-15T08:33:23.575725", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.576902", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.645351", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3", "retry_count": 1, "max_debug_retries": 3}}
+{"timestamp": "2026-04-15T08:33:23.649096", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3", "retry_count": 2, "max_debug_retries": 3}}
+{"timestamp": "2026-04-15T08:33:23.654533", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.654592", "level": "ERROR", "task_id": "test_task", "message": "Plan agent failed", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.655620", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.655676", "level": "ERROR", "task_id": "test_task", "message": "Implement agent failed", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.656699", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.656766", "level": "ERROR", "task_id": "test_task", "message": "Test agent failed", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.657778", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.657841", "level": "ERROR", "task_id": "test_task", "message": "Debug agent failed", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.658809", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.658863", "level": "ERROR", "task_id": "test_task", "message": "Debug retry limit exhausted", "data": {"iteration_id": "iter_zero_retries", "max_debug_retries": 0, "last_test_results": {"passed": 0, "failed": 1}}}
+{"timestamp": "2026-04-15T08:33:23.659841", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.659946", "level": "INFO", "task_id": "test_task", "message": "Reflection agent indicated task completion", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.660923", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.661918", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.662880", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.663861", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.664966", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.665018", "level": "INFO", "task_id": "test_task", "message": "Attempting to resume from checkpoint", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.665059", "level": "WARN", "task_id": "test_task", "message": "No checkpoint found, starting fresh", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.666067", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-04-15T08:33:23.667043", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
