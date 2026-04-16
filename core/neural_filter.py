@@ -15,7 +15,7 @@ Arhitektura:
   5. Quality gate (odbacuje score < 0.3)
 """
 
-import json
+import json, functools
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -87,7 +87,7 @@ def _get_embedder():
         _embedder = SentenceTransformer("all-MiniLM-L6-v2")
     return _embedder
 
-
+@functools.lru_cache(maxsize=128)
 def embed(text: str) -> np.ndarray:
     return _get_embedder().encode(text, normalize_embeddings=True)
 
@@ -146,7 +146,8 @@ def filter_knowledge(query: str,
                      raw_docs: List[Dict],
                      top_k: int = 5,
                      quality_threshold: float = 0.25,
-                     use_mmr: bool = True) -> List[Dict]:
+                     use_mmr: bool = True,
+                     query_embedding: Optional[np.ndarray] = None) -> List[Dict]:
     """
     Glavni filter — prima sirove ChromaDB rezultate,
     vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
@@ -162,10 +163,25 @@ def filter_knowledge(query: str,
         return []
 
     scorer = get_scorer()
-    q_emb  = embed(query)
+    q_emb  = query_embedding if query_embedding is not None else embed(query)
 
-    texts   = [d.get("content", "") for d in raw_docs]
-    d_embs  = embed_batch(texts)
+    # Re-use embeddings if provided by ChromaDB
+    d_embs = []
+    texts_to_embed = []
+    text_to_idx = {}
+
+    for i, d in enumerate(raw_docs):
+        if "_embedding" in d:
+            d_embs.append(np.array(d["_embedding"]))
+        else:
+            text_to_idx[len(texts_to_embed)] = i
+            texts_to_embed.append(d.get("content", ""))
+            d_embs.append(None) # Placeholder
+
+    if texts_to_embed:
+        new_embs = embed_batch(texts_to_embed)
+        for i, emb in enumerate(new_embs):
+            d_embs[text_to_idx[i]] = emb
 
     scored_with_embs = []
     for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
