@@ -67,14 +67,28 @@ def _json_ingest(documents, metadatas, ids, collection, err) -> dict:
 
 
 # ─── Query (raw, before neural filter) ───────────────────────────────────────
-def query_raw(text: str, collection: str, n: int = 20) -> List[dict]:
+def query_raw(text: str, collection: str, n: int = 20,
+              query_embeddings: Optional[List[List[float]]] = None) -> List[dict]:
     """Vraća sirove rezultate — neural_filter ih dalje obrađuje."""
     try:
         col = _client().get_collection(name=collection, embedding_function=_ef())
-        r   = col.query(query_texts=[text], n_results=min(n, col.count() or 1))
+
+        # If we already have embeddings, use them to avoid re-embedding in Chroma
+        kwargs = {"n_results": min(n, col.count() or 1),
+                  "include": ["documents", "metadatas", "embeddings"]}
+        if query_embeddings:
+            kwargs["query_embeddings"] = query_embeddings
+        else:
+            kwargs["query_texts"] = [text]
+
+        r = col.query(**kwargs)
+
         docs  = r.get("documents",[[]])[0]
         metas = r.get("metadatas",[[]])[0]
-        return [{"content":d,"metadata":m} for d,m in zip(docs,metas)]
+        embs  = r.get("embeddings",[[]])[0]
+
+        return [{"content":d, "metadata":m, "_embedding":e}
+                for d,m,e in zip(docs, metas, embs)]
     except Exception:
         return _json_query(text, collection, n)
 
@@ -99,9 +113,16 @@ def _json_query(text: str, collection: str, n: int) -> List[dict]:
 def query_smart(text: str, collection: str,
                 top_k: int = 5, threshold: float = 0.25) -> List[dict]:
     """Puni pipeline: ChromaDB → Neural Filter → MMR → top_k rezultata."""
-    from core.neural_filter import filter_knowledge
-    raw = query_raw(text, collection, n=30)
-    return filter_knowledge(text, raw, top_k=top_k, quality_threshold=threshold)
+    from core.neural_filter import filter_knowledge, embed
+
+    # Compute query embedding ONCE and reuse it
+    q_emb = embed(text)
+
+    # Pass pre-computed embedding to query_raw to avoid redundant inference in Chroma
+    raw = query_raw(text, collection, n=30, query_embeddings=[q_emb.tolist()])
+
+    # Pass pre-computed embedding to filter_knowledge to avoid redundant inference in filter
+    return filter_knowledge(text, raw, top_k=top_k, quality_threshold=threshold, q_emb=q_emb)
 
 
 # ─── Stats ────────────────────────────────────────────────────────────────────
