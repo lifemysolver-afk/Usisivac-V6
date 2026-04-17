@@ -15,7 +15,7 @@ Arhitektura:
   5. Quality gate (odbacuje score < 0.3)
 """
 
-import json
+import json, functools
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -88,6 +88,7 @@ def _get_embedder():
     return _embedder
 
 
+@functools.lru_cache(maxsize=128)
 def embed(text: str) -> np.ndarray:
     return _get_embedder().encode(text, normalize_embeddings=True)
 
@@ -104,30 +105,31 @@ def mmr_select(query_emb: np.ndarray,
                lambda_mmr: float = 0.7) -> List[dict]:
     """
     Maximal Marginal Relevance — balansira relevantnost i raznovrsnost.
-    lambda_mmr=1.0 → samo relevantnost, 0.0 → samo raznovrsnost.
+    Vectorized implementation for speed.
     """
-    if len(docs) == 0:
-        return []
+    if len(docs) == 0: return []
 
     selected_idx = []
     remaining = list(range(len(docs)))
 
+    # Pre-calculate relevance to query for all docs
+    relevance = doc_embs @ query_emb
+
     for _ in range(min(top_k, len(docs))):
-        best_idx, best_score = None, -np.inf
-        for i in remaining:
-            rel = float(np.dot(query_emb, doc_embs[i]))
-            if selected_idx:
-                sel_embs = doc_embs[selected_idx]
-                max_sim  = float(np.max(sel_embs @ doc_embs[i]))
-            else:
-                max_sim = 0.0
-            score = lambda_mmr * rel - (1 - lambda_mmr) * max_sim
-            if score > best_score:
-                best_score = score
-                best_idx   = i
-        if best_idx is not None:
-            selected_idx.append(best_idx)
-            remaining.remove(best_idx)
+        if not selected_idx:
+            best_idx = int(np.argmax(relevance))
+        else:
+            # Vectorized similarity between remaining and selected
+            rem_embs = doc_embs[remaining]
+            sel_embs = doc_embs[selected_idx]
+            # Max similarity to ANY selected doc for each remaining doc
+            max_sim = np.max(rem_embs @ sel_embs.T, axis=1)
+
+            scores = lambda_mmr * relevance[remaining] - (1 - lambda_mmr) * max_sim
+            best_idx = remaining[np.argmax(scores)]
+
+        selected_idx.append(best_idx)
+        remaining.remove(best_idx)
 
     return [docs[i] for i in selected_idx]
 
@@ -146,26 +148,24 @@ def filter_knowledge(query: str,
                      raw_docs: List[Dict],
                      top_k: int = 5,
                      quality_threshold: float = 0.25,
-                     use_mmr: bool = True) -> List[Dict]:
+                     use_mmr: bool = True,
+                     q_emb: Optional[np.ndarray] = None) -> List[Dict]:
     """
     Glavni filter — prima sirove ChromaDB rezultate,
     vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
-
-    Pipeline:
-      1. Embed query + docs
-      2. MLP scorer → relevance score
-      3. Quality gate (score < threshold → odbaci)
-      4. MMR diversity filter
-      5. Vrati rangirane dokumente sa score-ovima
     """
-    if not raw_docs:
-        return []
+    if not raw_docs: return []
 
     scorer = get_scorer()
-    q_emb  = embed(query)
+    if q_emb is None:
+        q_emb = embed(query)
 
-    texts   = [d.get("content", "") for d in raw_docs]
-    d_embs  = embed_batch(texts)
+    # Re-use embeddings if provided in raw_docs (prevents redundant inference)
+    if all("_embedding" in d for d in raw_docs):
+        d_embs = np.array([d["_embedding"] for d in raw_docs])
+    else:
+        texts  = [d.get("content", "") for d in raw_docs]
+        d_embs = embed_batch(texts)
 
     scored_with_embs = []
     for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
