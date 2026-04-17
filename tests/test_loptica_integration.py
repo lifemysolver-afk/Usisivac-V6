@@ -1,20 +1,8 @@
-import sys, os, tempfile, unittest.mock as mock
+import sys, os, tempfile
 from pathlib import Path
-import numpy as np
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-@pytest.fixture(autouse=True)
-def mock_all():
-    with mock.patch("sentence_transformers.SentenceTransformer") as mock_st:
-        mock_st.return_value.encode.return_value = np.random.randn(384).astype(np.float32)
-        with mock.patch("chromadb.PersistentClient") as mock_chroma:
-            mock_col = mock.Mock()
-            mock_col.count.return_value = 1
-            mock_chroma.return_value.get_or_create_collection.return_value = mock_col
-            mock_chroma.return_value.get_collection.return_value = mock_col
-            yield
 
 def test_loptica_engine():
     from loptica.loptica_engine import LopticaEngine
@@ -32,12 +20,12 @@ def test_veto_board():
     board = VetoBoard(use_llm=False)
     assert board.evaluate_action("Safe Action")["verdict"] == "PASS"
 
-def test_brain_mass_ingest():
+def test_brain_mass_ingest(monkeypatch):
     from loptica.brain_mass_ingest import BrainMassIngest
     with tempfile.TemporaryDirectory() as tmpdir:
         content = "# Knowledge\n\n" + "X" * 100
         (Path(tmpdir) / "data.md").write_text(content)
         ingestor = BrainMassIngest(db_path=tmpdir)
-        ingestor.collection = mock.Mock()
+        # ingestor.collection is a Mock from conftest.py
         ingestor.collection.count.side_effect = [0, 1]
         assert ingestor.ingest(tmpdir)["status"] == "OK"
