@@ -1,0 +1,9 @@
+[
+  {
+    "id": "test_001",
+    "content": "Test document about machine learning",
+    "metadata": {
+      "source": "test"
+    }
+  }
+]
