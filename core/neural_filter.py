@@ -15,7 +15,7 @@ Arhitektura:
   5. Quality gate (odbacuje score < 0.3)
 """
 
-import json
+import json, functools
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -53,11 +53,11 @@ class MLPScorer:
     def _relu(self, x): return np.maximum(0, x)
     def _sigmoid(self, x): return 1.0 / (1.0 + np.exp(-np.clip(x, -500, 500)))
 
-    def forward(self, x: np.ndarray) -> float:
+    def forward(self, x: np.ndarray) -> np.ndarray:
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
-        return float(out[0])
+        return out.flatten()
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
         """Online learning — ažurira težine na osnovu feedback-a."""
@@ -88,6 +88,7 @@ def _get_embedder():
     return _embedder
 
 
+@functools.lru_cache(maxsize=128)
 def embed(text: str) -> np.ndarray:
     return _get_embedder().encode(text, normalize_embeddings=True)
 
@@ -105,29 +106,37 @@ def mmr_select(query_emb: np.ndarray,
     """
     Maximal Marginal Relevance — balansira relevantnost i raznovrsnost.
     lambda_mmr=1.0 → samo relevantnost, 0.0 → samo raznovrsnost.
+    Vectorized version.
     """
     if len(docs) == 0:
         return []
 
+    n = len(docs)
     selected_idx = []
-    remaining = list(range(len(docs)))
+    remaining = list(range(n))
 
-    for _ in range(min(top_k, len(docs))):
-        best_idx, best_score = None, -np.inf
-        for i in remaining:
-            rel = float(np.dot(query_emb, doc_embs[i]))
-            if selected_idx:
-                sel_embs = doc_embs[selected_idx]
-                max_sim  = float(np.max(sel_embs @ doc_embs[i]))
-            else:
-                max_sim = 0.0
-            score = lambda_mmr * rel - (1 - lambda_mmr) * max_sim
-            if score > best_score:
-                best_score = score
-                best_idx   = i
-        if best_idx is not None:
-            selected_idx.append(best_idx)
-            remaining.remove(best_idx)
+    # Precompute relevance
+    relevances = doc_embs @ query_emb
+
+    # Track max similarity to any selected doc
+    max_similarities = np.zeros(n)
+
+    for _ in range(min(top_k, n)):
+        # MMRI = lambda * rel - (1 - lambda) * max_sim
+        scores = lambda_mmr * relevances[remaining] - (1 - lambda_mmr) * max_similarities[remaining]
+
+        best_in_remaining = np.argmax(scores)
+        best_idx = remaining[best_in_remaining]
+
+        selected_idx.append(best_idx)
+        remaining.pop(best_in_remaining)
+
+        if not remaining:
+            break
+
+        # Update max_similarities for the remaining documents
+        new_similarities = doc_embs[remaining] @ doc_embs[best_idx]
+        max_similarities[remaining] = np.maximum(max_similarities[remaining], new_similarities)
 
     return [docs[i] for i in selected_idx]
 
@@ -152,10 +161,10 @@ def filter_knowledge(query: str,
     vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
 
     Pipeline:
-      1. Embed query + docs
-      2. MLP scorer → relevance score
+      1. Embed query + docs (reuse if possible)
+      2. MLP scorer → relevance score (vectorized)
       3. Quality gate (score < threshold → odbaci)
-      4. MMR diversity filter
+      4. MMR diversity filter (vectorized)
       5. Vrati rangirane dokumente sa score-ovima
     """
     if not raw_docs:
@@ -164,23 +173,30 @@ def filter_knowledge(query: str,
     scorer = get_scorer()
     q_emb  = embed(query)
 
-    texts   = [d.get("content", "") for d in raw_docs]
-    d_embs  = embed_batch(texts)
+    # Reuse embeddings if present
+    if all("_embedding" in d for d in raw_docs):
+        d_embs = np.array([d["_embedding"] for d in raw_docs])
+    else:
+        texts   = [d.get("content", "") for d in raw_docs]
+        d_embs  = embed_batch(texts)
+
+    # Vectorized scoring
+    cos_sims = d_embs @ q_emb
+    mlp_scores = scorer.forward(d_embs)
+    combined_scores = 0.6 * cos_sims + 0.4 * mlp_scores
 
     scored_with_embs = []
-    for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
-        # Cosine similarity (embeddings su normalized)
-        cos_sim = float(np.dot(q_emb, d_emb))
-        # MLP relevance score
-        mlp_score = scorer.forward(d_emb)
-        # Combined score
-        combined = 0.6 * cos_sim + 0.4 * mlp_score
+    for i, doc in enumerate(raw_docs):
+        combined = combined_scores[i]
         if combined >= quality_threshold:
             doc_copy = dict(doc)
-            doc_copy["_score"]     = round(combined, 4)
-            doc_copy["_cos_sim"]   = round(cos_sim, 4)
-            doc_copy["_mlp_score"] = round(mlp_score, 4)
-            scored_with_embs.append((doc_copy, d_emb))
+            # Remove raw embedding from returned dict to keep it clean
+            if "_embedding" in doc_copy:
+                del doc_copy["_embedding"]
+            doc_copy["_score"]     = round(float(combined), 4)
+            doc_copy["_cos_sim"]   = round(float(cos_sims[i]), 4)
+            doc_copy["_mlp_score"] = round(float(mlp_scores[i]), 4)
+            scored_with_embs.append((doc_copy, d_embs[i]))
 
     if not scored_with_embs:
         return []

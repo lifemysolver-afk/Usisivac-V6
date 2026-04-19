@@ -13,6 +13,7 @@ Kolekcije:
 """
 
 import json, datetime, functools
+import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
 
@@ -35,9 +36,16 @@ def _client():
 
 @functools.lru_cache(maxsize=1)
 def _ef():
+    from core.neural_filter import _get_embedder
+    model = _get_embedder()
+
+    # Prilagođavamo SentenceTransformer za ChromaDB format
     from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    class SharedEF(embedding_functions.EmbeddingFunction):
+        def __call__(self, input: List[str]) -> List[np.ndarray]:
+            return [e.tolist() for e in model.encode(input, normalize_embeddings=True)]
+
+    return SharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
@@ -68,13 +76,19 @@ def _json_ingest(documents, metadatas, ids, collection, err) -> dict:
 
 # ─── Query (raw, before neural filter) ───────────────────────────────────────
 def query_raw(text: str, collection: str, n: int = 20) -> List[dict]:
-    """Vraća sirove rezultate — neural_filter ih dalje obrađuje."""
+    """Vraća sirove rezultate — uključujući i embeddinge za neural_filter."""
     try:
         col = _client().get_collection(name=collection, embedding_function=_ef())
-        r   = col.query(query_texts=[text], n_results=min(n, col.count() or 1))
+        r   = col.query(
+            query_texts=[text],
+            n_results=min(n, col.count() or 1),
+            include=["documents", "metadatas", "embeddings"]
+        )
         docs  = r.get("documents",[[]])[0]
         metas = r.get("metadatas",[[]])[0]
-        return [{"content":d,"metadata":m} for d,m in zip(docs,metas)]
+        embs  = r.get("embeddings",[[]])[0]
+        return [{"content":d, "metadata":m, "_embedding":e}
+                for d, m, e in zip(docs, metas, embs)]
     except Exception:
         return _json_query(text, collection, n)
 
