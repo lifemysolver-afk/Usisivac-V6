@@ -54,11 +54,12 @@ class MLPScorer:
     def _relu(self, x): return np.maximum(0, x)
     def _sigmoid(self, x): return 1.0 / (1.0 + np.exp(-np.clip(x, -500, 500)))
 
-    def forward(self, x: np.ndarray) -> float:
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Vectorized forward pass supporting both single vector and batch inputs."""
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
-        return float(out[0])
+        return out.flatten()
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
         """Online learning — ažurira težine na osnovu feedback-a."""
@@ -191,22 +192,22 @@ def filter_knowledge(query: str,
         for i, emb in zip(indices_to_embed, embedded):
             d_embs[i] = emb
 
+    # Vectorized scoring
+    d_embs_np = np.array(d_embs)
+    cos_sims = d_embs_np @ q_emb
+    mlp_scores = scorer.forward(d_embs_np)
+    combined_scores = 0.6 * cos_sims + 0.4 * mlp_scores
+
     scored_with_embs = []
-    for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
-        # Cosine similarity (embeddings su normalized)
-        cos_sim = float(np.dot(q_emb, d_emb))
-        # MLP relevance score
-        mlp_score = scorer.forward(d_emb)
-        # Combined score
-        combined = 0.6 * cos_sim + 0.4 * mlp_score
+    for i, combined in enumerate(combined_scores):
         if combined >= quality_threshold:
+            doc = raw_docs[i]
             doc_copy = dict(doc)
-            # Remove internal _embedding if present to avoid bloat in final results
             doc_copy.pop("_embedding", None)
-            doc_copy["_score"]     = round(combined, 4)
-            doc_copy["_cos_sim"]   = round(cos_sim, 4)
-            doc_copy["_mlp_score"] = round(mlp_score, 4)
-            scored_with_embs.append((doc_copy, d_emb))
+            doc_copy["_score"]     = round(float(combined), 4)
+            doc_copy["_cos_sim"]   = round(float(cos_sims[i]), 4)
+            doc_copy["_mlp_score"] = round(float(mlp_scores[i]), 4)
+            scored_with_embs.append((doc_copy, d_embs[i]))
 
     if not scored_with_embs:
         return []
