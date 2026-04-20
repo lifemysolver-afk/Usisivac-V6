@@ -1,7 +1,5 @@
 import inspect
-
 from orchestrator.autonomous_loop import AutonomousLoopManager
-
 
 class FakeController:
     def __init__(self):
@@ -38,7 +36,6 @@ class FakeController:
     def get_history(self):
         return []
 
-
 def _build_manager(max_debug_retries=3):
     manager = AutonomousLoopManager(
         task_id="test_task",
@@ -48,7 +45,6 @@ def _build_manager(max_debug_retries=3):
     )
     manager.controller = FakeController()
     return manager
-
 
 def test_run_iteration_recovers_within_retry_limit():
     manager = _build_manager(max_debug_retries=2)
@@ -83,7 +79,6 @@ def test_run_iteration_recovers_within_retry_limit():
     assert manager._run_iteration("iter_1") is True
     assert counters == {"implement": 2, "test": 2, "debug": 1}
 
-
 def test_run_iteration_stops_after_max_debug_retries():
     manager = _build_manager(max_debug_retries=2)
 
@@ -111,9 +106,20 @@ def test_run_iteration_stops_after_max_debug_retries():
 
     manager._call_agent = call_agent
     assert manager._run_iteration("iter_2") is False
+    # implement: initial + 2 retries = 3
+    # test: initial + 2 retries = 3
+    # debug: 3 failures, but after 3rd failure it stops, so 3 debug calls? 
+    # Let's check logic: 
+    # 1st fail -> debug_retries_left: 2 -> debug call 1
+    # 2nd fail -> debug_retries_left: 1 -> debug call 2
+    # 3rd fail -> debug_retries_left: 0 -> debug call 3
+    # 4th fail -> debug_retries_left: -1 -> stop
+    # With max_debug_retries=2:
+    # 1st fail -> left: 1 -> debug 1
+    # 2nd fail -> left: 0 -> debug 2
+    # 3rd fail -> left: -1 -> stop
     assert counters == {"implement": 3, "test": 3, "debug": 2}
     assert any("Debug retry limit exhausted" in message for _, message, _ in log_messages)
-
 
 def test_run_iteration_retry_loop_does_not_grow_stack_depth():
     manager = _build_manager(max_debug_retries=3)
@@ -146,4 +152,5 @@ def test_run_iteration_retry_loop_does_not_grow_stack_depth():
     manager._call_agent = call_agent
     assert manager._run_iteration("iter_3") is True
     assert len(implement_stack_depths) == 3
-    assert max(implement_stack_depths) - min(implement_stack_depths) <= 2
+    # Stack depth should be constant in a loop
+    assert max(implement_stack_depths) == min(implement_stack_depths)

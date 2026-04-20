@@ -103,15 +103,15 @@ def call(prompt: str,
     Poziva LLM sa automatskim fallback-om između providera.
     Redosled: groq → mistral → gemini → openrouter
     """
-    all_p = ["groq", "mistral", "gemini", "openrouter"]
-    only_primary = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}
-    pref = provider or os.getenv("PRIMARY_LLM", "gemini")
+    all_providers = ["groq", "mistral", "gemini", "openrouter"]
+    only_primary_llm = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}
+    primary_llm = provider or os.getenv("PRIMARY_LLM", "gemini")
 
-    # Build provider order
-    if provider or only_primary:
-        order = [pref]
+    # Build provider order based on PRIMARY_LLM and ONLY_PRIMARY_LLM
+    if only_primary_llm:
+        order = [primary_llm]
     else:
-        order = [pref] + [p for p in all_p if p != pref]
+        order = [primary_llm] + [p for p in all_providers if p != primary_llm]
 
     last_err = None
     for prov in order:
@@ -128,7 +128,7 @@ def call(prompt: str,
                 kwargs = {"prompt": prompt, "system": system}
                 chosen_model = model or os.getenv("PRIMARY_MODEL")
                 if not chosen_model and prov == "gemini":
-                    chosen_model = "gemini-2.5-flash"
+                    chosen_model = "gemini-2.5-flash" # Default for Gemini if not specified
                 if chosen_model:
                     kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)

@@ -199,18 +199,17 @@ class AutonomousLoopManager:
                 return False
             
             self.controller.record_plan(iteration_id, plan)
-            retry_count = 0
+            debug_retries_left = self.max_debug_retries
             implementation = None
             test_results = None
+            debug_info = None
 
-            # Steps 2-4 loop: implement -> test -> (debug and retry on failure)
             while True:
                 # Step 2: Implement
-                implementation = self._call_agent("implement_agent", iteration_id, plan)
+                implementation = self._call_agent("implement_agent", iteration_id, plan, debug_info=debug_info)
                 if not implementation:
                     self._log("ERROR", "Implement agent failed")
                     return False
-
                 self.controller.record_implementation(iteration_id, implementation)
 
                 # Step 3: Test
@@ -218,12 +217,15 @@ class AutonomousLoopManager:
                 if not test_results:
                     self._log("ERROR", "Test agent failed")
                     return False
-
                 tests_passed = self.controller.record_test_results(iteration_id, test_results)
-                if tests_passed:
-                    break
 
-                if retry_count >= self.max_debug_retries:
+                if tests_passed:
+                    self._log("INFO", "Tests passed, proceeding to review.", {"iteration_id": iteration_id})
+                    break
+                
+                # Tests failed, attempt to debug
+                debug_retries_left -= 1
+                if debug_retries_left < 0:
                     self._log("ERROR", "Debug retry limit exhausted", {
                         "iteration_id": iteration_id,
                         "max_debug_retries": self.max_debug_retries,
@@ -231,19 +233,13 @@ class AutonomousLoopManager:
                     })
                     return False
 
-                # Step 4: Debug (tests failed and retry budget remains)
-                debug_info = self._call_agent("debug_agent", iteration_id, test_results)
+                self._log("INFO", f"Tests failed. Attempting debug. Retries left: {debug_retries_left}", {"iteration_id": iteration_id})
+                debug_info = self._call_agent("debug_agent", iteration_id, test_results, implementation)
                 if not debug_info:
                     self._log("ERROR", "Debug agent failed")
                     return False
-
                 self.controller.record_debug_info(iteration_id, debug_info)
-                retry_count += 1
-                self._log("INFO", "Retrying implement/test after debug", {
-                    "iteration_id": iteration_id,
-                    "retry_count": retry_count,
-                    "max_debug_retries": self.max_debug_retries
-                })
+                self._log("INFO", "Retrying implement/test after debug", {"iteration_id": iteration_id})
             
             # Step 5: Review
             review_feedback = self._call_agent("review_agent", iteration_id, implementation)
