@@ -16,6 +16,7 @@ Arhitektura:
 """
 
 import json
+import functools
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -88,6 +89,7 @@ def _get_embedder():
     return _embedder
 
 
+@functools.lru_cache(maxsize=128)
 def embed(text: str) -> np.ndarray:
     return _get_embedder().encode(text, normalize_embeddings=True)
 
@@ -104,30 +106,36 @@ def mmr_select(query_emb: np.ndarray,
                lambda_mmr: float = 0.7) -> List[dict]:
     """
     Maximal Marginal Relevance — balansira relevantnost i raznovrsnost.
-    lambda_mmr=1.0 → samo relevantnost, 0.0 → samo raznovrsnost.
+    Vectorized implementation using NumPy.
     """
     if len(docs) == 0:
         return []
 
+    n_docs = len(docs)
     selected_idx = []
-    remaining = list(range(len(docs)))
+    remaining = list(range(n_docs))
 
-    for _ in range(min(top_k, len(docs))):
-        best_idx, best_score = None, -np.inf
-        for i in remaining:
-            rel = float(np.dot(query_emb, doc_embs[i]))
-            if selected_idx:
-                sel_embs = doc_embs[selected_idx]
-                max_sim  = float(np.max(sel_embs @ doc_embs[i]))
-            else:
-                max_sim = 0.0
-            score = lambda_mmr * rel - (1 - lambda_mmr) * max_sim
-            if score > best_score:
-                best_score = score
-                best_idx   = i
-        if best_idx is not None:
-            selected_idx.append(best_idx)
-            remaining.remove(best_idx)
+    # Precompute all relevance scores
+    relevances = doc_embs @ query_emb
+
+    for _ in range(min(top_k, n_docs)):
+        if not selected_idx:
+            # First selection is just the most relevant
+            best_idx = remaining[np.argmax(relevances[remaining])]
+        else:
+            # Calculate max similarity with already selected docs
+            sel_embs = doc_embs[selected_idx]
+            rem_embs = doc_embs[remaining]
+            # [len(remaining), len(selected)]
+            similarities = rem_embs @ sel_embs.T
+            max_similarities = np.max(similarities, axis=1)
+
+            # MMR Score: lambda * rel - (1-lambda) * max_sim
+            scores = lambda_mmr * relevances[remaining] - (1 - lambda_mmr) * max_similarities
+            best_idx = remaining[np.argmax(scores)]
+
+        selected_idx.append(best_idx)
+        remaining.remove(best_idx)
 
     return [docs[i] for i in selected_idx]
 
@@ -146,13 +154,14 @@ def filter_knowledge(query: str,
                      raw_docs: List[Dict],
                      top_k: int = 5,
                      quality_threshold: float = 0.25,
-                     use_mmr: bool = True) -> List[Dict]:
+                     use_mmr: bool = True,
+                     query_emb: Optional[np.ndarray] = None) -> List[Dict]:
     """
     Glavni filter — prima sirove ChromaDB rezultate,
     vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
 
     Pipeline:
-      1. Embed query + docs
+      1. Embed query + docs (reuse if available)
       2. MLP scorer → relevance score
       3. Quality gate (score < threshold → odbaci)
       4. MMR diversity filter
@@ -162,10 +171,25 @@ def filter_knowledge(query: str,
         return []
 
     scorer = get_scorer()
-    q_emb  = embed(query)
+    q_emb  = query_emb if query_emb is not None else embed(query)
 
-    texts   = [d.get("content", "") for d in raw_docs]
-    d_embs  = embed_batch(texts)
+    # Re-use embeddings if they are already in the doc
+    docs_to_embed = []
+    indices_to_embed = []
+
+    d_embs = [None] * len(raw_docs)
+
+    for i, doc in enumerate(raw_docs):
+        if "_embedding" in doc:
+            d_embs[i] = np.array(doc["_embedding"])
+        else:
+            docs_to_embed.append(doc.get("content", ""))
+            indices_to_embed.append(i)
+
+    if docs_to_embed:
+        embedded = embed_batch(docs_to_embed)
+        for i, emb in zip(indices_to_embed, embedded):
+            d_embs[i] = emb
 
     scored_with_embs = []
     for i, (doc, d_emb) in enumerate(zip(raw_docs, d_embs)):
@@ -177,6 +201,8 @@ def filter_knowledge(query: str,
         combined = 0.6 * cos_sim + 0.4 * mlp_score
         if combined >= quality_threshold:
             doc_copy = dict(doc)
+            # Remove internal _embedding if present to avoid bloat in final results
+            doc_copy.pop("_embedding", None)
             doc_copy["_score"]     = round(combined, 4)
             doc_copy["_cos_sim"]   = round(cos_sim, 4)
             doc_copy["_mlp_score"] = round(mlp_score, 4)
