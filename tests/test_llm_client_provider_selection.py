@@ -52,3 +52,28 @@ def test_call_sets_default_gemini_model_when_missing(monkeypatch):
 
     assert result == "ok-gemini"
     assert calls[0]["model"] == "gemini-2.5-flash"
+
+
+def test_call_uses_huggingface_provider(monkeypatch):
+    calls = []
+
+    monkeypatch.setenv("ONLY_PRIMARY_LLM", "true")
+    monkeypatch.setenv("PRIMARY_LLM", "huggingface")
+    monkeypatch.setenv("HF_API_KEY", "dummy-hf-key")
+    monkeypatch.setenv("PRIMARY_MODEL", "some-hf-model")
+
+    original = llm_client.PROVIDERS
+    llm_client.PROVIDERS = {
+        "huggingface": {
+            "env_key": "HF_API_KEY",
+            "call": lambda **kwargs: calls.append(kwargs) or "ok-hf"
+        }
+    }
+    try:
+        result = llm_client.call("hello")
+    finally:
+        llm_client.PROVIDERS = original
+
+    assert result == "ok-hf"
+    assert len(calls) == 1
+    assert calls[0]["model"] == "some-hf-model"
