@@ -11,6 +11,7 @@ Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 import os, json, time
 from pathlib import Path
 from typing import Optional
+import requests
 
 try:
     from dotenv import load_dotenv
@@ -85,12 +86,30 @@ def _call_openrouter(prompt: str, model: str = "mistralai/mistral-7b-instruct:fr
     return resp.choices[0].message.content
 
 
+def _call_huggingface(prompt: str, model: str = "HuggingFaceH4/zephyr-7b-beta", system: str = "") -> str:
+    api_key = os.getenv("HF_API_KEY")
+    if not api_key:
+        raise ValueError("HF_API_KEY not set for Hugging Face provider")
+
+    headers = {"Authorization": f"Bearer {api_key}"}
+    API_URL = f"https://api-inference.huggingface.co/models/{model}"
+
+    payload = {
+        "inputs": f"{system}\n\n{prompt}",
+        "parameters": {"max_new_tokens": 4096}
+    }
+    response = requests.post(API_URL, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()[0]["generated_text"]
+
+
 # Provider registry with priority order
 PROVIDERS = {
     "groq": {"call": _call_groq, "env_key": "GROQ_API_KEY"},
     "mistral": {"call": _call_mistral, "env_key": "MISTRAL_API_KEY"},
     "gemini": {"call": _call_gemini, "env_key": "GEMINI_KEY_1"},
     "openrouter": {"call": _call_openrouter, "env_key": "OPENROUTER_API_KEY"},
+    "huggingface": {"call": _call_huggingface, "env_key": "HF_API_KEY"},
 }
 
 
@@ -103,15 +122,15 @@ def call(prompt: str,
     Poziva LLM sa automatskim fallback-om između providera.
     Redosled: groq → mistral → gemini → openrouter
     """
-    all_p = ["groq", "mistral", "gemini", "openrouter"]
-    only_primary = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}
-    pref = provider or os.getenv("PRIMARY_LLM", "gemini")
+    all_providers = ["groq", "mistral", "gemini", "openrouter", "huggingface"]
+    only_primary_llm = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}
+    primary_llm = provider or os.getenv("PRIMARY_LLM", "gemini")
 
-    # Build provider order
-    if provider or only_primary:
-        order = [pref]
+    # Build provider order based on PRIMARY_LLM and ONLY_PRIMARY_LLM
+    if only_primary_llm:
+        order = [primary_llm]
     else:
-        order = [pref] + [p for p in all_p if p != pref]
+        order = [primary_llm] + [p for p in all_providers if p != primary_llm]
 
     last_err = None
     for prov in order:
@@ -128,7 +147,7 @@ def call(prompt: str,
                 kwargs = {"prompt": prompt, "system": system}
                 chosen_model = model or os.getenv("PRIMARY_MODEL")
                 if not chosen_model and prov == "gemini":
-                    chosen_model = "gemini-2.5-flash"
+                    chosen_model = "gemini-2.5-flash" # Default for Gemini if not specified
                 if chosen_model:
                     kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)
