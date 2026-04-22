@@ -1,19 +1,19 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Test: LopticaModule Integration                                    ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Test: LopticaModule Integration                                    |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Testira sve Loptica komponente:
-  1. LopticaEngine — 3-6-2 state machine
-  2. KnowledgeBase — SQLite CRUD + rich_context
-  3. ConflictResolver — HARD/SOFT conflict detection
-  4. FeedbackTracker — self-learning confidence adjustment
-  5. NotebookParser — AST hyperparameter extraction
-  6. HarvesterAnalytics — report generation
-  7. VetoBoard — 5-persona quorum (bez LLM)
-  8. LopticaModule — unified integration
-  9. BrainMassIngest — ChromaDB ingest
+  1. LopticaEngine - 3-6-2 state machine
+  2. KnowledgeBase - SQLite CRUD + rich_context
+  3. ConflictResolver - HARD/SOFT conflict detection
+  4. FeedbackTracker - self-learning confidence adjustment
+  5. NotebookParser - AST hyperparameter extraction
+  6. HarvesterAnalytics - report generation
+  7. VetoBoard - 5-persona quorum (bez LLM)
+  8. LopticaModule - unified integration
+  9. BrainMassIngest - ChromaDB ingest
 """
 
 import sys, os, json, tempfile
@@ -21,8 +21,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-PASS = "✅ PASS"
-FAIL = "❌ FAIL"
+PASS = "PASS PASS"
+FAIL = "FAIL FAIL"
 results = []
 
 
@@ -36,7 +36,7 @@ def test(name, fn):
         print(f"  {FAIL} {name}: {e}")
 
 
-# ─── Test 1: LopticaEngine ────────────────────────────────────────────────────
+# -- Test 1: LopticaEngine ----------------------------------------------------
 def t_loptica_engine():
     from loptica.loptica_engine import LopticaEngine
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -44,7 +44,7 @@ def t_loptica_engine():
         assert engine.get_current_phase() == "RESEARCH"
         assert engine.get_checkpoint_limit() == 3
 
-        # Log 3 actions → should auto-advance to DESIGN
+        # Log 3 actions  should auto-advance to DESIGN
         for i in range(3):
             engine.log_action(f"ACTION_{i}", f"detail_{i}")
 
@@ -56,7 +56,7 @@ def t_loptica_engine():
         assert not engine.is_complete()
 
 
-# ─── Test 2: KnowledgeBase ────────────────────────────────────────────────────
+# -- Test 2: KnowledgeBase ----------------------------------------------------
 def t_knowledge_base():
     from loptica.knowledge_base import KnowledgeBase
     kb = KnowledgeBase(":memory:")
@@ -90,7 +90,7 @@ def t_knowledge_base():
     assert stats["techniques"] == 1
 
 
-# ─── Test 3: ConflictResolver ─────────────────────────────────────────────────
+# -- Test 3: ConflictResolver ------------------------------------------------
 def t_conflict_resolver():
     from loptica.knowledge_base import ConflictResolver
     resolver = ConflictResolver()
@@ -110,7 +110,7 @@ def t_conflict_resolver():
     )
     assert dup_conflict is not None
 
-    # Test batch resolution — should keep higher confidence
+    # Test batch resolution - should keep higher confidence
     techs = [
         {"name": "learning_rate", "value": 1e-4, "confidence": 0.95},
         {"name": "learning_rate", "value": 5e-4, "confidence": 0.80},  # duplicate
@@ -123,13 +123,13 @@ def t_conflict_resolver():
     names = [t["name"] for t in resolved]
     assert "learning_rate" in names
     assert "batch_size" in names
-    # no_warmup conflicts with high_learning_rate — but since we don't have
+    # no_warmup conflicts with high_learning_rate - but since we don't have
     # "high_learning_rate" exactly, it may pass. Check at least no duplicates.
     lr_count = names.count("learning_rate")
     assert lr_count == 1, f"Expected 1 learning_rate, got {lr_count}"
 
 
-# ─── Test 4: FeedbackTracker ──────────────────────────────────────────────────
+# -- Test 4: FeedbackTracker --------------------------------------------------
 def t_feedback_tracker():
     from loptica.knowledge_base import KnowledgeBase, FeedbackTracker
     kb = KnowledgeBase(":memory:")
@@ -139,7 +139,7 @@ def t_feedback_tracker():
 
     tracker = FeedbackTracker(kb)
 
-    # Top 10 rank → should boost by +0.10
+    # Top 10 rank  should boost by +0.10
     result = tracker.log_result("test-comp", 5, ["learning_rate", "batch_size"])
     assert result["adjustment"] == 0.10
 
@@ -149,12 +149,12 @@ def t_feedback_tracker():
         assert float(t["confidence"]) > 0.80, \
             f"Expected >0.80 after boost, got {t['confidence']}"
 
-    # Low rank → should downgrade by -0.05
+    # Low rank  should downgrade by -0.05
     result2 = tracker.log_result("test-comp", 50, ["learning_rate"])
     assert result2["adjustment"] == -0.05
 
 
-# ─── Test 5: NotebookParser ───────────────────────────────────────────────────
+# -- Test 5: NotebookParser --------------------------------------------------
 def t_notebook_parser():
     from loptica.knowledge_base import NotebookParser
     parser = NotebookParser()
@@ -175,7 +175,7 @@ n_estimators = 200
     assert len(techs) >= 3
 
 
-# ─── Test 6: HarvesterAnalytics ──────────────────────────────────────────────
+# -- Test 6: HarvesterAnalytics ----------------------------------------------
 def t_harvester_analytics():
     from loptica.knowledge_base import KnowledgeBase, FeedbackTracker, HarvesterAnalytics
     kb = KnowledgeBase(":memory:")
@@ -203,25 +203,25 @@ def t_harvester_analytics():
         os.unlink(snap_path)
 
 
-# ─── Test 7: VetoBoard (no LLM) ──────────────────────────────────────────────
+# -- Test 7: VetoBoard (no LLM) ----------------------------------------------
 def t_veto_board():
     from loptica.veto_board import VetoBoard
     board = VetoBoard(use_llm=False)
 
-    # Safe action → PASS
+    # Safe action  PASS
     result = board.evaluate_action("Train XGBoost model on tabular data")
     assert result["verdict"] == "PASS"
 
-    # Dangerous action → VETO (contains "password")
+    # Dangerous action  VETO (contains "password")
     result2 = board.evaluate_action("Read password from config file")
     assert result2["verdict"] == "VETO"
 
-    # Path traversal → VETO
+    # Path traversal  VETO
     result3 = board.evaluate_action("Access file at ../../../etc/passwd")
     assert result3["verdict"] == "VETO"
 
 
-# ─── Test 8: LopticaModule (unified) ─────────────────────────────────────────
+# -- Test 8: LopticaModule (unified) ----------------------------------------
 def t_loptica_module():
     from loptica.loptica_module import LopticaModule
     module = LopticaModule(mission_name="test_unified")
@@ -236,7 +236,7 @@ def t_loptica_module():
     assert "kb_stats" in result
     assert result["engine_summary"]["mission"] == "test_unified"
 
-    # Get best techniques (empty at start — OK)
+    # Get best techniques (empty at start - OK)
     techs = module.get_best_techniques(domain="tabular")
     assert isinstance(techs, list)
 
@@ -245,7 +245,7 @@ def t_loptica_module():
     assert "db_stats" in report
 
 
-# ─── Test 9: BrainMassIngest ─────────────────────────────────────────────────
+# -- Test 9: BrainMassIngest ------------------------------------------------
 def t_brain_mass_ingest():
     from loptica.brain_mass_ingest import BrainMassIngest
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -266,7 +266,7 @@ def t_brain_mass_ingest():
         assert isinstance(hits, list)
 
 
-# ─── Run all tests ────────────────────────────────────────────────────────────
+# -- Run all tests ------------------------------------------------------------
 if __name__ == "__main__":
     print("\n" + "="*60)
     print("  LOPTICA INTEGRATION TEST SUITE")
@@ -288,12 +288,12 @@ if __name__ == "__main__":
     total = len(results)
     print(f"  RESULTS: {passed}/{total} tests passed")
     if passed == total:
-        print("  STATUS: ALL TESTS PASSED — LOPTICA INTEGRATION OK")
+        print("  STATUS: ALL TESTS PASSED - LOPTICA INTEGRATION OK")
     else:
         print("  STATUS: SOME TESTS FAILED")
         for name, ok, err in results:
             if not ok:
-                print(f"    FAILED: {name} → {err}")
+                print(f"    FAILED: {name}  {err}")
     print("="*60)
 
     sys.exit(0 if passed == total else 1)

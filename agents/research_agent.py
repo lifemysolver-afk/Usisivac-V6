@@ -1,12 +1,12 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  ResearchAgent — Univerzalni Usisivač Znanja                        ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  ResearchAgent - Univerzalni Usisivac Znanja                        |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-Pretražuje ChromaDB, usisava znanje iz bilo kog domena,
-izvlači "Golden Recipe" (best practices) za dati problem.
-Radi za SVE — ne samo Kaggle.
+Pretrazuje ChromaDB, usisava znanje iz bilo kog domena,
+izvlaci "Golden Recipe" (best practices) za dati problem.
+Radi za SVE - ne samo Kaggle.
 """
 
 import sys, json, datetime
@@ -24,7 +24,7 @@ from core import state_manager as SM
 AGENT = "ResearchAgent"
 
 
-# ─── Univerzalna baza znanja za bilo koji domen ──────────────────────────────
+# -- Univerzalna baza znanja za bilo koji domen ------------------------------
 UNIVERSAL_KNOWLEDGE = {
     "data_science_fundamentals": [
         {"id":"ds_eda_001","content":"EDA best practices: (1) Check shape, dtypes, nulls. (2) Distribution plots for all numeric. (3) Correlation heatmap. (4) Target variable analysis. (5) Outlier detection via IQR/z-score. (6) Feature-target relationships. (7) Cardinality check for categoricals. (8) Time-based patterns if temporal.","metadata":{"domain":"universal","topic":"EDA","source":"data_science_handbook"}},
@@ -32,7 +32,7 @@ UNIVERSAL_KNOWLEDGE = {
         {"id":"ds_val_001","content":"Validation strategies: (1) Stratified K-Fold for classification. (2) TimeSeriesSplit for temporal data. (3) GroupKFold when groups must not leak. (4) Nested CV for hyperparameter tuning. (5) Adversarial validation to detect train/test drift. (6) NEVER use test set for any decision.","metadata":{"domain":"universal","topic":"validation","source":"cross_validation_guide"}},
     ],
     "ml_algorithms": [
-        {"id":"ml_grad_001","content":"Gradient Boosting mastery: (1) XGBoost: fast, handles missing values. (2) LightGBM: faster, leaf-wise growth, better for large data. (3) CatBoost: native categorical support, ordered boosting. Tuning priority: learning_rate → n_estimators → max_depth → min_child_weight → subsample → colsample_bytree. Always use early_stopping.","metadata":{"domain":"universal","topic":"gradient_boosting","source":"ml_mastery"}},
+        {"id":"ml_grad_001","content":"Gradient Boosting mastery: (1) XGBoost: fast, handles missing values. (2) LightGBM: faster, leaf-wise growth, better for large data. (3) CatBoost: native categorical support, ordered boosting. Tuning priority: learning_rate  n_estimators  max_depth  min_child_weight  subsample  colsample_bytree. Always use early_stopping.","metadata":{"domain":"universal","topic":"gradient_boosting","source":"ml_mastery"}},
         {"id":"ml_nn_001","content":"Neural Network patterns: (1) TabNet for tabular data. (2) 1D-CNN for sequence features. (3) Transformer for attention-based feature interaction. (4) Embedding layers for categoricals. (5) BatchNorm + Dropout for regularization. (6) Learning rate scheduling: cosine annealing or one-cycle. (7) Mixed precision for speed.","metadata":{"domain":"universal","topic":"neural_networks","source":"deep_learning_guide"}},
         {"id":"ml_ens_001","content":"Ensemble strategies: (1) Stacking: train meta-learner on OOF predictions. (2) Blending: weighted average of diverse models. (3) Bagging: reduce variance with random subsets. (4) Diversity is key: mix tree-based + linear + NN. (5) Rank averaging for robust ensembles. (6) Optuna for weight optimization.","metadata":{"domain":"universal","topic":"ensembles","source":"competition_winners"}},
     ],
@@ -71,12 +71,12 @@ def ingest_universal_knowledge() -> dict:
 
 def research(query: str, domain: str = "universal") -> dict:
     """
-    Pretražuje bazu znanja za dati query.
+    Pretrazuje bazu znanja za dati query.
     Koristi Neural Filter za ekstrakciju maksimuma.
     """
     log_work(AGENT, "RESEARCH_START", f"query='{query}' domain='{domain}'")
 
-    # Pretraži sve relevantne kolekcije
+    # Pretrazi sve relevantne kolekcije
     all_results = []
     for col in ["knowledge_base", "kaggle_insights", "golden_recipes", "domain_specific"]:
         try:
@@ -116,7 +116,7 @@ def research(query: str, domain: str = "universal") -> dict:
 
 def extract_golden_recipe(problem_description: str) -> dict:
     """
-    Izvlači "Golden Recipe" — optimalni pristup za dati problem.
+    Izvlaci "Golden Recipe" - optimalni pristup za dati problem.
     Koristi LLM + RAG za sintezu.
     """
     log_work(AGENT, "GOLDEN_RECIPE_START", problem_description[:100])
@@ -132,12 +132,12 @@ def extract_golden_recipe(problem_description: str) -> dict:
 
     system_prompt = (
         "Ti si ResearchAgent u Usisivac V6 sistemu. "
-        "Na osnovu prikupljenog znanja iz baze, sintetiši GOLDEN RECIPE — "
+        "Na osnovu prikupljenog znanja iz baze, sintetisi GOLDEN RECIPE - "
         "optimalni pristup za dati problem. "
-        "Format: JSON sa ključevima: approach, steps, models, features, validation, risks."
+        "Format: JSON sa kljucevima: approach, steps, models, features, validation, risks."
     )
 
-    prompt = f"PROBLEM:\n{problem_description}\n\nKNOWLEDGE BASE:\n{context}\n\nGeneriši Golden Recipe:"
+    prompt = f"PROBLEM:\n{problem_description}\n\nKNOWLEDGE BASE:\n{context}\n\nGenerisi Golden Recipe:"
 
     llm_response = llm_call(prompt, system=system_prompt)
 

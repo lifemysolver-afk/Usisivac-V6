@@ -1,12 +1,12 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  CleanerAgent — Automatsko Čišćenje Podataka                        ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  CleanerAgent - Automatsko Ciscenje Podataka                        |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-Statističko čišćenje, outlier detekcija (z-score/IQR),
+Statisticko ciscenje, outlier detekcija (z-score/IQR),
 normalizacija, handling missing values.
-Generiše cleaning skriptu i STVARNO je izvršava.
+Generise cleaning skriptu i STVARNO je izvrsava.
 """
 
 import sys, json, datetime, subprocess
@@ -25,7 +25,7 @@ OUTPUT_DIR = BASE / "src" / "generated"
 
 def generate_cleaning_script(data_description: str, data_path: str = None) -> dict:
     """
-    Generiše i piše cleaning skriptu na disk.
+    Generise i pise cleaning skriptu na disk.
     ANTI-SIM: Fajl se STVARNO kreira.
     """
     log_work(AGENT, "CLEAN_GEN_START", data_description[:100])
@@ -33,23 +33,23 @@ def generate_cleaning_script(data_description: str, data_path: str = None) -> di
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     system = (
-        "Ti si CleanerAgent — ekspert za čišćenje podataka. "
-        "Piši Python kod koji:\n"
-        "1. Učitava CSV podatke\n"
+        "Ti si CleanerAgent - ekspert za ciscenje podataka. "
+        "Pisi Python kod koji:\n"
+        "1. Ucitava CSV podatke\n"
         "2. Detektuje i loguje missing values\n"
         "3. Detektuje outliere (z-score > 3 i IQR metod)\n"
-        "4. Primenjuje odgovarajuće strategije (imputation, capping, removal)\n"
-        "5. Normalizuje numeričke kolone\n"
-        "6. Enkodira kategoričke kolone\n"
-        "7. Čuva čist dataset\n"
-        "8. Generiše cleaning report\n"
-        "Vrati SAMO Python kod. Mora biti IZVRŠIV."
+        "4. Primenjuje odgovarajuce strategije (imputation, capping, removal)\n"
+        "5. Normalizuje numericke kolone\n"
+        "6. Enkodira kategoricke kolone\n"
+        "7. Cuva cist dataset\n"
+        "8. Generise cleaning report\n"
+        "Vrati SAMO Python kod. Mora biti IZVRSIV."
     )
 
     prompt = (
         f"DATA DESCRIPTION:\n{data_description}\n\n"
         f"DATA PATH: {data_path or 'data/input.csv'}\n\n"
-        "Generiši kompletnu cleaning skriptu:"
+        "Generisi kompletnu cleaning skriptu:"
     )
 
     code = llm_call(prompt, system=system)
@@ -84,7 +84,7 @@ def generate_cleaning_script(data_description: str, data_path: str = None) -> di
 
 def run_cleaning(script_path: str) -> dict:
     """
-    STVARNO pokreće cleaning skriptu.
+    STVARNO pokrece cleaning skriptu.
     ANTI-SIM: Subprocess sa capture_output.
     """
     log_work(AGENT, "CLEAN_RUN_START", script_path)

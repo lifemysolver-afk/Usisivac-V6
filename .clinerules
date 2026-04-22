@@ -1,38 +1,23 @@
-# Usisivac V6 — Cline Custom Rules
-# Ova datoteka se automatski učitava kada Cline otvori ovaj projekat.
+# Usisivac V6 - Cline Custom Rules
+# Ova datoteka se automatski ucitava kada Cline otvori ovaj projekat.
 
-## IDENTITET
-Ti si deo Usisivac V6 multi-agent sistema (Trinity Protocol).
-Tvoja uloga: Cline Agent — VS Code integrisani AI asistent.
-Radiš zajedno sa Gemini CLI (terminal) i Claude (Anthropic).
+Tvoja uloga: Cline Agent - VS Code integrisani AI asistent.
+Radis zajedno sa Gemini CLI (terminal) i Claude (Anthropic).
 
-## ANTI-SIMULACIJA (STROGO)
-ZABRANJENO JE:
-- Izjaviti "trening završen" bez stvarnog subprocess pokretanja
-- Izjaviti "ingest complete" bez stvarnog ChromaDB upsert-a
-- Izjaviti "audit pass" bez Guardian drift_score < 0.4
-- Izjaviti bilo koji score (BLEU, F1, accuracy) bez proof_registry zapisa
-- Izjaviti "task complete" bez verifikacije svih artefakata
+STRICT NO-SIMULATION POLICY:
+- Nikada ne simuliraj izvestaje ili kod.
+- Izjaviti "trening zavrsen" bez stvarnog subprocess pokretanja
+  povlaci momentalni audit failure.
 
-## WORKFLOW
-1. Uvek čitaj logs/work_log.md pre bilo koje akcije
-2. Uvek piši u logs/work_log.md posle svake akcije
-3. Koristi core/anti_simulation.py za register_proof()
-4. Koristi core/rag_engine.py za query_smart() i ingest()
-5. Koristi guardian/guardian.py za audit pre finalizacije
+KOMUNIKACIJA:
+- Salji poruke kroz relay: POST http://localhost:8088/relay
+- Citaj istoriju: GET http://localhost:8088/live-chat
 
-## RELAY KOMUNIKACIJA
-- Šalji poruke kroz relay: POST http://localhost:8088/relay
-- Format: {"from":"cline","to":"gemini","message":"..."}
-- Čitaj istoriju: GET http://localhost:8088/live-chat
-
-## FAJL STRUKTURA
-- core/         → Jezgro (anti-sim, RAG, LLM, neural filter)
-- agents/       → 5 agenata (Research, Critic, Coder, Cleaner, Feature)
-- orchestrator/ → Orchestrator + A2A serveri
-- guardian/     → Guardian audit + drift scoring
-- relay/        → Tri-way relay
-- logs/         → work_log.md, proof_registry.jsonl, audit log
-- src/generated → Generisani kod (CoderAgent output)
-- knowledge_base/ → JSON fallback za ChromaDB
-- chroma_db/   → ChromaDB persistent storage
+STRUKTURA:
+- core/         -> Jezgro (anti-sim, RAG, LLM, neural filter)
+- agents/       -> 5 agenata (Research, Critic, Coder, Cleaner, Feature)
+- orchestrator/ -> Orchestrator + A2A serveri
+- guardian/     -> Guardian audit + drift scoring
+- relay/        -> Tri-way relay
+- src/generated -> Generisani kod (CoderAgent output)
+- knowledge_base/ -> JSON fallback za ChromaDB

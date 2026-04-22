@@ -1,9 +1,9 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Reflection Agent — Meta-Analysis of Autonomous Coding Loop         ║
-║  Usisivac V6 | Gemini Orchestrator Extension                        ║
-║  Anti-Simulation Enforced: All reflections logged and verified      ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Reflection Agent - Meta-Analysis of Autonomous Coding Loop         |
+|  Usisivac V6 | Gemini Orchestrator Extension                        |
+|  Anti-Simulation Enforced: All reflections logged and verified      |
++----------------------------------------------------------------------+
 
 The Reflection Agent performs meta-analysis on the coding loop's performance:
   - Failure analysis: Root causes of test failures, debugging logs

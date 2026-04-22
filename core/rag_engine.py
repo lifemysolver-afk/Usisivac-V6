@@ -1,15 +1,15 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  RAG Engine — ChromaDB + Neural Filter                              ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  RAG Engine - ChromaDB + Neural Filter                              |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Kolekcije:
-  knowledge_base   — naučni radovi, best practices, data science znanje
-  kaggle_insights  — Kaggle kernels i competition strategies
-  agent_history    — prethodne agent akcije i rezultati
-  golden_recipes   — verifikovani top-tier paterni
-  domain_specific  — znanje specifično za trenutni problem
+  knowledge_base   - naucni radovi, best practices, data science znanje
+  kaggle_insights  - Kaggle kernels i competition strategies
+  agent_history    - prethodne agent akcije i rezultati
+  golden_recipes   - verifikovani top-tier paterni
+  domain_specific  - znanje specificno za trenutni problem
 """
 
 import json, datetime, functools
@@ -27,7 +27,7 @@ COLLECTIONS = [
 ]
 
 
-# ─── ChromaDB Client ──────────────────────────────────────────────────────────
+# -- ChromaDB Client ----------------------------------------------------------
 @functools.lru_cache(maxsize=1)
 def _client():
     import chromadb
@@ -40,7 +40,7 @@ def _ef():
         model_name=EMBED_MODEL)
 
 
-# ─── Ingest ───────────────────────────────────────────────────────────────────
+# -- Ingest ------------------------------------------------------------------
 def ingest(documents: List[str], metadatas: List[dict],
            ids: List[str], collection: str) -> dict:
     """Stvarni ChromaDB upsert. Nikad ne simulira."""
@@ -66,9 +66,9 @@ def _json_ingest(documents, metadatas, ids, collection, err) -> dict:
             "collection":collection,"backend":"json","chroma_err":err}
 
 
-# ─── Query (raw, before neural filter) ───────────────────────────────────────
+# -- Query (raw, before neural filter) --------------------------------------
 def query_raw(text: str, collection: str, n: int = 20, query_embeddings: Optional[List[float]] = None) -> List[dict]:
-    """Vraća sirove rezultate — neural_filter ih dalje obrađuje."""
+    """Vraca sirove rezultate - neural_filter ih dalje obraduje."""
     try:
         col = _client().get_collection(name=collection, embedding_function=_ef())
         kwargs = {"n_results": min(n, col.count() or 1), "include": ["documents", "metadatas", "embeddings"]}
@@ -102,10 +102,10 @@ def _json_query(text: str, collection: str, n: int) -> List[dict]:
         return []
 
 
-# ─── Smart Query (raw + neural filter) ───────────────────────────────────────
+# -- Smart Query (raw + neural filter) --------------------------------------
 def query_smart(text: str, collection: str,
                 top_k: int = 5, threshold: float = 0.25) -> List[dict]:
-    """Puni pipeline: ChromaDB → Neural Filter → MMR → top_k rezultata."""
+    """Puni pipeline: ChromaDB  Neural Filter  MMR  top_k rezultata."""
     from core.neural_filter import filter_knowledge, embed
     # Pre-calculate query embedding once (cached)
     q_emb = embed(text)
@@ -115,7 +115,7 @@ def query_smart(text: str, collection: str,
     return filter_knowledge(text, raw, top_k=top_k, quality_threshold=threshold, query_emb=q_emb)
 
 
-# ─── Stats ────────────────────────────────────────────────────────────────────
+# -- Stats --------------------------------------------------------------------
 def stats() -> dict:
     out = {}
     try:

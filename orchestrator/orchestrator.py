@@ -1,19 +1,19 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Orchestrator — Non-Stop Agent Loop                                 ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Orchestrator - Non-Stop Agent Loop                                 |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Pipeline:
-  0. DiscussionEngine → Pre-ingest debate (Proponent vs Opponent vs Moderator)
-  1. ResearchAgent    → usisava znanje, izvlači Golden Recipe
-  2. CriticAgent      → kritikuje plan i nalaze
-  3. CoderAgent       → piše kod na osnovu research-a + kritike
-  4. CriticAgent      → kritikuje kod (second pass)
-  5. CleanerAgent     → generiše i izvršava cleaning
-  6. FeatureAgent     → izvršava feature engineering
-  7. Guardian         → audit drift_score + verifikacija
-  8. → LOOP
+  0. DiscussionEngine  Pre-ingest debate (Proponent vs Opponent vs Moderator)
+  1. ResearchAgent     usisava znanje, izvlaci Golden Recipe
+  2. CriticAgent       kritikuje plan i nalaze
+  3. CoderAgent        pise kod na osnovu research-a + kritike
+  4. CriticAgent       kritikuje kod (second pass)
+  5. CleanerAgent      generise i izvrsava cleaning
+  6. FeatureAgent      izvrsava feature engineering
+  7. Guardian          audit drift_score + verifikacija
+  8.  LOOP
 """
 
 import sys, json, time, datetime, signal, os, traceback
@@ -66,11 +66,11 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 def run_discussion(problem: str) -> dict:
     """
-    Pokreće Neural Discussion Engine.
+    Pokrece Neural Discussion Engine.
     Proponent (Groq) brani, Opponent (Mistral) napada, Moderator (Groq) presuda.
-    Sve se čuva u discussion_db (ChromaDB) i discussion_log.jsonl.
+    Sve se cuva u discussion_db (ChromaDB) i discussion_log.jsonl.
     """
-    log_work(AGENT, "STEP_0", "Neural Discussion Engine → Pre-ingest debate")
+    log_work(AGENT, "STEP_0", "Neural Discussion Engine  Pre-ingest debate")
     print(f"  [Discussion] Starting debate on: {problem[:60]}...")
 
     # 1. Proponent argues FOR
@@ -118,7 +118,7 @@ def run_pipeline(problem: str, domain: str = "universal",
     log_work(AGENT, "PIPELINE_START", f"problem='{problem[:80]}' domain='{domain}'")
     results = {}
 
-    # ── STEP -1: LopticaModule (3-6-2 State Machine + KB) ────────────────────
+    # -- STEP -1: LopticaModule (3-6-2 State Machine + KB) --------------------
     try:
         loptica = get_loptica()
         loptica_result = loptica.run_mission(problem, domain)
@@ -135,7 +135,7 @@ def run_pipeline(problem: str, domain: str = "universal",
         print(f"  [Loptica] Error (non-fatal): {e}")
         results["loptica"] = {"error": str(e)}
 
-    # ── STEP 0: Neural Discussion ─────────────────────────────────────────────
+    # -- STEP 0: Neural Discussion --------------------------------------------
     try:
         disc_result = run_discussion(problem)
         results["discussion"] = disc_result
@@ -150,8 +150,8 @@ def run_pipeline(problem: str, domain: str = "universal",
         log_work(AGENT, "DISCUSSION_ERROR", str(e))
         results["discussion"] = {"verdict": {"decision": "INGEST", "reasoning": f"Discussion failed: {e}"}}
 
-    # ── STEP 1: Research ──────────────────────────────────────────────────────
-    log_work(AGENT, "STEP_1", "ResearchAgent → knowledge ingest + research")
+    # -- STEP 1: Research ------------------------------------------------------
+    log_work(AGENT, "STEP_1", "ResearchAgent  knowledge ingest + research")
     SM.set_status("RESEARCHER_INGESTING", "ResearchAgent")
 
     kb_stats = rag_stats()
@@ -169,8 +169,8 @@ def run_pipeline(problem: str, domain: str = "universal",
         "problem": problem,
     })
 
-    # ── STEP 2: Critic (plan review) ─────────────────────────────────────────
-    log_work(AGENT, "STEP_2", "CriticAgent → plan critique")
+    # -- STEP 2: Critic (plan review) ----------------------------------------
+    log_work(AGENT, "STEP_2", "CriticAgent  plan critique")
     results["critique_plan"] = critic_run({
         "action": "critique_plan",
         "plan": {
@@ -180,8 +180,8 @@ def run_pipeline(problem: str, domain: str = "universal",
         }
     })
 
-    # ── STEP 3: Coder ────────────────────────────────────────────────────────
-    log_work(AGENT, "STEP_3", "CoderAgent → code generation")
+    # -- STEP 3: Coder --------------------------------------------------------
+    log_work(AGENT, "STEP_3", "CoderAgent  code generation")
     SM.set_status("EXECUTOR_RUNNING", "CoderAgent")
 
     results["code"] = coder_run({
@@ -198,34 +198,34 @@ def run_pipeline(problem: str, domain: str = "universal",
             "research_output": results.get("research", {}),
         })
 
-    # ── STEP 4: Critic (code review) ─────────────────────────────────────────
-    log_work(AGENT, "STEP_4", "CriticAgent → code critique")
+    # -- STEP 4: Critic (code review) ----------------------------------------
+    log_work(AGENT, "STEP_4", "CriticAgent  code critique")
     code_preview = results.get("code", {}).get("code_preview", "")
     results["critique_code"] = critic_run({
         "action": "critique_code",
         "code": code_preview,
     })
 
-    # ── STEP 5: Cleaner ──────────────────────────────────────────────────────
+    # -- STEP 5: Cleaner ------------------------------------------------------
     if data_description:
-        log_work(AGENT, "STEP_5", "CleanerAgent → data cleaning")
+        log_work(AGENT, "STEP_5", "CleanerAgent  data cleaning")
         results["cleaning"] = cleaner_run({
             "action": "generate",
             "data_description": data_description,
             "data_path": data_path,
         })
 
-    # ── STEP 6: Feature Execution ─────────────────────────────────────────────
+    # -- STEP 6: Feature Execution --------------------------------------------
     feat_script = results.get("features_code", {}).get("file")
     if feat_script:
-        log_work(AGENT, "STEP_6", "FeatureAgent → execute features")
+        log_work(AGENT, "STEP_6", "FeatureAgent  execute features")
         results["features_exec"] = feature_run({
             "action": "execute",
             "script_path": feat_script,
         })
 
-    # ── STEP 7: Guardian Audit ────────────────────────────────────────────────
-    log_work(AGENT, "STEP_7", "Guardian → drift audit")
+    # -- STEP 7: Guardian Audit ------------------------------------------------
+    log_work(AGENT, "STEP_7", "Guardian  drift audit")
     SM.set_status("GUARDIAN_AUDITING", "Guardian")
 
     from guardian.guardian import run as guardian_run
@@ -234,7 +234,7 @@ def run_pipeline(problem: str, domain: str = "universal",
         "pipeline_results": results,
     })
 
-    # ── Finalizacija ──────────────────────────────────────────────────────────
+    # -- Finalizacija ----------------------------------------------------------
     drift = results.get("audit", {}).get("drift_score", 1.0)
     if drift > 0.4:
         SM.set_status("DRIFT_EXCEEDED")
@@ -262,7 +262,7 @@ def run_non_stop(problem: str, domain: str = "universal",
              f"max_iter={max_iter}, delay={delay}s, domain={domain}")
 
     print(f"\n{'='*60}")
-    print(f"  USISIVAC V6 — NON-STOP MODE + DISCUSSION ENGINE")
+    print(f"  USISIVAC V6 - NON-STOP MODE + DISCUSSION ENGINE")
     print(f"  Problem: {problem[:50]}")
     print(f"  Domain:  {domain}")
     print(f"  Max iterations: {max_iter}")
@@ -273,7 +273,7 @@ def run_non_stop(problem: str, domain: str = "universal",
     while RUNNING and iteration < max_iter:
         iteration += 1
         ts = datetime.datetime.now().strftime("%H:%M:%S")
-        print(f"\n[{ts}] ── Iteration {iteration}/{max_iter} ──")
+        print(f"\n[{ts}] -- Iteration {iteration}/{max_iter} --")
 
         try:
             results = run_pipeline(problem, domain, data_description, data_path)
@@ -290,7 +290,7 @@ def run_non_stop(problem: str, domain: str = "universal",
             print(f"  KB stats: {rag_stats()}")
 
             if isinstance(drift, (int, float)) and drift > 0.4:
-                print(f"  ⚠ DRIFT EXCEEDED — will retry with corrections")
+                print(f"   DRIFT EXCEEDED - will retry with corrections")
 
         except KeyboardInterrupt:
             RUNNING = False
@@ -311,7 +311,7 @@ def run_non_stop(problem: str, domain: str = "universal",
     log_work(AGENT, "NON_STOP_END", f"iterations={iteration}")
     SM.set_status("COMPLETED")
     print(f"\n{'='*60}")
-    print(f"  USISIVAC V6 — STOPPED after {iteration} iterations")
+    print(f"  USISIVAC V6 - STOPPED after {iteration} iterations")
     print(f"{'='*60}")
 
 

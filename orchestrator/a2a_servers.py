@@ -1,18 +1,18 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  A2A Servers — Agent-to-Agent HTTP Protocol                         ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  A2A Servers - Agent-to-Agent HTTP Protocol                         |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Ports:
-  8081 → Orchestrator (Strategist)
-  8082 → CoderAgent (Executor)
-  8083 → Guardian (QA)
-  8084 → ResearchAgent
-  8085 → CriticAgent
-  8086 → CleanerAgent
-  8087 → FeatureAgent
-  8088 → Relay (tri-way chat)
+  8081  Orchestrator (Strategist)
+  8082  CoderAgent (Executor)
+  8083  Guardian (QA)
+  8084  ResearchAgent
+  8085  CriticAgent
+  8086  CleanerAgent
+  8087  FeatureAgent
+  8088  Relay (tri-way chat)
 """
 
 import http.server, socketserver, json, threading, sys, os, datetime
@@ -25,7 +25,7 @@ from core.anti_simulation import enforce, log_work
 from core import state_manager as SM
 from core.rag_engine import query_smart, ingest, stats as rag_stats
 
-# ─── Chat relay ───────────────────────────────────────────────────────────────
+# -- Chat relay --------------------------------------------------------------
 CHAT_MESSAGES = []
 CHAT_LOCK = threading.Lock()
 CHAT_LOG = BASE / "logs" / "agent_conversation.jsonl"
@@ -38,7 +38,7 @@ AGENTS_CFG = {
     "CriticAgent":   {"port":8085, "role":"Quality Guard & Anti-Pattern Detector"},
     "CleanerAgent":  {"port":8086, "role":"Data Cleaner & Normalizer"},
     "FeatureAgent":  {"port":8087, "role":"Feature Executor & Validator"},
-    "Relay":         {"port":8088, "role":"Tri-Way Chat (Claude↔Gemini↔Cline)"},
+    "Relay":         {"port":8088, "role":"Tri-Way Chat (ClaudeGeminiCline)"},
 }
 
 
@@ -91,7 +91,7 @@ class AgentHandler(http.server.BaseHTTPRequestHandler):
             return
 
         if self.path == "/relay":
-            # Tri-way relay: Claude ↔ Gemini ↔ Cline
+            # Tri-way relay: Claude  Gemini  Cline
             from_a = body.get("from","unknown")
             to_a   = body.get("to","all")
             msg    = body.get("message","")
@@ -157,7 +157,7 @@ def start_all():
         )
         t.start()
         threads.append(t)
-        print(f"  [{name}] → http://localhost:{port}")
+        print(f"  [{name}]  http://localhost:{port}")
 
     log_work("A2A_SERVER", "ALL_ONLINE",
              f"agents={list(AGENTS_CFG.keys())}, ports={[c['port'] for c in AGENTS_CFG.values()]}")
@@ -166,9 +166,9 @@ def start_all():
 
 
 if __name__ == "__main__":
-    print("╔══════════════════════════════════════════╗")
-    print("║  Usisivac V6 — A2A Servers Starting...   ║")
-    print("╚══════════════════════════════════════════╝\n")
+    print("+------------------------------------------+")
+    print("|  Usisivac V6 - A2A Servers Starting...   |")
+    print("+------------------------------------------+\n")
     threads = start_all()
     try:
         for t in threads:

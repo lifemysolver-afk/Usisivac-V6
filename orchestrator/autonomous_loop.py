@@ -1,11 +1,11 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Autonomous Coding Loop Manager                                     ║
-║  Usisivac V6 | Gemini Orchestrator Extension                        ║
-║  Orchestrates: Plan → Implement → Test → Debug → Review → Commit   ║
-║                      → Reflect → Improve → Loop                     ║
-║  Anti-Simulation Enforced: All actions logged to proof_registry     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Autonomous Coding Loop Manager                                     |
+|  Usisivac V6 | Gemini Orchestrator Extension                        |
+|  Orchestrates: Plan  Implement  Test  Debug  Review  Commit   |
+|                       Reflect  Improve  Loop                     |
+|  Anti-Simulation Enforced: All actions logged to proof_registry     |
++----------------------------------------------------------------------+
 
 The Autonomous Loop Manager coordinates all agents in the coding loop:
   - Initializes and manages the Loop Controller

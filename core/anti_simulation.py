@@ -1,20 +1,20 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  ANTI_SIMULATION_v3 — Core Enforcement Layer                        ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  ANTI_SIMULATION_v3 - Core Enforcement Layer                        |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-STROGE ZABRANE — Nijedan agent NE SME izjaviti ništa od sledećeg
-bez stvarnog PROOF_HASH-a koji dokazuje izvršenu akciju:
+STROGE ZABRANE - Nijedan agent NE SME izjaviti nista od sledeceg
+bez stvarnog PROOF_HASH-a koji dokazuje izvrsenu akciju:
 
-  ✗  "trening završen" / "training complete" / "training finished"
-  ✗  "BLEU 19.1" ili bilo koji score bez proof-a
-  ✗  "audit pass" / "audit passed"
-  ✗  "model spreman" / "model ready"
-  ✗  "ingest complete" / "ingest završen"
-  ✗  "task complete" / "zadatak završen"
-  ✗  "features generated" / "cleaning complete"
-  ✗  "golden recipe found" bez stvarnog RAG query-a
+    "trening zavrsen" / "training complete" / "training finished"
+    "BLEU 19.1" ili bilo koji score bez proof-a
+    "audit pass" / "audit passed"
+    "model spreman" / "model ready"
+    "ingest complete" / "ingest zavrsen"
+    "task complete" / "zadatak zavrsen"
+    "features generated" / "cleaning complete"
+    "golden recipe found" bez stvarnog RAG query-a
 """
 
 import hashlib, json, datetime, os
@@ -26,13 +26,13 @@ PROOF_REG  = BASE_DIR / "logs" / "proof_registry.jsonl"
 WORK_LOG   = BASE_DIR / "logs" / "work_log.md"
 
 FORBIDDEN = [
-    "trening završen","training complete","training finished","training done",
+    "trening zavrsen","training complete","training finished","training done",
     "successfully trained","model trained","model ready","model spreman",
     "bleu 19","bleu 20","bleu 21","bleu 22","bleu 23","bleu 24","bleu 25",
     "score achieved","accuracy: 0.9","accuracy: 1.0","f1: 0.9",
     "audit pass","audit passed","audit complete","audit ok",
-    "ingest complete","ingest završen","data ingested","ingestion done",
-    "task complete","zadatak završen","task done","completed successfully",
+    "ingest complete","ingest zavrsen","data ingested","ingestion done",
+    "task complete","zadatak zavrsen","task done","completed successfully",
     "features generated","features ready","feature engineering done",
     "cleaning complete","data cleaned","preprocessing done",
     "golden recipe found","recipe extracted","knowledge extracted",

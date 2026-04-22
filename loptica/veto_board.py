@@ -1,28 +1,29 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  VetoBoard — 5-Persona Quorum Validator                             ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-║  Integrisano iz: Trinity_AIMO_Loptica_Final / boardroom.py          ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  VetoBoard - 5-Persona Quorum Validator                             |
+|  Usisivac V6 | Trinity Protocol                                     |
+|  Integrisano iz: Trinity_AIMO_Loptica_Final / boardroom.py          |
++----------------------------------------------------------------------+
 
-5 persona ocenjuju svaku akciju pre izvršavanja:
-  CEO    → Poslovna vrednost
-  CTO    → Tehnička izvodljivost
-  CFO    → Troškovi resursa
-  LEGAL  → Bezbednost (ima pravo veta)
-  CRITIC → Rizik od overfitting/greške
+5 persona ocenjuju svaku akciju pre izvrsavanja:
+  CEO    -> Poslovna vrednost
+  CTO    -> Tehnicka izvodljivost
+  CFO    -> Troskovi resursa
+  LEGAL  -> Bezbednost (ima pravo veta)
+  CRITIC -> Rizik od overfitting/greske
 
 Quorum: 3/5 glasova "PASS" = akcija prolazi.
 LEGAL veto = trenutno odbijanje.
 """
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from core.llm_client import call as llm_call
 
 
 class VetoBoard:
     """
-    5-persona glasanje za svaku kritičnu akciju u pipeline-u.
+    5-persona glasanje za svaku kriticnu akciju u pipeline-u.
     Koristi LLM za realne ocene umesto hardkodovane logike.
     """
 
@@ -43,9 +44,9 @@ class VetoBoard:
     def evaluate_action(self, action_description: str, context: str = "") -> dict:
         """
         Evaluira akciju kroz 5 persona.
-        Vraća: {"verdict": "PASS"|"VETO", "reason": str, "votes": dict}
+        Vraca: {"verdict": "PASS"|"VETO", "reason": str, "votes": dict}
         """
-        # 1. LEGAL instant veto check (bez LLM — deterministički)
+        # 1. LEGAL instant veto check (bez LLM - deterministicki)
         if self._legal_veto(action_description):
             return {
                 "verdict": "VETO",
@@ -54,23 +55,34 @@ class VetoBoard:
                 "quorum_reached": False
             }
 
-        # 2. Glasanje svih persona
+        # 2. Glasanje svih persona u paraleli (Bolt: Parallelize for speed)
         votes = {}
         reasonings = {}
 
-        for persona, persona_prompt in self.PERSONAS.items():
-            vote, reasoning = self._get_vote(persona, persona_prompt, action_description, context)
-            votes[persona] = vote
-            reasonings[persona] = reasoning
+        with ThreadPoolExecutor(max_workers=len(self.PERSONAS)) as executor:
+            future_to_persona = {
+                executor.submit(self._get_vote, persona, prompt, action_description, context): persona
+                for persona, prompt in self.PERSONAS.items()
+            }
 
-            # LEGAL veto iz LLM odgovora
-            if persona == "LEGAL" and vote == "VETO":
-                return {
-                    "verdict": "VETO",
-                    "reason": f"LEGAL VETO: {reasoning}",
-                    "votes": votes,
-                    "quorum_reached": False
-                }
+            for future in future_to_persona:
+                persona = future_to_persona[future]
+                try:
+                    vote, reasoning = future.result()
+                    votes[persona] = vote
+                    reasonings[persona] = reasoning
+                except Exception as e:
+                    votes[persona] = "PASS"
+                    reasonings[persona] = f"Parallel evaluation error: {e}"
+
+        # 2b. LEGAL veto iz LLM odgovora
+        if votes.get("LEGAL") == "VETO":
+            return {
+                "verdict": "VETO",
+                "reason": f"LEGAL VETO: {reasonings.get('LEGAL')}",
+                "votes": votes,
+                "quorum_reached": False
+            }
 
         # 3. Quorum check
         pass_count = sum(1 for v in votes.values() if v == "PASS")
@@ -85,13 +97,13 @@ class VetoBoard:
         }
 
     def _legal_veto(self, action: str) -> bool:
-        """Deterministička provera bezbednosnih rizika."""
+        """Deterministicka provera bezbednosnih rizika."""
         action_lower = action.lower()
         return any(kw in action_lower for kw in self.RISK_KEYWORDS)
 
     def _get_vote(self, persona: str, persona_prompt: str,
                   action: str, context: str) -> tuple:
-        """Dobija glas od jedne persone. Vraća (vote, reasoning)."""
+        """Dobija glas od jedne persone. Vraca (vote, reasoning)."""
         if not self.use_llm:
             # Fallback: uvek PASS osim za CRITIC koji bude WARN
             return ("WARN" if persona == "CRITIC" else "PASS"), "Fallback vote (LLM disabled)"

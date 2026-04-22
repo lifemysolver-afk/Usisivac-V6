@@ -1,8 +1,8 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  End-to-End Test — Usisivac V6                                      ║
-║  Verifikuje da svi moduli rade ispravno                             ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  End-to-End Test - Usisivac V6                                      |
+|  Verifikuje da svi moduli rade ispravno                             |
++----------------------------------------------------------------------+
 """
 
 import sys, json, os
@@ -24,23 +24,23 @@ def test(name, fn):
             print(f"  [PASS] {name}")
         else:
             FAIL += 1
-            print(f"  [FAIL] {name} — returned False")
+            print(f"  [FAIL] {name} - returned False")
     except Exception as e:
         FAIL += 1
-        print(f"  [FAIL] {name} — {e}")
+        print(f"  [FAIL] {name} - {e}")
 
 
-# ─── Test 1: Anti-Simulation ─────────────────────────────────────────────────
+# -- Test 1: Anti-Simulation ------------------------------------------------
 def test_anti_sim():
     from core.anti_simulation import enforce, register_proof, log_work
     r = enforce("TestAgent", "ovo je normalan tekst")
     assert not r["BLOCKED"], "Should not block normal text"
-    r2 = enforce("TestAgent", "trening završen bez dokaza")
+    r2 = enforce("TestAgent", "trening zavrsen bez dokaza")
     assert r2["BLOCKED"], "Should block forbidden phrase"
     log_work("TestAgent", "TEST", "test entry")
     return True
 
-# ─── Test 2: Proof Registry ──────────────────────────────────────────────────
+# -- Test 2: Proof Registry --------------------------------------------------
 def test_proof():
     from core.anti_simulation import register_proof
     p = register_proof("TestAgent", "test claim", ingest_count=5)
@@ -49,7 +49,7 @@ def test_proof():
     assert not p2["proof_valid"], "Proof should be invalid with ingest_count=0"
     return True
 
-# ─── Test 3: RAG Engine ──────────────────────────────────────────────────────
+# -- Test 3: RAG Engine ------------------------------------------------------
 def test_rag():
     from core.rag_engine import ingest, query_raw, stats
     r = ingest(
@@ -64,7 +64,7 @@ def test_rag():
     assert "knowledge_base" in s, "Stats should include knowledge_base"
     return True
 
-# ─── Test 4: Neural Filter ───────────────────────────────────────────────────
+# -- Test 4: Neural Filter --------------------------------------------------
 def test_neural_filter():
     from core.neural_filter import MLPScorer, embed, filter_knowledge
     scorer = MLPScorer(input_dim=384)
@@ -81,7 +81,7 @@ def test_neural_filter():
     assert len(results) > 0, "Should return at least 1 result"
     return True
 
-# ─── Test 5: State Manager ───────────────────────────────────────────────────
+# -- Test 5: State Manager --------------------------------------------------
 def test_state():
     from core import state_manager as SM
     s = SM.init("test_project", "test goal", "universal")
@@ -94,7 +94,7 @@ def test_state():
     assert s3["drift_scores"]["TestAgent"]["passed"] == True
     return True
 
-# ─── Test 6: LLM Client (mock mode) ─────────────────────────────────────────
+# -- Test 6: LLM Client (mock mode) ----------------------------------------
 def test_llm():
     from core.llm_client import call
     r = call("Hello world", provider="groq")
@@ -102,7 +102,7 @@ def test_llm():
     assert len(r) > 0
     return True
 
-# ─── Test 7: ResearchAgent ───────────────────────────────────────────────────
+# -- Test 7: ResearchAgent --------------------------------------------------
 def test_research_agent():
     from agents.research_agent import run
     r = run({"action": "ingest"})
@@ -112,14 +112,14 @@ def test_research_agent():
     assert r2["status"] == "RESEARCH_DONE"
     return True
 
-# ─── Test 8: CriticAgent ─────────────────────────────────────────────────────
+# -- Test 8: CriticAgent ----------------------------------------------------
 def test_critic_agent():
     from agents.critic_agent import run
     r = run({"action": "critique_plan", "plan": {"steps": ["train model"]}})
     assert r["status"] == "CRITIQUE_DONE"
     return True
 
-# ─── Test 9: CoderAgent ──────────────────────────────────────────────────────
+# -- Test 9: CoderAgent ------------------------------------------------------
 def test_coder_agent():
     from agents.coder_agent import run
     r = run({
@@ -131,7 +131,7 @@ def test_coder_agent():
     assert Path(r["file"]).exists(), "Generated file should exist on disk"
     return True
 
-# ─── Test 10: Guardian ───────────────────────────────────────────────────────
+# -- Test 10: Guardian ------------------------------------------------------
 def test_guardian():
     from guardian.guardian import run
     r = run({"action": "full_audit", "pipeline_results": {}})
@@ -139,7 +139,7 @@ def test_guardian():
     assert "verdict" in r, "Should have verdict"
     return True
 
-# ─── Test 11: Relay ──────────────────────────────────────────────────────────
+# -- Test 11: Relay ----------------------------------------------------------
 def test_relay():
     from relay.triway_relay import send, get_history, broadcast
     r = send("gemini", "claude", "Test message from test suite")
@@ -148,7 +148,7 @@ def test_relay():
     assert len(h) > 0, "Should have at least 1 message"
     return True
 
-# ─── Test 12: File Structure ─────────────────────────────────────────────────
+# -- Test 12: File Structure ------------------------------------------------
 def test_structure():
     required = [
         "core/anti_simulation.py", "core/rag_engine.py", "core/neural_filter.py",
@@ -165,11 +165,11 @@ def test_structure():
     return True
 
 
-# ─── Run All ──────────────────────────────────────────────────────────────────
+# -- Run All ------------------------------------------------------------------
 if __name__ == "__main__":
-    print("╔══════════════════════════════════════════╗")
-    print("║  Usisivac V6 — End-to-End Tests          ║")
-    print("╚══════════════════════════════════════════╝\n")
+    print("+------------------------------------------+")
+    print("|  Usisivac V6 - End-to-End Tests          |")
+    print("+------------------------------------------+\n")
 
     test("Anti-Simulation Enforcement", test_anti_sim)
     test("Proof Registry", test_proof)

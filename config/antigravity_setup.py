@@ -1,10 +1,10 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Antigravity IDE — Auto-Config Generator                            ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Antigravity IDE - Auto-Config Generator                            |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-Automatski generiše sve konfiguracije za:
+Automatski generise sve konfiguracije za:
   - Gemini CLI
   - Cline (VS Code extension)
   - VS Code settings
@@ -25,9 +25,9 @@ def setup_env():
     if not env_file.exists() and env_example.exists():
         shutil.copy(env_example, env_file)
         print(f"[OK] .env kreiran iz .env.example")
-        print(f"     Edituj {env_file} i dodaj API ključeve!")
+        print(f"     Edituj {env_file} i dodaj API kljuceve!")
     elif env_file.exists():
-        print(f"[OK] .env već postoji: {env_file}")
+        print(f"[OK] .env vec postoji: {env_file}")
     return str(env_file)
 
 
@@ -86,7 +86,7 @@ notebooks/.ipynb_checkpoints/
 
 
 def generate_gemini_config():
-    """Generiše Gemini CLI konfiguraciju."""
+    """Generise Gemini CLI konfiguraciju."""
     config = {
         "project": "Usisivac-V6",
         "protocol": "Trinity Protocol",
@@ -123,10 +123,10 @@ def generate_gemini_config():
 
 
 def run_full_setup():
-    """Pokreće kompletnu konfiguraciju."""
-    print("╔══════════════════════════════════════════╗")
-    print("║  Antigravity IDE — Setup Starting...     ║")
-    print("╚══════════════════════════════════════════╝\n")
+    """Pokrece kompletnu konfiguraciju."""
+    print("+------------------------------------------+")
+    print("|  Antigravity IDE - Setup Starting...     |")
+    print("+------------------------------------------+\n")
 
     setup_dirs()
     setup_env()
@@ -135,16 +135,16 @@ def run_full_setup():
     setup_gitignore()
     generate_gemini_config()
 
-    print("\n╔══════════════════════════════════════════╗")
-    print("║  Setup Complete!                         ║")
-    print("╠══════════════════════════════════════════╣")
-    print("║  Next steps:                             ║")
-    print("║  1. Edit .env with your API keys         ║")
-    print("║  2. pip install -r requirements.txt      ║")
-    print("║  3. python config/antigravity_setup.py   ║")
-    print("║  4. python orchestrator/a2a_servers.py   ║")
-    print("║  5. python orchestrator/orchestrator.py  ║")
-    print("╚══════════════════════════════════════════╝")
+    print("\n+------------------------------------------+")
+    print("|  Setup Complete!                         |")
+    print("------------------------------------------")
+    print("|  Next steps:                             |")
+    print("|  1. Edit .env with your API keys         |")
+    print("|  2. pip install -r requirements.txt      |")
+    print("|  3. python config/antigravity_setup.py   |")
+    print("|  4. python orchestrator/a2a_servers.py   |")
+    print("|  5. python orchestrator/orchestrator.py  |")
+    print("+------------------------------------------+")
 
 
 if __name__ == "__main__":

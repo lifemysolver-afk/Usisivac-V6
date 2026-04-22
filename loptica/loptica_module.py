@@ -1,23 +1,23 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  LopticaModule — Unified Integration Layer                          ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  LopticaModule - Unified Integration Layer                          |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Spaja sve Loptica komponente u jedan pozivni interfejs koji koristi
 Usisivac V6 Orchestrator:
 
-  loptica.run_mission(problem, domain) → dict sa svim rezultatima
+  loptica.run_mission(problem, domain)  dict sa svim rezultatima
 
 Interna arhitektura:
-  LopticaEngine     → 3-6-2 state machine
-  VetoBoard         → 5-persona quorum (CEO/CTO/CFO/LEGAL/CRITIC)
-  KnowledgeBase     → SQLite tehnika sa rich_context
-  ConflictResolver  → Winner-takes-all za HARD konflikte
-  FeedbackTracker   → Self-learning confidence adjustment
-  BrainMassIngest   → ChromaDB masovni ingest
-  NotebookParser    → AST ekstrakcija iz .ipynb
-  HarvesterAnalytics→ Izveštaji i snapshoti
+  LopticaEngine      3-6-2 state machine
+  VetoBoard          5-persona quorum (CEO/CTO/CFO/LEGAL/CRITIC)
+  KnowledgeBase      SQLite tehnika sa rich_context
+  ConflictResolver   Winner-takes-all za HARD konflikte
+  FeedbackTracker    Self-learning confidence adjustment
+  BrainMassIngest    ChromaDB masovni ingest
+  NotebookParser     AST ekstrakcija iz .ipynb
+  HarvesterAnalytics Izvestaji i snapshoti
 """
 
 import json, logging
@@ -53,13 +53,13 @@ class LopticaModule:
         self.analytics = HarvesterAnalytics(self.kb)
         self._brain_ingest_done = False
 
-    # ── Public API ────────────────────────────────────────────────────────────
+    # -- Public API ------------------------------------------------------------
 
     def run_mission(self, problem: str, domain: str = "universal",
                     notebook_paths: list = None) -> dict:
         """
-        Pokreće kompletan Loptica mission za dati problem.
-        Vraća dict sa svim rezultatima svih faza.
+        Pokrece kompletan Loptica mission za dati problem.
+        Vraca dict sa svim rezultatima svih faza.
         """
         log_work(AGENT, "MISSION_START",
                  f"phase={self.engine.get_current_phase()} problem='{problem[:60]}'")
@@ -71,19 +71,19 @@ class LopticaModule:
             "timestamp": datetime.now().isoformat(),
         }
 
-        # ── Faza 1: RESEARCH ─────────────────────────────────────────────────
+        # -- Faza 1: RESEARCH ------------------------------------------------
         if self.engine.get_current_phase() == "RESEARCH":
             results["research"] = self._phase_research(problem, domain, notebook_paths)
 
-        # ── Faza 2: DESIGN ───────────────────────────────────────────────────
+        # -- Faza 2: DESIGN --------------------------------------------------
         if self.engine.get_current_phase() == "DESIGN":
             results["design"] = self._phase_design(problem, domain)
 
-        # ── Faza 3: IMPLEMENTATION ───────────────────────────────────────────
+        # -- Faza 3: IMPLEMENTATION ------------------------------------------
         if self.engine.get_current_phase() == "IMPLEMENTATION":
             results["implementation"] = self._phase_implementation(problem, domain)
 
-        # ── Faza 4: VALIDATION ───────────────────────────────────────────────
+        # -- Faza 4: VALIDATION ----------------------------------------------
         if self.engine.get_current_phase() == "VALIDATION":
             results["validation"] = self._phase_validation()
 
@@ -153,28 +153,28 @@ class LopticaModule:
 
     def log_competition_result(self, competition: str, rank: int,
                                techniques_used: list) -> dict:
-        """Loguje rezultat takmičenja i prilagođava confidence."""
+        """Loguje rezultat takmicenja i prilagodava confidence."""
         result = self.tracker.log_result(competition, rank, techniques_used)
         log_work(AGENT, "FEEDBACK_LOGGED", json.dumps(result))
         return result
 
     def get_best_techniques(self, domain: str = None,
                             min_confidence: float = 0.7) -> list:
-        """Vraća tehnike sa visokim confidence-om iz KB."""
+        """Vraca tehnike sa visokim confidence-om iz KB."""
         return self.kb.get_techniques(domain=domain, min_confidence=min_confidence)
 
     def get_report(self) -> dict:
-        """Generiše analitički izveštaj iz KB."""
+        """Generise analiticki izvestaj iz KB."""
         return self.analytics.generate_report()
 
-    # ── Private Phase Methods ─────────────────────────────────────────────────
+    # -- Private Phase Methods ------------------------------------------------
 
     def _phase_research(self, problem: str, domain: str,
                         notebook_paths: list = None) -> dict:
         """RESEARCH faza: ingest notebooka i pretraga KB."""
         results = {"phase": "RESEARCH", "ingested": [], "kb_query": []}
 
-        # Ingest notebooka ako su prosleđeni
+        # Ingest notebooka ako su prosledeni
         if notebook_paths:
             for nb_path in notebook_paths:
                 r = self.ingest_notebook(nb_path, competition=domain)
@@ -228,7 +228,7 @@ class LopticaModule:
         return {"phase": "IMPLEMENTATION", "config": config, "engine_entry": entry}
 
     def _phase_validation(self) -> dict:
-        """VALIDATION faza: finalni izveštaj i snapshot."""
+        """VALIDATION faza: finalni izvestaj i snapshot."""
         report = self.analytics.generate_report()
         snapshot = self.analytics.export_snapshot()
 

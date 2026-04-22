@@ -1,12 +1,12 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  FeatureAgent V6 — Dinamički Feature Executor                       ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  FeatureAgent V6 - Dinamicki Feature Executor                       |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-Izvršava kod koji je CoderAgent napisao.
-Transformiše sirove podatke u visoko-performansne feature-e.
-ANTI-SIM: Stvarno izvršava skripte, verifikuje output.
+Izvrsava kod koji je CoderAgent napisao.
+Transformise sirove podatke u visoko-performansne feature-e.
+ANTI-SIM: Stvarno izvrsava skripte, verifikuje output.
 """
 
 import sys, json, datetime, subprocess
@@ -23,7 +23,7 @@ AGENT = "FeatureAgent"
 
 def execute_feature_script(script_path: str) -> dict:
     """
-    STVARNO izvršava feature engineering skriptu.
+    STVARNO izvrsava feature engineering skriptu.
     Verifikuje da je output fajl kreiran.
     """
     log_work(AGENT, "FEAT_EXEC_START", script_path)

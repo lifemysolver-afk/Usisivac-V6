@@ -1,15 +1,15 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  LopticaEngine — 3-6-2 Phase State Machine                          ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-║  Integrisano iz: Trinity_AIMO_Loptica_Final / loptica_engine.py     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  LopticaEngine - 3-6-2 Phase State Machine                          |
+|  Usisivac V6 | Trinity Protocol                                     |
+|  Integrisano iz: Trinity_AIMO_Loptica_Final / loptica_engine.py     |
++----------------------------------------------------------------------+
 
 3-6-2 Checkpoint logika:
-  Faza 1 (RESEARCH)        → 3 koraka pre prelaska
-  Faza 2 (DESIGN)          → 6 koraka pre prelaska
-  Faza 3 (IMPLEMENTATION)  → 2 koraka pre prelaska
-  Faza 4 (VALIDATION)      → finalna sinteza
+  Faza 1 (RESEARCH)         3 koraka pre prelaska
+  Faza 2 (DESIGN)           6 koraka pre prelaska
+  Faza 3 (IMPLEMENTATION)   2 koraka pre prelaska
+  Faza 4 (VALIDATION)       finalna sinteza
 
 Svaki prelaz se loguje u work_log.md i state JSON fajlu.
 """
@@ -40,7 +40,7 @@ class LopticaEngine:
 
         self._load_state()
 
-    # ── State Persistence ────────────────────────────────────────────────────
+    # -- State Persistence ----------------------------------------------------
 
     def _load_state(self):
         if self.state_file.exists():
@@ -62,13 +62,13 @@ class LopticaEngine:
             "current_phase": self.get_current_phase(),
             "step_count": self.step_count,
             "checkpoint_limit": self.CHECKPOINT_SEQUENCE[min(self.current_phase_idx, len(self.CHECKPOINT_SEQUENCE)-1)],
-            "history": self.history[-50:],  # čuvamo poslednjih 50 unosa
+            "history": self.history[-50:],  # cuvamo poslednjih 50 unosa
             "updated_at": datetime.now().isoformat()
         }
         with open(self.state_file, "w") as f:
             json.dump(state, f, indent=2)
 
-    # ── Phase Control ────────────────────────────────────────────────────────
+    # -- Phase Control --------------------------------------------------------
 
     def get_current_phase(self) -> str:
         return self.PHASES[min(self.current_phase_idx, len(self.PHASES) - 1)]
@@ -78,7 +78,7 @@ class LopticaEngine:
         return self.CHECKPOINT_SEQUENCE[idx]
 
     def log_action(self, action: str, details) -> dict:
-        """Loguje akciju i inkrementira step_count. Vraća entry dict."""
+        """Loguje akciju i inkrementira step_count. Vraca entry dict."""
         self.step_count += 1
         limit = self.get_checkpoint_limit()
 
@@ -95,13 +95,13 @@ class LopticaEngine:
         if self.step_count >= limit:
             old_phase = self.get_current_phase()
             self.advance_phase()
-            entry["phase_advanced"] = f"{old_phase} → {self.get_current_phase()}"
+            entry["phase_advanced"] = f"{old_phase}  {self.get_current_phase()}"
 
         self._save_state()
         return entry
 
     def advance_phase(self) -> bool:
-        """Ručno prelazi na sledeću fazu. Vraća True ako je uspelo."""
+        """Rucno prelazi na sledecu fazu. Vraca True ako je uspelo."""
         if self.current_phase_idx < len(self.PHASES) - 1:
             self.current_phase_idx += 1
             self.step_count = 0
