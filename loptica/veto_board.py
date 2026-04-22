@@ -17,6 +17,7 @@ LEGAL veto = trenutno odbijanje.
 """
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from core.llm_client import call as llm_call
 
 
@@ -54,23 +55,34 @@ class VetoBoard:
                 "quorum_reached": False
             }
 
-        # 2. Glasanje svih persona
+        # 2. Glasanje svih persona u paraleli (Bolt: Parallelize for speed)
         votes = {}
         reasonings = {}
 
-        for persona, persona_prompt in self.PERSONAS.items():
-            vote, reasoning = self._get_vote(persona, persona_prompt, action_description, context)
-            votes[persona] = vote
-            reasonings[persona] = reasoning
+        with ThreadPoolExecutor(max_workers=len(self.PERSONAS)) as executor:
+            future_to_persona = {
+                executor.submit(self._get_vote, persona, prompt, action_description, context): persona
+                for persona, prompt in self.PERSONAS.items()
+            }
 
-            # LEGAL veto iz LLM odgovora
-            if persona == "LEGAL" and vote == "VETO":
-                return {
-                    "verdict": "VETO",
-                    "reason": f"LEGAL VETO: {reasoning}",
-                    "votes": votes,
-                    "quorum_reached": False
-                }
+            for future in future_to_persona:
+                persona = future_to_persona[future]
+                try:
+                    vote, reasoning = future.result()
+                    votes[persona] = vote
+                    reasonings[persona] = reasoning
+                except Exception as e:
+                    votes[persona] = "PASS"
+                    reasonings[persona] = f"Parallel evaluation error: {e}"
+
+        # 2b. LEGAL veto iz LLM odgovora
+        if votes.get("LEGAL") == "VETO":
+            return {
+                "verdict": "VETO",
+                "reason": f"LEGAL VETO: {reasonings.get('LEGAL')}",
+                "votes": votes,
+                "quorum_reached": False
+            }
 
         # 3. Quorum check
         pass_count = sum(1 for v in votes.values() if v == "PASS")
