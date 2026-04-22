@@ -6,7 +6,7 @@ This report details the architectural design and implementation of the Gemini Or
 
 ## 2. Autonomous Coding Loop Architecture
 
-The autonomous coding loop operates on a persistent, iterative cycle: **plan → implement → test → debug → review → commit → reflect → improve**. This cycle continues until the task objective is met, all tests pass, or a predefined iteration limit is reached.
+The autonomous coding loop operates on a persistent, iterative cycle: **plan  implement  test  debug  review  commit  reflect  improve**. This cycle continues until the task objective is met, all tests pass, or a predefined iteration limit is reached.
 
 ### 2.1. Loop Flow Diagram
 

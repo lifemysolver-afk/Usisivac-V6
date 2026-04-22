@@ -1,13 +1,13 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Discussion Agents — Neural Debate Engine                            ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Discussion Agents - Neural Debate Engine                            |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Tri agenta debatuju o relevantnosti znanja pre ingesta u RAG:
-  - Proponent (Groq/Llama)  → Brani relevantnost
-  - Opponent  (Mistral)     → Napada relevantnost
-  - Moderator (Groq/Llama)  → Presuda + JSON verdict
+  - Proponent (Groq/Llama)   Brani relevantnost
+  - Opponent  (Mistral)      Napada relevantnost
+  - Moderator (Groq/Llama)   Presuda + JSON verdict
 """
 
 import json, re, traceback
@@ -102,13 +102,13 @@ Respond with ONLY the JSON object. No markdown, no explanation."""
 
     def _parse_verdict(self, raw: str) -> dict:
         """Robusno parsiranje JSON-a iz LLM odgovora."""
-        # Pokušaj 1: direktan JSON parse
+        # Pokusaj 1: direktan JSON parse
         try:
             return json.loads(raw.strip())
         except json.JSONDecodeError:
             pass
 
-        # Pokušaj 2: izvuci JSON iz markdown code block-a
+        # Pokusaj 2: izvuci JSON iz markdown code block-a
         match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', raw, re.DOTALL)
         if match:
             try:
@@ -116,7 +116,7 @@ Respond with ONLY the JSON object. No markdown, no explanation."""
             except json.JSONDecodeError:
                 pass
 
-        # Pokušaj 3: nađi prvi { ... } blok
+        # Pokusaj 3: nadi prvi { ... } blok
         match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', raw, re.DOTALL)
         if match:
             try:
@@ -124,7 +124,7 @@ Respond with ONLY the JSON object. No markdown, no explanation."""
             except json.JSONDecodeError:
                 pass
 
-        # Pokušaj 4: proveri da li tekst sadrži ključne reči
+        # Pokusaj 4: proveri da li tekst sadrzi kljucne reci
         raw_lower = raw.lower()
         if "reject" in raw_lower:
             return self._default_verdict("Parsed from text: REJECT signal detected", decision="REJECT")

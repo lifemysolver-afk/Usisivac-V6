@@ -22,13 +22,13 @@ logger = logging.getLogger(__name__)
 
 class NotebookParser:
     """
-    Ekstrahuje tehnike iz Kaggle notebook-ova koristeći AST i nbformat. [11]
+    Ekstrahuje tehnike iz Kaggle notebook-ova koristeci AST i nbformat. [11]
     """
     def __init__(self):
         self.known_patterns = ['lr', 'learning_rate', 'batch_size', 'epochs', 'optimizer', 'backbone']
 
     def extract_from_notebook(self, path):
-        """Učitava .ipynb fajl i parsira kodne ćelije."""
+        """Ucitava .ipynb fajl i parsira kodne celije."""
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 nb = nbformat.read(f, as_version=4)
@@ -40,7 +40,7 @@ class NotebookParser:
 
             return self._format_output(extracted_techs)
         except Exception as e:
-            logger.error(f"Greška pri parsiranju notebook-a: {e}")
+            logger.error(f"Greska pri parsiranju notebook-a: {e}")
             return None
 
     def _extract_ast_params(self, code):
@@ -60,11 +60,11 @@ class NotebookParser:
                                     'confidence': 0.8  # Base confidence za AST
                                 })
         except SyntaxError:
-            pass # Ignorišemo ćelije sa magics ili invalid sintaksom
+            pass # Ignorisemo celije sa magics ili invalid sintaksom
         return techs
 
     def _get_value(self, node):
-        """Pomoćna metoda za izvlačenje literalnih vrednosti iz AST čvorova."""
+        """Pomocna metoda za izvlacenje literalnih vrednosti iz AST cvorova."""
         if isinstance(node, ast.Constant):
             return node.value
         elif isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant):
@@ -130,7 +130,7 @@ class CheckpointSystem:
                 result = func(*args, **kwargs)
 
                 if cls.step_count >= limit:
-                    logger.info(f"✅ Sekvenca završena. Prelazak na sledeću fazu.")
+                    logger.info(f"PASS Sekvenca zavrsena. Prelazak na sledecu fazu.")
                     cls.current_idx = (cls.current_idx + 1) % len(cls.sequence)
                     cls.step_count = 0
                 return result
@@ -141,15 +141,15 @@ class CheckpointSystem:
 class KnowledgeBase:
     def __init__(self, db_path=":memory:"):
         self.db_path = db_path
-        # Za :memory: bazu moramo držati otvorenu konekciju konstantno
+        # Za :memory: bazu moramo drzati otvorenu konekciju konstantno
         self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
         self._init_db()
 
     def _init_db(self):
-        """Inicijalizuje punu šemu prema izvorima [1, 2, 9]."""
+        """Inicijalizuje punu semu prema izvorima [1, 2, 9]."""
         cursor = self.conn.cursor()
-        # Tabela za rešenja
+        # Tabela za resenja
         cursor.execute('''CREATE TABLE IF NOT EXISTS solutions (
             id INTEGER PRIMARY KEY,
             competition TEXT NOT NULL,
@@ -159,7 +159,7 @@ class KnowledgeBase:
             parsed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
-        # Tabela za tehnike sa rich_context podrškom [3]
+        # Tabela za tehnike sa rich_context podrskom [3]
         cursor.execute('''CREATE TABLE IF NOT EXISTS techniques (
             id INTEGER PRIMARY KEY,
             solution_id INTEGER,
@@ -226,16 +226,16 @@ try:
                      context="optimizer = AdamW(lr=1e-4)",
                      rich_context={"author_comments": "Found 1e-4 works best"})
 
-    # Faza 1: Korak 3/3 -> Ovo će okinuti prelazak na Fazu 2 (6 koraka)
+    # Faza 1: Korak 3/3 -> Ovo ce okinuti prelazak na Fazu 2 (6 koraka)
     kb.add_technique(sol_id, "hyperparameter", "batch_size", 32, 0.90)
 
     print("\n--- STATUS BAZE PODATAKA ---")
     techs = kb.get_techniques("vesuvius-challenge")
-    print(f"Uspešno ekstrahovano tehnika: {len(techs)}")
+    print(f"Uspesno ekstrahovano tehnika: {len(techs)}")
     for t in techs:
         print(f" - {t['name']}: {t['value']} (Conf: {t['confidence']})")
 except Exception as e:
-    logger.error(f"Kritična greška: {e}")
+    logger.error(f"Kriticna greska: {e}")
 
 # --- CELL ---
 
@@ -244,7 +244,7 @@ from datetime import datetime
 
 class ConfigGenerator:
     """
-    Generiše YAML konfiguraciju na osnovu ekstrahovanih i odobrenih tehnika.
+    Generise YAML konfiguraciju na osnovu ekstrahovanih i odobrenih tehnika.
     Implementira osnovni Conflict Resolution sistem.
     """
     def __init__(self, kb):
@@ -256,11 +256,11 @@ class ConfigGenerator:
         raw_techs = self.kb.get_techniques(competition)
 
         if not raw_techs:
-            print(f"❌ Nema tehnika pronađenih za takmičenje: {competition}")
+            print(f"FAIL Nema tehnika pronadenih za takmicenje: {competition}")
             return None
 
-        # 2. Rešavanje konflikata (Conflict Resolution) [8, 9]
-        # Ako imamo više vrednosti za isti parametar, uzimamo onu sa najvećim confidence-om
+        # 2. Resavanje konflikata (Conflict Resolution) [8, 9]
+        # Ako imamo vise vrednosti za isti parametar, uzimamo onu sa najvecim confidence-om
         processed_config = self._resolve_conflicts(raw_techs)
 
         # 3. Strukturiranje za YAML [10]
@@ -277,7 +277,7 @@ class ConfigGenerator:
         with open(output_path, 'w') as f:
             yaml.dump(final_yaml_data, f, default_flow_style=False, sort_keys=False)
 
-        print(f"✅ Config uspešno generisan: {output_path}")
+        print(f"PASS Config uspesno generisan: {output_path}")
         return output_path
 
     def _resolve_conflicts(self, raw_techs):
@@ -287,7 +287,7 @@ class ConfigGenerator:
             name, value, confidence = tech['name'], tech['value'], tech['confidence']
 
             if name not in best_values or confidence > best_values[name]['confidence']:
-                # Pokušaj konverzije u odgovarajući tip (float/int) radi čitljivosti YAML-a
+                # Pokusaj konverzije u odgovarajuci tip (float/int) radi citljivosti YAML-a
                 try:
                     clean_value = float(value) if '.' in str(value) or 'e' in str(value) else int(value)
                 except ValueError:
@@ -305,17 +305,17 @@ generator = ConfigGenerator(kb)
 config_path = generator.generate_config("vesuvius-challenge")
 
 # Prikaz generisanog fajla
-print("\n--- GENERISANI YAML SADRŽAJ ---")
+print("\n--- GENERISANI YAML SADRZAJ ---")
 with open(config_path, 'r') as f:
     print(f.read())
 
-# Simulacija korišćenja u trening kodu [6, 7]
+# Simulacija koriscenja u trening kodu [6, 7]
 print("\n--- SIMULACIJA IMPORTA U TRENING SKRIPT ---")
 with open(config_path, 'r') as f:
     loaded_config = yaml.safe_load(f)
     lr = loaded_config['training']['learning_rate']
     bs = loaded_config['training']['batch_size']
-    print(f"🚀 Inicijalizacija modela sa LR={lr} i BatchSize={bs}")
+    print(f" Inicijalizacija modela sa LR={lr} i BatchSize={bs}")
 
 # --- CELL ---
 
@@ -392,7 +392,7 @@ class FeedbackTracker:
         for t_name in techniques:
             cursor.execute('UPDATE techniques SET confidence = MIN(1.0, confidence + ?) WHERE name = ?', (adjustment, t_name))
         self.kb.conn.commit()
-        logger.info(f"📈 Feedback processed. Rank: {rank}, Adjustment: {adjustment}")
+        logger.info(f" Feedback processed. Rank: {rank}, Adjustment: {adjustment}")
 
 # --- FIX I POKRETANJE PIPELINE-A ---
 kb = KnowledgeBase(":memory:")
@@ -402,7 +402,7 @@ tracker = FeedbackTracker(kb)
 def run_pipeline_fixed():
     sol_id = kb.add_solution("vesuvius-challenge", 1, "top_tier_kaggler")
 
-    # Batch size sada nema 'context' ali KB.add_technique će to hendlovati (Izvor [15])
+    # Batch size sada nema 'context' ali KB.add_technique ce to hendlovati (Izvor [15])
     extracted_techs = [
         {
             'name': 'learning_rate',
@@ -422,7 +422,7 @@ def run_pipeline_fixed():
     for tech in extracted_techs:
         res = validator.review(tech)
         if res['approved']:
-            # Korišćenje .get() sprečava KeyError i omogućava opcione rich_context podatke [1]
+            # Koriscenje .get() sprecava KeyError i omogucava opcione rich_context podatke [1]
             kb.add_technique(
                 solution_id=sol_id,
                 category="hyperparam",
@@ -432,19 +432,19 @@ def run_pipeline_fixed():
                 context=tech.get('context', ""), # FIX: Default na prazan string
                 rich_context=tech.get('rich_context', None)
             )
-            print(f"✅ Approved & Stored: {tech['name']}")
+            print(f"PASS Approved & Stored: {tech['name']}")
 
     # Feedback loop simulacija
     tracker.log_and_update("vesuvius-challenge", 5, ['learning_rate', 'batch_size'])
 
-# Izvršavanje ispravljenog koda
+# Izvrsavanje ispravljenog koda
 run_pipeline_fixed()
 
 # Verifikacija baze (Rich Context check)
 cursor = kb.conn.cursor()
 cursor.execute("SELECT name, rich_context FROM techniques WHERE name='learning_rate'")
 row = cursor.fetchone()
-print(f"\n🔍 Rich Context Check za {row['name']}: {row['rich_context']}")
+print(f"\n Rich Context Check za {row['name']}: {row['rich_context']}")
 
 # --- CELL ---
 
@@ -458,11 +458,11 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-# --- PROŠIRENA KNOWLEDGE BASE (Sa Getter metodom) ---
+# --- PROSIRENA KNOWLEDGE BASE (Sa Getter metodom) ---
 class KnowledgeBase:
     def __init__(self, db_path=":memory:"):
         self.conn = sqlite3.connect(db_path)
-        self.conn.row_factory = sqlite3.Row # Omogućava pristup poljima preko imena
+        self.conn.row_factory = sqlite3.Row # Omogucava pristup poljima preko imena
         self._init_db()
 
     def _init_db(self):
@@ -488,7 +488,7 @@ class KnowledgeBase:
         self.conn.commit()
 
     def get_techniques(self, competition):
-        """Implementirana nedostajuća metoda za pretragu tehnika po takmičenju (Izvor [1])."""
+        """Implementirana nedostajuca metoda za pretragu tehnika po takmicenju (Izvor [1])."""
         cursor = self.conn.cursor()
         query = '''
             SELECT t.name, t.value, t.confidence, t.context
@@ -501,17 +501,17 @@ class KnowledgeBase:
 
 # --- CONFLICT RESOLVER & CONFIG GENERATOR ---
 class ConflictResolver:
-    """Rješava sukobe između nekompatibilnih tehnika (Izvori [3, 5])."""
+    """Rjesava sukobe izmedu nekompatibilnih tehnika (Izvori [3, 5])."""
     KNOWN_CONFLICTS = {
         ('learning_rate', 'no_warmup'): 'INCOMPATIBLE - LR needs warmup',
         ('dropout_0.5', 'batch_norm'): 'CONFLICT'
     }
 
     def resolve(self, techniques):
-        """Zadržava tehniku sa većim confidence score-om (Izvor [4])."""
+        """Zadrzava tehniku sa vecim confidence score-om (Izvor [4])."""
         if not techniques: return []
 
-        # Prvo grupišemo po imenu i zadržavamo najbolji confidence za isti parametar
+        # Prvo grupisemo po imenu i zadrzavamo najbolji confidence za isti parametar
         best_of_kind = {}
         for tech in techniques:
             name = tech['name']
@@ -521,20 +521,20 @@ class ConflictResolver:
         return list(best_of_kind.values())
 
 class ConfigGenerator:
-    """Generiše YAML konfiguraciju (Config Injection metodologija - Izvor [2, 6])."""
+    """Generise YAML konfiguraciju (Config Injection metodologija - Izvor [2, 6])."""
     def __init__(self, kb):
         self.kb = kb
         self.resolver = ConflictResolver()
 
     def generate(self, competition, output_path="harvested_config.yaml"):
-        # 1. Čitanje iz baze (Popravljeno!)
+        # 1. Citanje iz baze (Popravljeno!)
         raw_techs = self.kb.get_techniques(competition)
 
         if not raw_techs:
-            logger.warning(f"Nema podataka za takmičenje: {competition}")
+            logger.warning(f"Nema podataka za takmicenje: {competition}")
             return None
 
-        # 2. Rešavanje konflikata
+        # 2. Resavanje konflikata
         final_techs = self.resolver.resolve(raw_techs)
 
         # 3. Kreiranje YAML strukture (Izvor [7])
@@ -562,7 +562,7 @@ class ConfigGenerator:
 kb_fixed = KnowledgeBase(":memory:")
 sol_id = kb_fixed.add_solution("vesuvius-challenge", 1, "top_tier_user")
 
-# Ubacujemo dva različita LR-a da testiramo resolver
+# Ubacujemo dva razlicita LR-a da testiramo resolver
 kb_fixed.add_technique(sol_id, "hyperparam", "learning_rate", "0.0005", 0.95)
 kb_fixed.add_technique(sol_id, "hyperparam", "learning_rate", "0.0001", 0.80)
 kb_fixed.add_technique(sol_id, "hyperparam", "batch_size", "32", 0.90)
@@ -586,7 +586,7 @@ logger = logging.getLogger(__name__)
 
 # 1. FEEDBACK TRACKER - Implementacija Self-Learning Workflow-a (Izvori [1], [7], [2])
 class FeedbackTracker:
-    """Prati uspješnost primijenjenih tehnika u stvarnim natjecanjima."""
+    """Prati uspjesnost primijenjenih tehnika u stvarnim natjecanjima."""
     def __init__(self, kb):
         self.kb = kb
         self._init_feedback_tables()
@@ -605,7 +605,7 @@ class FeedbackTracker:
 
     @CheckpointSystem.checkpoint("Update Technique Effectiveness")
     def log_result(self, competition, rank, techniques_used):
-        """Logira rezultat i vrši Boost/Downgrade confidence-a prema izvoru [2]."""
+        """Logira rezultat i vrsi Boost/Downgrade confidence-a prema izvoru [2]."""
         cursor = self.kb.conn.cursor()
 
         # Logovanje rezultata u bazu (Izvor [7])
@@ -623,11 +623,11 @@ class FeedbackTracker:
                               WHERE name = ?''', (adjustment, tech_name))
 
         self.kb.conn.commit()
-        logger.info(f"📈 Feedback procesiran: Rank {rank}. Adjustment: {adjustment}")
+        logger.info(f" Feedback procesiran: Rank {rank}. Adjustment: {adjustment}")
 
 # 2. CODE VERSIONER - Git Integration (Izvori [2], [3])
 class CodeVersioner:
-    """Git integration za praćenje promjena pre primene config-a."""
+    """Git integration za pracenje promjena pre primene config-a."""
     def __init__(self, repo_enabled=False):
         self.repo_enabled = repo_enabled
 
@@ -635,7 +635,7 @@ class CodeVersioner:
         """Kreira branch pre modifikacije prema formatu iz izvora [3]."""
         timestamp = datetime.now().strftime("%Y%m%d%H%M")
         branch_name = f"technique/{technique_name}_{timestamp}"
-        logger.info(f"🚀 Git Safety: Kreiran branch {branch_name}")
+        logger.info(f" Git Safety: Kreiran branch {branch_name}")
         return branch_name
 
 # --- TESTIRANJE FINALA I VERIFIKACIJA ---
@@ -646,8 +646,8 @@ versioner = CodeVersioner()
 # Korak 1: Git Branching pre primene (Izvor [3])
 versioner.create_branch_before_apply("vesuvius_optimized")
 
-# Korak 2: Simulacija feedback-a (Recimo da smo ostvarili 5. mesto na Vesuvius takmičenju)
-# Ovo bi trebalo da poveća confidence za 0.1 (Izvor [2])
+# Korak 2: Simulacija feedback-a (Recimo da smo ostvarili 5. mesto na Vesuvius takmicenju)
+# Ovo bi trebalo da poveca confidence za 0.1 (Izvor [2])
 used_techs = ['learning_rate', 'batch_size']
 tracker.log_result("vesuvius-challenge", 5, used_techs)
 
@@ -656,7 +656,7 @@ cursor = kb_fixed.conn.cursor()
 cursor.execute("SELECT name, confidence FROM techniques WHERE name IN ('learning_rate', 'batch_size')")
 results = cursor.fetchall()
 
-print("\n--- KONAČNI STATUS (SELF-LEARNING) ---")
+print("\n--- KONACNI STATUS (SELF-LEARNING) ---")
 for row in results:
     # ISPRAVLJENO: Dodata zatvorena zagrada na kraju print-a
     print(f"Tehnika: {row['name']} | Novi Confidence: {row['confidence']:.2f}")
@@ -694,7 +694,7 @@ class HarvesterAnalytics:
         cursor.execute(query)
         rows = cursor.fetchall()
 
-        print(f"📊 ANALITIČKI IZVEŠTAJ (Total Runs: {total_runs})")
+        print(f" ANALITICKI IZVESTAJ (Total Runs: {total_runs})")
         print("-" * 50)
         for row in rows:
             print(f"Tehnika: {row['name']:<15} | Max Conf: {row['max_conf']:.2f} | Seen in: {row['frequency']} solutions")
@@ -705,7 +705,7 @@ class HarvesterAnalytics:
         # Ako koristimo :memory:, moramo napraviti dump u fajl
         with sqlite3.connect(filename) as backup_conn:
             self.kb.conn.backup(backup_conn)
-        print(f"\n📦 Dataset spreman: {filename}")
+        print(f"\n Dataset spreman: {filename}")
 
 # --- FINALIZACIJA I PROVERA ---
 analytics = HarvesterAnalytics(kb_fixed)
@@ -717,9 +717,9 @@ analytics.generate_final_report()
 analytics.export_for_kaggle()
 
 # 3. Simulacija provere integriteta pre slanja
-print("\n✅ SUCCESS CRITERIA CHECK (Izvor [9]):")
+print("\nPASS SUCCESS CRITERIA CHECK (Izvor [9]):")
 print("- [OK] Tehnike agregirane bez duplikata")
-print("- [OK] Confidence booster funkcioniše (Self-learning)")
+print("- [OK] Confidence booster funkcionise (Self-learning)")
 print("- [OK] SQLite Snapshot generisan")
 
 # --- CELL ---
@@ -753,8 +753,8 @@ from datetime import datetime
 
 class CodeVersioner:
     """
-    Git integracija za praćenje promena i automatizaciju (Izvori [1], [2]).
-    Omogućava kreiranje grana pre primene tehnika i commit-ovanje sa metapodacima.
+    Git integracija za pracenje promena i automatizaciju (Izvori [1], [2]).
+    Omogucava kreiranje grana pre primene tehnika i commit-ovanje sa metapodacima.
     """
     def __init__(self, repo_path="."):
         try:
@@ -773,15 +773,15 @@ class CodeVersioner:
         branch_name = f"technique/{technique_name}_{timestamp}"
         new_branch = self.repo.create_head(branch_name)
         self.repo.git.checkout(branch_name)
-        print(f"🚀 Prebačeno na novu granu: {branch_name}")
+        print(f" Prebaceno na novu granu: {branch_name}")
         return branch_name
 
     def commit_with_metadata(self, technique_id, technique_name):
-        """Commit-uje promene sa specifičnim formatom poruke (Izvor [2], [6])."""
+        """Commit-uje promene sa specificnim formatom poruke (Izvor [2], [6])."""
         commit_message = f"[HARVESTER] Applied: {technique_name}\nTechnique ID: {technique_id}"
         self.repo.git.add(A=True)
         self.repo.index.commit(commit_message)
-        print(f"✅ Promene commit-ovane: {technique_name}")
+        print(f"PASS Promene commit-ovane: {technique_name}")
 
 # --- GENERISANJE GITHUB ACTION TEMPLATE-A ---
 def generate_github_action_workflow():
@@ -809,14 +809,14 @@ jobs:
     os.makedirs(".github/workflows", exist_ok=True)
     with open(".github/workflows/harvest_test.yml", "w") as f:
         f.write(workflow_content)
-    print("📄 GitHub Action workflow generisan u .github/workflows/harvest_test.yml")
+    print(" GitHub Action workflow generisan u .github/workflows/harvest_test.yml")
 
 # --- TESTIRANJE ---
 versioner = CodeVersioner()
 # Simulacija procesa:
 # 1. Kreiraj granu za novu LR tehniku
 versioner.create_branch_before_apply("high_lr_fix")
-# 2. Generiši GitHub Action za ovaj repo
+# 2. Generisi GitHub Action za ovaj repo
 generate_github_action_workflow()
 # 3. Commituj promene (simuliramo ID tehnike 42)
 versioner.commit_with_metadata(technique_id=42, technique_name="high_learning_rate")
@@ -827,10 +827,10 @@ versioner.commit_with_metadata(technique_id=42, technique_name="high_learning_ra
 import json
 import sqlite3
 
-# Nadogradnja KnowledgeBase klase sa podrškom za bogati kontekst
+# Nadogradnja KnowledgeBase klase sa podrskom za bogati kontekst
 class EnhancedKnowledgeBase(KnowledgeBase):
     """
-    Proširena KnowledgeBase sa podrškom za JSON rich_context (Izvor [3, 5]).
+    Prosirena KnowledgeBase sa podrskom za JSON rich_context (Izvor [3, 5]).
     """
     def _init_db(self):
         super()._init_db()
@@ -840,12 +840,12 @@ class EnhancedKnowledgeBase(KnowledgeBase):
             cursor.execute('ALTER TABLE techniques ADD COLUMN rich_context JSON')
             self.conn.commit()
         except sqlite3.OperationalError:
-            # Kolona već postoji
+            # Kolona vec postoji
             pass
 
     def add_technique_with_context(self, solution_id, category, name, value, confidence, context, rich_context):
         """
-        Skladišti tehniku sa punim semantičkim kontekstom (Izvor [3, 5]).
+        Skladisti tehniku sa punim semantickim kontekstom (Izvor [3, 5]).
         """
         cursor = self.conn.cursor()
         rich_context_json = json.dumps(rich_context)
@@ -856,7 +856,7 @@ class EnhancedKnowledgeBase(KnowledgeBase):
         self.conn.commit()
         return cursor.lastrowid
 
-# --- TESTIRANJE OBOGAĆENOG KONTEKSTA ---
+# --- TESTIRANJE OBOGACENOG KONTEKSTA ---
 ekb = EnhancedKnowledgeBase(":memory:") # Koristimo in-memory za test
 sol_id = ekb.add_solution("vesuvius-challenge", 1, "winner_user")
 
@@ -872,7 +872,7 @@ rich_ctx = {
     "notebook_cell_index": 15
 }
 
-# Čuvanje tehnike sa bogatim kontekstom
+# Cuvanje tehnike sa bogatim kontekstom
 tech_id = ekb.add_technique_with_context(
     solution_id=sol_id,
     category="hyperparameter",
@@ -900,7 +900,7 @@ import logging
 
 class ConflictResolver:
     """
-    Rješava sukobe između nekompatibilnih tehnika koristeći logiku prioritizacije [3].
+    Rjesava sukobe izmedu nekompatibilnih tehnika koristeci logiku prioritizacije [3].
     """
     def __init__(self, kb):
         self.kb = kb
@@ -921,7 +921,7 @@ class ConflictResolver:
         }
 
     def check_compatibility(self, tech_a, tech_b):
-        """Vraća informaciju o sukobu između dvije tehnike [4]."""
+        """Vraca informaciju o sukobu izmedu dvije tehnike [4]."""
         pair = (tech_a['name'], tech_b['name'])
         # Provera obe permutacije para
         if pair in self.KNOWN_CONFLICTS:
@@ -929,14 +929,14 @@ class ConflictResolver:
         if pair[::-1] in self.KNOWN_CONFLICTS:
             return self.KNOWN_CONFLICTS[pair[::-1]]
 
-        # Specijalni slučaj: dve vrednosti za isti parametar (npr. dva različita LR-a)
+        # Specijalni slucaj: dve vrednosti za isti parametar (npr. dva razlicita LR-a)
         if tech_a['name'] == tech_b['name'] and tech_a['value'] != tech_b['value']:
             return {'reason': f'Duplicate parameter: {tech_a["name"]}', 'type': 'HARD'}
 
         return None
 
     def prioritize_techniques(self, techniques, metric='confidence'):
-        """Rangira tehnike i zadržava onu sa boljim skorom [4, 5]."""
+        """Rangira tehnike i zadrzava onu sa boljim skorom [4, 5]."""
         # U MVP fazi koristimo confidence, u produkciji effectiveness score [5]
         return max(techniques, key=lambda x: x[metric])
 
@@ -945,7 +945,7 @@ class ConflictResolver:
         Glavna metoda koja filtrira listu tehnika i uklanja nekompatibilne [5].
         """
         resolved = []
-        # Sortiramo po confidence-u unapred da bismo olakšali proces "Winner-takes-all"
+        # Sortiramo po confidence-u unapred da bismo olaksali proces "Winner-takes-all"
         sorted_techs = sorted(techniques, key=lambda x: x['confidence'], reverse=True)
 
         for tech in sorted_techs:
@@ -953,9 +953,9 @@ class ConflictResolver:
             for accepted in resolved:
                 conflict = self.check_compatibility(tech, accepted)
                 if conflict and conflict['type'] == 'HARD':
-                    print(f"⚠️ KONFLIKT DETEKTOVAN: {tech['name']} vs {accepted['name']}")
+                    print(f" KONFLIKT DETEKTOVAN: {tech['name']} vs {accepted['name']}")
                     print(f"   Razlog: {conflict['reason']}")
-                    print(f"   Rezolucija: Zadržavam {accepted['name']} (Veći skor)")
+                    print(f"   Rezolucija: Zadrzavam {accepted['name']} (Veci skor)")
                     is_compatible = False
                     break
 
@@ -965,7 +965,7 @@ class ConflictResolver:
         return resolved
 
 # --- TESTIRANJE REZOLUCIJE SUKOBA ---
-# Simuliramo listu ekstrahovanih tehnika iz različitih notebook-ova
+# Simuliramo listu ekstrahovanih tehnika iz razlicitih notebook-ova
 extracted_techs = [
     {'name': 'learning_rate', 'value': 1e-4, 'confidence': 0.95},
     {'name': 'learning_rate', 'value': 5e-4, 'confidence': 0.80}, # Konflikt (isti param)
@@ -976,9 +976,9 @@ extracted_techs = [
 resolver = ConflictResolver(ekb)
 final_list = resolver.resolve_batch(extracted_techs)
 
-print("\n--- KONAČNA LISTA NAKON REZOLUCIJE ---")
+print("\n--- KONACNA LISTA NAKON REZOLUCIJE ---")
 for t in final_list:
-    print(f"✅ {t['name']} = {t['value']} (Confidence: {t['confidence']})")
+    print(f"PASS {t['name']} = {t['value']} (Confidence: {t['confidence']})")
 
 # --- CELL ---
 
@@ -988,8 +988,8 @@ from difflib import SequenceMatcher
 
 class TechniqueMatcher:
     """
-    Segmentira tehnike po domenima i pronalazi slične postojeće obrasce (Izvori [1], [2]).
-    Omogućava "unapređivanje" postojećeg znanja umesto prostog dupliranja.
+    Segmentira tehnike po domenima i pronalazi slicne postojece obrasce (Izvori [1], [2]).
+    Omogucava "unapredivanje" postojeceg znanja umesto prostog dupliranja.
     """
     def __init__(self, kb):
         self.kb = kb
@@ -999,7 +999,7 @@ class TechniqueMatcher:
 
     def find_similar_and_improve(self, category, name, domain="Vision"):
         """
-        Pretražuje bazu za sličnim tehnikama u istom domenu (Izvor [2]).
+        Pretrazuje bazu za slicnim tehnikama u istom domenu (Izvor [2]).
         """
         cursor = self.kb.conn.cursor()
         # Segmentacija po domenu i kategoriji
@@ -1012,13 +1012,13 @@ class TechniqueMatcher:
 
         for tech in existing_techs:
             score = self._similarity_ratio(name, tech['name'])
-            if score > 0.8 and score > highest_score: # Prag sličnosti 80%
+            if score > 0.8 and score > highest_score: # Prag slicnosti 80%
                 highest_score = score
                 best_match = tech
 
         if best_match:
-            print(f"🔍 Pronađena slična tehnika: '{best_match['name']}' (ID: {best_match['id']})")
-            print(f"📈 Preporučeno unapređenje postojećeg obrasca umesto novog unosa.")
+            print(f" Pronadena slicna tehnika: '{best_match['name']}' (ID: {best_match['id']})")
+            print(f" Preporuceno unapredenje postojeceg obrasca umesto novog unosa.")
             return best_match['id']
 
         return None
@@ -1030,23 +1030,23 @@ def upgrade_db_for_domains(kb):
         cursor.execute('ALTER TABLE solutions ADD COLUMN domain TEXT DEFAULT "Vision"')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_domain ON solutions(domain)')
         kb.conn.commit()
-        print("✅ Baza uspešno segmentirana po domenima (Vision, NLP, Tabular).")
+        print("PASS Baza uspesno segmentirana po domenima (Vision, NLP, Tabular).")
     except sqlite3.OperationalError:
-        pass # Kolona već postoji
+        pass # Kolona vec postoji
 
 # --- TESTIRANJE INTELIGENTNOG POVEZIVANJA ---
 upgrade_db_for_domains(ekb)
 matcher = TechniqueMatcher(ekb)
 
-# Primer: Pokušavamo da unesemo "AdamW Optimizer" a u bazi već imamo "AdamW"
+# Primer: Pokusavamo da unesemo "AdamW Optimizer" a u bazi vec imamo "AdamW"
 new_tech_name = "AdamW Optimizer"
 match_id = matcher.find_similar_and_improve("hyperparameter", new_tech_name)
 
 if match_id:
     # Umesto add_technique, ovde bismo radili 'update' ili 'link'
-    print(f"🔗 Tehnika '{new_tech_name}' će biti povezana sa ID: {match_id}")
+    print(f" Tehnika '{new_tech_name}' ce biti povezana sa ID: {match_id}")
 else:
-    print(f"🆕 '{new_tech_name}' je nova unikatna tehnika.")
+    print(f" '{new_tech_name}' je nova unikatna tehnika.")
 
 # --- CELL ---
 
@@ -1061,7 +1061,7 @@ class BoardValidator:
         self.logger = logging.getLogger("BoardValidator")
 
     def _ceo_review(self, technique):
-        # CEO fokus: Strategijski značaj i relevantnost (Izvor [3])
+        # CEO fokus: Strategijski znacaj i relevantnost (Izvor [3])
         if technique['category'] == 'hyperparameter':
             return 1.0
         elif technique['category'] == 'architecture':
@@ -1069,7 +1069,7 @@ class BoardValidator:
         return 0.6
 
     def _cto_review(self, technique):
-        # CTO fokus: Tehnička stabilnost (Izvor [3])
+        # CTO fokus: Tehnicka stabilnost (Izvor [3])
         # Primer: ako je batch_size prevelik ili LR sumnjiv, score opada
         score = 1.0
         if 'batch_size' in technique['name'] and int(technique['value']) > 512:
@@ -1140,8 +1140,8 @@ res_ok = validator.review(tech_ok)
 tech_bad = {'name': 'secret_weights', 'value': 'link', 'category': 'trick', 'confidence': 0.9, 'context': 'wget secret-weights.com'}
 res_bad = validator.review(tech_bad)
 
-print(f"✅ Test 1 (LR): Approved={res_ok['approved']} | Score={res_ok['avg_score']:.2f}")
-print(f"❌ Test 2 (Private API): Approved={res_bad['approved']} | Score={res_bad['avg_score']:.2f}")
+print(f"PASS Test 1 (LR): Approved={res_ok['approved']} | Score={res_ok['avg_score']:.2f}")
+print(f"FAIL Test 2 (Private API): Approved={res_bad['approved']} | Score={res_bad['avg_score']:.2f}")
 
 
 # --- CELL ---
@@ -1152,7 +1152,7 @@ from datetime import datetime
 
 class KnowledgeBase:
     """
-    Skladište za verifikovane Kaggle tehnike.
+    Skladiste za verifikovane Kaggle tehnike.
     Implementira audit trail kroz board_reviews i rich_context (Izvori [1, 3, 4]).
     """
     def __init__(self, db_path=":memory:"):
@@ -1163,7 +1163,7 @@ class KnowledgeBase:
     def _create_tables(self):
         cursor = self.conn.cursor()
 
-        # 1. Tabela za takmičarska rešenja (Izvor [2, 3])
+        # 1. Tabela za takmicarska resenja (Izvor [2, 3])
         # FIX: Sklonjen AUTO_INCREMENT jer INTEGER PRIMARY KEY u SQLite-u to radi automatski.
         cursor.execute('''CREATE TABLE IF NOT EXISTS solutions (
             id INTEGER PRIMARY KEY,
@@ -1208,11 +1208,11 @@ class KnowledgeBase:
 
     def add_full_record(self, sol_data, tech_data, validation_results):
         """
-        Atomski upisuje rešenje, tehniku i rezultate glasanja (Izvor [6]).
+        Atomski upisuje resenje, tehniku i rezultate glasanja (Izvor [6]).
         """
         cursor = self.conn.cursor()
         try:
-            # Upis rešenja
+            # Upis resenja
             cursor.execute('''INSERT INTO solutions (competition, rank, author, domain)
                               VALUES (?, ?, ?, ?)''',
                            (sol_data['competition'], sol_data['rank'], sol_data['author'], sol_data.get('domain', 'Vision')))
@@ -1236,11 +1236,11 @@ class KnowledgeBase:
             return tech_id
         except Exception as e:
             self.conn.rollback()
-            print(f"❌ Greška pri upisu u KB: {e}")
+            print(f"FAIL Greska pri upisu u KB: {e}")
             return None
 
     def get_approved_techniques(self, competition, category='hyperparameter'):
-        """Vraća samo odobrene tehnike za specifičan domen/takmičenje (Izvor [6])."""
+        """Vraca samo odobrene tehnike za specifican domen/takmicenje (Izvor [6])."""
         cursor = self.conn.cursor()
         query = '''
             SELECT t.* FROM techniques t
@@ -1264,9 +1264,9 @@ mock_res = {'approved': True, 'avg_score': 0.95, 'verdicts': {'CEO': 1.0, 'CTO':
 
 tech_id = kb.add_full_record(sol_info, tech_info, mock_res)
 
-print(f"📦 KB Status: Tehnika sačuvana sa ID: {tech_id}")
+print(f" KB Status: Tehnika sacuvana sa ID: {tech_id}")
 approved_list = kb.get_approved_techniques('vesuvius-challenge')
-print(f"🔎 Broj odobrenih tehnika u bazi: {len(approved_list)}")
+print(f" Broj odobrenih tehnika u bazi: {len(approved_list)}")
 
 # --- CELL ---
 
@@ -1282,7 +1282,7 @@ logger = logging.getLogger("Harvester_Final")
 
 # 1. FEEDBACK TRACKER - Self-Learning Mehanizam (Izvor [8, 9, 12])
 class FeedbackTracker:
-    """Ažurira bazu znanja na osnovu stvarnih rezultata takmičenja (Self-learning)."""
+    """Azurira bazu znanja na osnovu stvarnih rezultata takmicenja (Self-learning)."""
     def __init__(self, kb):
         self.kb = kb
         self._init_feedback_tables()
@@ -1308,7 +1308,7 @@ class FeedbackTracker:
                               SET confidence = MIN(1.0, MAX(0.1, confidence + ?))
                               WHERE name = ?''', (adjustment, tech_name))
         self.kb.conn.commit()
-        logger.info(f"📈 Feedback procesiran: Rank {rank}. Adjustment: {adjustment}")
+        logger.info(f" Feedback procesiran: Rank {rank}. Adjustment: {adjustment}")
 
 # 2. CODE VERSIONER - Git Integracija (Izvor [9, 10])
 class CodeVersioner:
@@ -1316,12 +1316,12 @@ class CodeVersioner:
     def create_branch_before_apply(self, technique_name):
         timestamp = datetime.now().strftime("%Y%m%d%H%M")
         branch_name = f"technique/{technique_name}_{timestamp}"
-        logger.info(f"🚀 Git Safety: Kreiran branch {branch_name}")
+        logger.info(f" Git Safety: Kreiran branch {branch_name}")
         return branch_name
 
 # 3. ANALITIKA I REPORTING (Izvor [5, 13])
 def run_final_analysis(kb):
-    """Generiše finalni izveštaj o najefikasnijim tehnikama."""
+    """Generise finalni izvestaj o najefikasnijim tehnikama."""
     cursor = kb.conn.cursor()
     # Agregacija po imenu tehnike da izbegnemo duplikate u prikazu (Izvor [4])
     query = '''
@@ -1333,12 +1333,12 @@ def run_final_analysis(kb):
     cursor.execute(query)
     results = cursor.fetchall()
 
-    print("\n--- KONAČNI STATUS (SELF-LEARNING) ---")
+    print("\n--- KONACNI STATUS (SELF-LEARNING) ---")
     for row in results:
         # FIX: Dodata zatvorena zagrada koja je uzrokovala SyntaxError
-        print(f"Tehnika: {row['name']:<15} | Najbolji Confidence: {row['best_conf']:.2f} | Viđeno u: {row['freq']} rešenja")
+        print(f"Tehnika: {row['name']:<15} | Najbolji Confidence: {row['best_conf']:.2f} | Videno u: {row['freq']} resenja")
 
-# --- IZVRŠAVANJE I VERIFIKACIJA ---
+# --- IZVRSAVANJE I VERIFIKACIJA ---
 
 # Inicijalizacija komponenti
 tracker = FeedbackTracker(kb_fixed)
@@ -1348,7 +1348,7 @@ versioner = CodeVersioner()
 versioner.create_branch_before_apply("vesuvius_final_optimization")
 
 # Korak 2: Simulacija feedback-a (Osvojili smo 5. mesto!)
-# Ovo će uraditi 'Boost' za korišćene tehnike (Izvor [9])
+# Ovo ce uraditi 'Boost' za koriscene tehnike (Izvor [9])
 used_techs = ['learning_rate', 'batch_size']
 tracker.log_result("vesuvius-challenge", 5, used_techs)
 
@@ -1363,7 +1363,7 @@ dataset_metadata = {
 }
 with open('dataset-metadata.json', 'w') as f:
     json.dump(dataset_metadata, f, indent=4)
-print("\n✅ Dataset metapodaci generisani.")
+print("\nPASS Dataset metapodaci generisani.")
 
 
 # --- CELL ---
@@ -1387,13 +1387,13 @@ class HarvesterCLI:
         self.tracker = tracker
 
     def harvest(self, path, competition, rank, author):
-        """Pokreće workflow od parsiranja do skladištenja (Izvor [2], [7])."""
-        print(f"🚜 Pokretanje žetve: {path} za takmičenje {competition}...")
+        """Pokrece workflow od parsiranja do skladistenja (Izvor [2], [7])."""
+        print(f" Pokretanje zetve: {path} za takmicenje {competition}...")
 
         # 1. Parsiranje (Izvor [8])
         raw_techs = self.parser.extract_from_notebook(path)
 
-        # 2. Rešenje i Validacija (Izvor [9], [7])
+        # 2. Resenje i Validacija (Izvor [9], [7])
         sol_id = self.kb.add_solution(competition, rank, author)
 
         for category, techs in raw_techs.items():
@@ -1406,19 +1406,19 @@ class HarvesterCLI:
                         tech['confidence'], tech.get('context', ''),
                         tech.get('rich_context', {})
                     )
-        print(f"✅ Žetva završena. Tehnike su verifikovane i sačuvane u bazi.")
+        print(f"PASS Zetva zavrsena. Tehnike su verifikovane i sacuvane u bazi.")
 
     def generate(self, competition, output="config.yaml"):
-        """Generiše finalnu konfiguraciju uz rešavanje konflikata (Izvor [10], [11])."""
-        print(f"⚙️ Generisanje konfiguracije za: {competition}")
+        """Generise finalnu konfiguraciju uz resavanje konflikata (Izvor [10], [11])."""
+        print(f" Generisanje konfiguracije za: {competition}")
 
-        # Povlačenje odobrenih tehnika (Izvor [12])
+        # Povlacenje odobrenih tehnika (Izvor [12])
         techs = self.kb.get_techniques(competition)
 
-        # Rešavanje konflikata i YAML (Izvor [13], [10])
+        # Resavanje konflikata i YAML (Izvor [13], [10])
         final_config = self.generator.generate(competition, output)
         if final_config:
-            print(f"💾 Konfiguracija sačuvana u: {output}")
+            print(f" Konfiguracija sacuvana u: {output}")
         return final_config
 
 # --- FINALNI EXPORT I PRIPREMA DATASETA ---
@@ -1429,13 +1429,13 @@ def package_harvester_dataset():
     with open('requirements.txt', 'w') as f:
         f.write(requirements)
 
-    print("\n📦 PAKOVANJE ZA KAGGLE ZAVRŠENO:")
+    print("\n PAKOVANJE ZA KAGGLE ZAVRSENO:")
     print("- [OK] kaggle_intelligence.db")
     print("- [OK] dataset-metadata.json")
     print("- [OK] README.md")
     print("- [OK] requirements.txt")
 
-# Inicijalizacija CLI-ja (koristeći instance iz prethodnih blokova)
+# Inicijalizacija CLI-ja (koristeci instance iz prethodnih blokova)
 cli = HarvesterCLI(kb_fixed, None, validator, generator, tracker)
 
 # Demonstracija komande za generisanje
@@ -1445,7 +1445,7 @@ cli.generate("vesuvius-challenge", "vesuvius_final_config.yaml")
 package_harvester_dataset()
 
 # Verifikacija generisanog YAML-a (Izvor [15])
-print("\n📄 SADRŽAJ GENERISANOG YAML-A:")
+print("\n SADRZAJ GENERISANOG YAML-A:")
 !cat vesuvius_final_config.yaml
 
 # --- CELL ---
@@ -1461,14 +1461,14 @@ logger = logging.getLogger(__name__)
 
 # 1. FEEDBACK TRACKER - Implementacija Self-Learning Workflow-a (Izvor [4, 7, 8])
 class FeedbackTracker:
-    """Prati uspješnost primijenjenih tehnika u stvarnim natjecanjima [7]."""
+    """Prati uspjesnost primijenjenih tehnika u stvarnim natjecanjima [7]."""
     def __init__(self, kb):
         self.kb = kb
         self._init_feedback_tables()
 
     def _init_feedback_tables(self):
         cursor = self.kb.conn.cursor()
-        # Tabela za rezultate takmičenja prema izvoru [8]
+        # Tabela za rezultate takmicenja prema izvoru [8]
         cursor.execute('''CREATE TABLE IF NOT EXISTS competition_results (
             id INTEGER PRIMARY KEY,
             competition TEXT,
@@ -1479,7 +1479,7 @@ class FeedbackTracker:
         self.kb.conn.commit()
 
     def log_result(self, competition, rank, techniques_used):
-        """Logira rezultat i vrši Boost/Downgrade confidence-a [4]."""
+        """Logira rezultat i vrsi Boost/Downgrade confidence-a [4]."""
         cursor = self.kb.conn.cursor()
 
         # Logovanje rezultata u bazu
@@ -1487,7 +1487,7 @@ class FeedbackTracker:
                           VALUES (?, ?, ?)''', (competition, rank, json.dumps(techniques_used)))
 
         # Self-learning: High effectiveness -> Boost confidence [4]
-        # Ako je rank u top 10%, povećavamo confidence za 0.1
+        # Ako je rank u top 10%, povecavamo confidence za 0.1
         adjustment = 0.1 if rank <= 10 else -0.05
 
         for tech_name in techniques_used:
@@ -1496,11 +1496,11 @@ class FeedbackTracker:
                               WHERE name = ?''', (adjustment, tech_name))
 
         self.kb.conn.commit()
-        logger.info(f"📈 Feedback procesiran: Rank {rank}. Tehnike {techniques_used} ažurirane sa {adjustment}.")
+        logger.info(f" Feedback procesiran: Rank {rank}. Tehnike {techniques_used} azurirane sa {adjustment}.")
 
 # 2. CODE VERSIONER - Git Integration (Izvor [4, 6])
 class CodeVersioner:
-    """Git integracija za praćenje promjena [4]."""
+    """Git integracija za pracenje promjena [4]."""
     def __init__(self, repo_enabled=False):
         self.repo_enabled = repo_enabled
 
@@ -1508,24 +1508,24 @@ class CodeVersioner:
         """Kreira branch pre modifikacije radi sigurnosti [6]."""
         timestamp = datetime.now().strftime("%Y%m%d%H%M")
         branch_name = f"technique/{technique_name}_{timestamp}"
-        logger.info(f"🚀 Git: Kreiran branch {branch_name} (Safety First).")
+        logger.info(f" Git: Kreiran branch {branch_name} (Safety First).")
         return branch_name
 
 # --- TESTIRANJE FINALA ---
 tracker = FeedbackTracker(kb_fixed)
 versioner = CodeVersioner()
 
-# 1. Simulacija primene: Kreiramo branch pre nego što upotrebimo config
+# 1. Simulacija primene: Kreiramo branch pre nego sto upotrebimo config
 versioner.create_branch_before_apply("vesuvius_optimized_v1")
 
-# 2. Simulacija rezultata: Takmičenje završeno, ostvarili smo RANK 5 (Top 10%)
+# 2. Simulacija rezultata: Takmicenje zavrseno, ostvarili smo RANK 5 (Top 10%)
 used_techniques = ['learning_rate', 'batch_size']
 tracker.log_result("vesuvius-challenge", 5, used_techniques)
 
 # 3. Verifikacija: Da li je confidence porastao?
 cursor = kb_fixed.conn.cursor()
 cursor.execute("SELECT name, confidence FROM techniques WHERE name IN ('learning_rate', 'batch_size')")
-print("\n--- AŽURIRANI CONFIDENCE (SELF-LEARNING) ---")
+print("\n--- AZURIRANI CONFIDENCE (SELF-LEARNING) ---")
 for row in cursor.fetchall():
     print(f"Tehnika: {row['name']} | Novi Confidence: {row['confidence']:.2f}")
 
@@ -1540,13 +1540,13 @@ def upgrade_to_rich_context(kb):
     try:
         cursor.execute('ALTER TABLE techniques ADD COLUMN rich_context JSON')
         kb.conn.commit()
-        print("✅ Baza nadograđena: Dodata kolona 'rich_context'")
+        print("PASS Baza nadogradena: Dodata kolona 'rich_context'")
     except sqlite3.OperationalError:
-        print("ℹ️ Kolona 'rich_context' već postoji.")
+        print(" Kolona 'rich_context' vec postoji.")
 
 # 2. CONFLICT RESOLVER - Mehanizam za eliminaciju duplikata i sukoba (Izvori [4], [6], [7])
 class ConflictResolver:
-    """Rješava sukobe između nekompatibilnih tehnika (npr. dva različita LR-a)."""
+    """Rjesava sukobe izmedu nekompatibilnih tehnika (npr. dva razlicita LR-a)."""
 
     # Kategorije konflikata prema izvoru [7]
     CONFLICT_MAP = {
@@ -1557,10 +1557,10 @@ class ConflictResolver:
 
     def prioritize_techniques(self, techniques, metric='confidence'):
         """
-        Auto-resolve: Zadržava tehniku sa višim skorom učinkovitosti (Izvor [7]).
-        Ovo će eliminisati duplikate koje vidimo u tvom outputu.
+        Auto-resolve: Zadrzava tehniku sa visim skorom ucinkovitosti (Izvor [7]).
+        Ovo ce eliminisati duplikate koje vidimo u tvom outputu.
         """
-        # Grupišemo po imenu i zadržavamo samo najbolji primerak
+        # Grupisemo po imenu i zadrzavamo samo najbolji primerak
         best_of_breed = {}
         for tech in techniques:
             name = tech['name']
@@ -1569,7 +1569,7 @@ class ConflictResolver:
 
         return list(best_of_breed.values())
 
-# --- IZVRŠAVANJE I TESTIRANJE ---
+# --- IZVRSAVANJE I TESTIRANJE ---
 
 # Nadogradnja baze
 upgrade_to_rich_context(kb_fixed)
@@ -1582,7 +1582,7 @@ sample_rich_context = {
     "leaderboard_jump": "+0.03 after applying"
 }
 
-# Simulacija rešavanja duplikata iz tvog outputa
+# Simulacija resavanja duplikata iz tvog outputa
 extracted_from_db = [
     {'name': 'learning_rate', 'value': '0.0001', 'confidence': 1.00},
     {'name': 'learning_rate', 'value': '0.0005', 'confidence': 0.85},
@@ -1592,12 +1592,12 @@ extracted_from_db = [
 resolver = ConflictResolver()
 optimized_list = resolver.prioritize_techniques(extracted_from_db)
 
-print("\n--- KONAČNA LISTA NAKON REZOLUCIJE KONFLIKATA ---")
+print("\n--- KONACNA LISTA NAKON REZOLUCIJE KONFLIKATA ---")
 for tech in optimized_list:
-    print(f"✅ Zadržana Tehnika: {tech['name']} | Vrednost: {tech['value']} | Confidence: {tech['confidence']:.2f}")
+    print(f"PASS Zadrzana Tehnika: {tech['name']} | Vrednost: {tech['value']} | Confidence: {tech['confidence']:.2f}")
 
 # Provera Rich Context upisa (Izvor [8])
-print(f"\n💡 Expert Insight: Author comments: {sample_rich_context['author_comments']}")
+print(f"\n Expert Insight: Author comments: {sample_rich_context['author_comments']}")
 
 
 # --- CELL ---
@@ -1607,14 +1607,14 @@ import json
 from pathlib import Path
 
 class ConfigGenerator:
-    """Generiše YAML konfiguraciju umesto direktnog editovanja koda (Safer approach) [4, 8]."""
+    """Generise YAML konfiguraciju umesto direktnog editovanja koda (Safer approach) [4, 8]."""
 
     def __init__(self, kb):
         self.kb = kb
 
     def generate_config(self, competition, output_path="harvested_config.yaml"):
-        """Povlači odobrene tehnike i pakuje ih u YAML [6]."""
-        # Povlačenje samo verifikovanih tehnika sa visokim confidence-om [9, 10]
+        """Povlaci odobrene tehnike i pakuje ih u YAML [6]."""
+        # Povlacenje samo verifikovanih tehnika sa visokim confidence-om [9, 10]
         cursor = self.kb.conn.cursor()
         query = '''
             SELECT t.name, t.value, t.confidence, t.category
@@ -1637,7 +1637,7 @@ class ConfigGenerator:
         with open(output_path, 'w') as f:
             yaml.dump(config, f, default_flow_style=False)
 
-        print(f"✅ Konfiguracija generisana: {output_path} [4]")
+        print(f"PASS Konfiguracija generisana: {output_path} [4]")
         return config
 
 # 1. Generisanje finalne YAML konfiguracije za Vesuvius [11]
@@ -1656,19 +1656,19 @@ with open('dataset-metadata.json', 'w') as f:
 
 # 3. Kreiranje README.md za dataset [7]
 readme_content = """
-# Kaggle Intelligence Harvester 🚜🧠
+# Kaggle Intelligence Harvester
 
-Ovaj dataset sadrži SQLite bazu znanja (kaggle_intelligence.db) sa ekstrahovanim i validiranim
-tehnikama iz pobedničkih Kaggle rešenja.
+Ovaj dataset sadrzi SQLite bazu znanja (kaggle_intelligence.db) sa ekstrahovanim i validiranim
+tehnikama iz pobednickih Kaggle resenja.
 
 ## Kako koristiti:
-Učitajte bazu i koristite `ConfigGenerator` da dobijete optimalne parametre za vaše takmičenje.
+Ucitajte bazu i koristite `ConfigGenerator` da dobijete optimalne parametre za vase takmicenje.
 """
 with open('README.md', 'w') as f:
     f.write(readme_content)
 
 # 4. Finalna provera fajlova za upload [5]
-print("\n📦 STRUKTURA ZA KAGGLE DATASET UPLOAD:")
+print("\n STRUKTURA ZA KAGGLE DATASET UPLOAD:")
 !ls -F dataset-metadata.json README.md harvested_config.yaml
 
 
@@ -1679,7 +1679,7 @@ import pandas as pd
 
 def generate_final_report(db_path):
     """
-    Generiše analitički izveštaj o prikupljenoj inteligenciji (Izvor [8, 9]).
+    Generise analiticki izvestaj o prikupljenoj inteligenciji (Izvor [8, 9]).
     """
     conn = sqlite3.connect(db_path)
 
@@ -1697,25 +1697,25 @@ def generate_final_report(db_path):
     cursor.execute("SELECT COUNT(*) FROM competition_results")
     total_runs = cursor.fetchone()
 
-    print(f"📊 ANALITIČKI IZVEŠTAJ (Total Runs: {total_runs})")
+    print(f" ANALITICKI IZVESTAJ (Total Runs: {total_runs})")
     print("-" * 50)
     for _, row in df_stats.iterrows():
         print(f"Tehnika: {row['Tehnika']:<15} | Max Conf: {row['Max Conf']:.2f} | Seen in: {row['Seen in']} solutions")
 
     # 3. Snapshot baze za prenos
-    print(f"\n📦 Dataset spreman: {db_path}")
+    print(f"\n Dataset spreman: {db_path}")
     conn.close()
 
-# Izvršavanje analitike
+# Izvrsavanje analitike
 db_file = 'kaggle_intelligence_final.db'
 # Kopiramo radnu bazu u finalnu verziju za upload
 !cp kaggle_intelligence.db {db_file}
 generate_final_report(db_file)
 
 # 4. SUCCESS CRITERIA CHECK (Izvor [8])
-print("\n✅ SUCCESS CRITERIA CHECK (Izvor [8, 11]):")
+print("\nPASS SUCCESS CRITERIA CHECK (Izvor [8, 11]):")
 print("- [OK] Tehnike agregirane bez duplikata")
-print("- [OK] Confidence booster funkcioniše (Self-learning)")
+print("- [OK] Confidence booster funkcionise (Self-learning)")
 print("- [OK] SQLite Snapshot generisan")
 
 # --- CELL ---
@@ -1730,7 +1730,7 @@ FINAL_DB_NAME = 'kaggle_intelligence_final.db'
 
 def ensure_unified_schema(kb_instance):
     """
-    Osigurava da in-memory baza sadrži sve tabele potrebne za Feedback Loop (Izvor [5, 6]).
+    Osigurava da in-memory baza sadrzi sve tabele potrebne za Feedback Loop (Izvor [5, 6]).
     """
     cursor = kb_instance.conn.cursor()
 
@@ -1752,7 +1752,7 @@ def ensure_unified_schema(kb_instance):
     )''')
 
     kb_instance.conn.commit()
-    print("✅ Unifikacija sheme završena: Sve tabele su prisutne.")
+    print("PASS Unifikacija sheme zavrsena: Sve tabele su prisutne.")
 
 def export_memory_to_disk(memory_kb, disk_path):
     """
@@ -1761,24 +1761,24 @@ def export_memory_to_disk(memory_kb, disk_path):
     # Prvo osiguravamo shemu u memoriji
     ensure_unified_schema(memory_kb)
 
-    # Brisanje starog fajla ako postoji radi čiste serijalizacije
+    # Brisanje starog fajla ako postoji radi ciste serijalizacije
     if os.path.exists(disk_path):
         os.remove(disk_path)
 
     disk_conn = sqlite3.connect(disk_path)
     memory_kb.conn.backup(disk_conn)
     disk_conn.close()
-    print(f"💾 Baza serijalizovana na disk: {disk_path}")
+    print(f" Baza serijalizovana na disk: {disk_path}")
 
-# 2. IZVRŠAVANJE EKSPORTA
+# 2. IZVRSAVANJE EKSPORTA
 try:
     # Koristimo najnapredniju dostupnu instancu baze iz memorije
     active_kb = ekb if 'ekb' in locals() else kb_fixed
     export_memory_to_disk(active_kb, FINAL_DB_NAME)
 except NameError:
-    print("❌ Greška: Nije pronađena aktivna baza (ekb/kb_fixed).")
+    print("FAIL Greska: Nije pronadena aktivna baza (ekb/kb_fixed).")
 
-# 3. FINALNI ANALITIČKI IZVEŠTAJ (Izvor [8, 9])
+# 3. FINALNI ANALITICKI IZVESTAJ (Izvor [8, 9])
 def final_analytics_report(db_path):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -1799,18 +1799,18 @@ def final_analytics_report(db_path):
     # Pristupamo skalaru (Izvor [12])
     results_count = res if res else 0
 
-    print(f"\n📊 FINALNI ANALITIČKI IZVEŠTAJ (Feedback Sessions: {results_count})")
+    print(f"\n FINALNI ANALITICKI IZVESTAJ (Feedback Sessions: {results_count})")
     print("-" * 65)
     for _, row in df.iterrows():
         print(f"Tehnika: {row['name']:<15} | Conf: {row['confidence']:.2f} | Freq: {row['frequency']}")
 
     conn.close()
 
-# Pokretanje finalnog izveštaja nad fajlom sa diska
+# Pokretanje finalnog izvestaja nad fajlom sa diska
 final_analytics_report(FINAL_DB_NAME)
 
 # 4. VERIFIKACIJA DATASET PAKETA (Izvor [7, 13])
-print("\n📁 KAGGLE DATASET PACKAGING STATUS:")
+print("\n KAGGLE DATASET PACKAGING STATUS:")
 !ls -F {FINAL_DB_NAME} dataset-metadata.json README.md
 
 # --- CELL ---
@@ -1838,8 +1838,8 @@ class KaggleHarvesterCLI:
         res = cursor.fetchone()
         sessions = res if res else 0
 
-        print(f"\n🧠 KAGGLE INTELLIGENCE HARVESTER - STATUS")
-        print(f"📈 Ukupno procesiranih sesija: {sessions}")
+        print(f"\n KAGGLE INTELLIGENCE HARVESTER - STATUS")
+        print(f" Ukupno procesiranih sesija: {sessions}")
         print("-" * 45)
 
         # Prikaz top tehnika po domenu [5]
@@ -1855,7 +1855,7 @@ class KaggleHarvesterCLI:
         conn.close()
 
     def generate_config(self, competition, output_path="harvested_config.yaml"):
-        """Generiše YAML konfiguraciju za specifično takmičenje [2, 6]."""
+        """Generise YAML konfiguraciju za specificno takmicenje [2, 6]."""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
@@ -1880,10 +1880,10 @@ class KaggleHarvesterCLI:
         with open(output_path, 'w') as f:
             yaml.dump(config, f)
 
-        print(f"\n✅ YAML Config generisan: {output_path} [6]")
+        print(f"\nPASS YAML Config generisan: {output_path} [6]")
         conn.close()
 
-# --- IZVRŠAVANJE FINALNE VERIFIKACIJE ---
+# --- IZVRSAVANJE FINALNE VERIFIKACIJE ---
 # Inicijalizacija CLI-ja nad tvojim novim fajlom
 harvester = KaggleHarvesterCLI('kaggle_intelligence_final.db')
 
@@ -1894,7 +1894,7 @@ harvester.print_stats()
 harvester.generate_config("vesuvius-challenge")
 
 # 3. Finalni Success Criteria Check [9]
-print("\n🚀 PROJEKAT JE SPREMAN ZA UPLOAD NA KAGGLE DATASETS [10]")
+print("\n PROJEKAT JE SPREMAN ZA UPLOAD NA KAGGLE DATASETS [10]")
 !ls -lh kaggle_intelligence_final.db dataset-metadata.json harvested_config.yaml
 
 
@@ -1907,7 +1907,7 @@ from datetime import datetime
 
 # 1. CONFLICT RESOLVER - Inteligencija za detekciju nekompatibilnosti [3, 7]
 class ConflictResolver:
-    """Rješava sukobe između nekompatibilnih tehnika koristeći effectiveness metriku."""
+    """Rjesava sukobe izmedu nekompatibilnih tehnika koristeci effectiveness metriku."""
 
     # Definirani sukobi prema izvoru [3]
     KNOWN_CONFLICTS = {
@@ -1917,7 +1917,7 @@ class ConflictResolver:
     }
 
     def resolve(self, techniques):
-        """Auto-resolve: zadržava tehniku sa većom efektivnošću ili confidence-om [8]."""
+        """Auto-resolve: zadrzava tehniku sa vecom efektivnoscu ili confidence-om [8]."""
         # U MVP fazi koristimo 'confidence' kao proksiju za efektivnost
         resolved = {}
         for tech in techniques:
@@ -1931,7 +1931,7 @@ class ConflictResolver:
         for i, name_a in enumerate(tech_names):
             for name_b in tech_names[i+1:]:
                 if (name_a, name_b) in self.KNOWN_CONFLICTS:
-                    # Zadrži onu sa većim skorom, drugu markiraj za brisanje [8]
+                    # Zadrzi onu sa vecim skorom, drugu markiraj za brisanje [8]
                     if resolved[name_a]['confidence'] < resolved[name_b]['confidence']:
                         to_remove.add(name_a)
                     else:
@@ -1941,12 +1941,12 @@ class ConflictResolver:
 
 # 2. FEEDBACK TRACKER - Self-learning Workflow [1, 2, 5]
 class FeedbackTracker:
-    """Ažurira bazu na osnovu stvarnih rezultata takmičenja (Self-learning)."""
+    """Azurira bazu na osnovu stvarnih rezultata takmicenja (Self-learning)."""
     def __init__(self, db_path):
         self.db_path = db_path
 
     def log_and_learn(self, competition, rank, techniques_used):
-        """Boost confidence za uspeh, downgrade za loš rang [2, 5]."""
+        """Boost confidence za uspeh, downgrade za los rang [2, 5]."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
@@ -1964,9 +1964,9 @@ class FeedbackTracker:
 
         conn.commit()
         conn.close()
-        print(f"📈 Self-learning: Tehnike {techniques_used} ažurirane (Adjustment: {adjustment})")
+        print(f" Self-learning: Tehnike {techniques_used} azurirane (Adjustment: {adjustment})")
 
-# 3. KONAČNA VERIFIKACIJA I FIX ZA ROW OBJECT [10]
+# 3. KONACNA VERIFIKACIJA I FIX ZA ROW OBJECT [10]
 def run_final_status(db_path):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -1977,8 +1977,8 @@ def run_final_status(db_path):
     res = cursor.fetchone()
     sessions = res if res else 0
 
-    print(f"\n🧠 KAGGLE INTELLIGENCE HARVESTER - FINALNI STATUS")
-    print(f"📈 Feedback sesije: {sessions}")
+    print(f"\n KAGGLE INTELLIGENCE HARVESTER - FINALNI STATUS")
+    print(f" Feedback sesije: {sessions}")
     print("-" * 55)
 
     cursor.execute("SELECT name, confidence, category FROM techniques ORDER BY confidence DESC")
@@ -1987,11 +1987,11 @@ def run_final_status(db_path):
 
     conn.close()
 
-# --- IZVRŠAVANJE ---
+# --- IZVRSAVANJE ---
 db_path = 'kaggle_intelligence_final.db'
 tracker = FeedbackTracker(db_path)
 
-# Simulacija učenja: Takmičenje završeno, Rank 3 osvojen sa learning_rate! [5]
+# Simulacija ucenja: Takmicenje zavrseno, Rank 3 osvojen sa learning_rate! [5]
 tracker.log_and_learn("vesuvius-challenge", rank=3, techniques_used=['learning_rate'])
 
 # Prikaz ispravljenog statusa
@@ -2004,7 +2004,7 @@ import pandas as pd
 
 def final_refined_report(db_path):
     """
-    Finalni izveštaj sa ispravljenim skalarnim pristupom i rezolucijom duplikata (Izvori [3, 7]).
+    Finalni izvestaj sa ispravljenim skalarnim pristupom i rezolucijom duplikata (Izvori [3, 7]).
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -2013,11 +2013,11 @@ def final_refined_report(db_path):
     # 1. FIX ZA ROW OBJECT: Eksplicitni pristup indeksu  (Izvor [8])
     cursor.execute("SELECT COUNT(*) FROM competition_results")
     res = cursor.fetchone()
-    # Čak i sa Row factory, res vraća čistu integer vrednost
+    # Cak i sa Row factory, res vraca cistu integer vrednost
     sessions_count = res if res else 0
 
     # 2. KONSTRUKCIJA "BEST OF BREED" PRIKAZA (Izvor [4, 6])
-    # Grupišemo po imenu i uzimamo maksimalni confidence i vrednost
+    # Grupisemo po imenu i uzimamo maksimalni confidence i vrednost
     query = """
     SELECT category, name, MAX(confidence) as max_conf, value, COUNT(*) as frequency
     FROM techniques
@@ -2027,8 +2027,8 @@ def final_refined_report(db_path):
     cursor.execute(query)
     rows = cursor.fetchall()
 
-    print(f"🚀 KAGGLE INTELLIGENCE SYSTEM - PROREĐENI IZVEŠTAJ")
-    print(f"📊 Uspešne Feedback sesije: {sessions_count}")
+    print(f" KAGGLE INTELLIGENCE SYSTEM - PROREDENI IZVESTAJ")
+    print(f" Uspesne Feedback sesije: {sessions_count}")
     print("=" * 65)
     print(f"{'KATEGORIJA':<12} | {'TEHNIKA':<18} | {'CONF':<6} | {'FREQ':<5} | {'OPTIMALNA VREDNOST'}")
     print("-" * 65)
@@ -2039,8 +2039,8 @@ def final_refined_report(db_path):
 
     conn.close()
 
-# --- IZVRŠAVANJE ---
-# Koristimo fizički fajl koji smo serijalizovali
+# --- IZVRSAVANJE ---
+# Koristimo fizicki fajl koji smo serijalizovali
 final_refined_report('kaggle_intelligence_final.db')
 
 # --- CELL ---
@@ -2051,7 +2051,7 @@ import yaml
 import os
 from datetime import datetime
 
-# Pokušaj uvoza GitPython-a, instalacija ako je potrebno u Colab okruženju
+# Pokusaj uvoza GitPython-a, instalacija ako je potrebno u Colab okruzenju
 try:
     import git
 except ImportError:
@@ -2077,12 +2077,12 @@ class CodeVersioner:
         branch_name = f"technique/{technique_name}_{timestamp}"
         new_branch = self.repo.create_head(branch_name)
         new_branch.checkout()
-        print(f"🚀 Prebačeno na novu granu: {branch_name}")
+        print(f" Prebaceno na novu granu: {branch_name}")
         return branch_name
 
 # 2. CONFLICT RESOLVER - Detekcija nekompatibilnosti [5, 7]
 class ConflictResolver:
-    """Rješava sukobe između nekompatibilnih tehnika koristeći logiku prioriteta [5]."""
+    """Rjesava sukobe izmedu nekompatibilnih tehnika koristeci logiku prioriteta [5]."""
     KNOWN_CONFLICTS = {
         ('high_learning_rate', 'no_warmup'): 'INCOMPATIBLE - LR needs warmup',
         ('dropout_0.5', 'batch_norm'): 'CONFLICT - BN assumes no dropout during inference'
@@ -2096,7 +2096,7 @@ class ConflictResolver:
                 pair = (name_a, name_b)
                 if pair in self.KNOWN_CONFLICTS or pair[::-1] in self.KNOWN_CONFLICTS:
                     reason = self.KNOWN_CONFLICTS.get(pair) or self.KNOWN_CONFLICTS.get(pair[::-1])
-                    print(f"⚠️ KONFLIKT DETEKTOVAN: {name_a} vs {name_b}. Razlog: {reason}")
+                    print(f" KONFLIKT DETEKTOVAN: {name_a} vs {name_b}. Razlog: {reason}")
                     return False
         return True
 
@@ -2111,8 +2111,8 @@ def run_refined_status(db_path):
     res = cursor.fetchone()
     sessions = res if res else 0
 
-    print(f"\n🧠 KAGGLE INTELLIGENCE HARVESTER - FINALNI STATUS")
-    print(f"📈 Uspešne Feedback sesije: {sessions}")
+    print(f"\n KAGGLE INTELLIGENCE HARVESTER - FINALNI STATUS")
+    print(f" Uspesne Feedback sesije: {sessions}")
     print("-" * 55)
 
     cursor.execute("SELECT name, MAX(confidence) as conf FROM techniques GROUP BY name")
@@ -2120,7 +2120,7 @@ def run_refined_status(db_path):
         print(f"Tehnika: {row['name']:<18} | Poverenje: {row['conf']:.2f}")
     conn.close()
 
-# --- IZVRŠAVANJE PROCESA ---
+# --- IZVRSAVANJE PROCESA ---
 db_path = 'kaggle_intelligence_final.db'
 versioner = CodeVersioner()
 resolver = ConflictResolver()
@@ -2128,10 +2128,10 @@ resolver = ConflictResolver()
 # Korak 1: Kreiranje safety grane za novu optimizaciju [4, 9]
 versioner.create_safety_branch("high_lr_fix")
 
-# Korak 2: Provera konflikata za set koji želimo primeniti [6]
+# Korak 2: Provera konflikata za set koji zelimo primeniti [6]
 current_set = [{'name': 'learning_rate', 'value': 0.0001}, {'name': 'batch_size', 'value': 32}]
 if resolver.validate_set(current_set):
-    print("✅ Set tehnika je kompatibilan.")
+    print("PASS Set tehnika je kompatibilan.")
 
 # Korak 3: Prikaz popravljenog statusa sesija
 run_refined_status(db_path)
@@ -2144,8 +2144,8 @@ import nbformat
 
 class RichContextExtractor:
     """
-    Ekstrahuje 'zašto' i 'kako' iza tehnike (Izvor [1, 2]).
-    Skuplja isečke koda i komentare autora iz notebook ćelija.
+    Ekstrahuje 'zasto' i 'kako' iza tehnike (Izvor [1, 2]).
+    Skuplja isecke koda i komentare autora iz notebook celija.
     """
     def __init__(self, notebook_path):
         with open(notebook_path, 'r', encoding='utf-8') as f:
@@ -2169,7 +2169,7 @@ class RichContextExtractor:
         return {}
 
     def _find_nearest_markdown(self, cell_index):
-        """Traži najbližu markdown ćeliju iznad koda za uvid autora (Izvor [4])."""
+        """Trazi najblizu markdown celiju iznad koda za uvid autora (Izvor [4])."""
         for i in range(cell_index - 1, -1, -1):
             if self.nb.cells[i].cell_type == 'markdown':
                 return [self.nb.cells[i].source[:200]] # Prvih 200 karaktera
@@ -2184,10 +2184,10 @@ def run_final_report_fixed(db_path):
     # FIX: Eksplicitni pristup indeksu  za skalarne rezultate (Izvor [5])
     cursor.execute("SELECT COUNT(*) FROM competition_results")
     res = cursor.fetchone()
-    sessions = res if res else 0  # <--- KLJUČNA ISPRAVKA
+    sessions = res if res else 0  # <--- KLJUCNA ISPRAVKA
 
-    print(f"\n🧠 KAGGLE INTELLIGENCE HARVESTER - KONAČNI STATUS")
-    print(f"📈 Uspešne Feedback sesije: {sessions}")
+    print(f"\n KAGGLE INTELLIGENCE HARVESTER - KONACNI STATUS")
+    print(f" Uspesne Feedback sesije: {sessions}")
     print("=" * 55)
 
     cursor.execute("SELECT name, MAX(confidence) as conf, category FROM techniques GROUP BY name")
@@ -2201,12 +2201,12 @@ def run_final_report_fixed(db_path):
 try:
     extractor = RichContextExtractor('test_notebook.ipynb')
     context = extractor.get_context_for_line("learning_rate")
-    print("\n📝 EKSTRAKTOVANI BOGATI KONTEKST (Izvor [2]):")
+    print("\n EKSTRAKTOVANI BOGATI KONTEKST (Izvor [2]):")
     print(json.dumps(context, indent=2))
 except Exception as e:
-    print(f"\nℹ️ Info: Za puni Rich Context test potreban je fizički .ipynb fajl. Greška: {e}")
+    print(f"\n Info: Za puni Rich Context test potreban je fizicki .ipynb fajl. Greska: {e}")
 
-# Prikaz ispravljenog izveštaja
+# Prikaz ispravljenog izvestaja
 run_final_report_fixed('kaggle_intelligence_final.db')
 
 # --- CELL ---
@@ -2216,7 +2216,7 @@ import json
 
 def final_robust_report_v2(db_path):
     """
-    Finalna ispravka izveštaja: rešava Row object bug i TypeError (Izvor [1, 5]).
+    Finalna ispravka izvestaja: resava Row object bug i TypeError (Izvor [1, 5]).
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -2225,13 +2225,13 @@ def final_robust_report_v2(db_path):
     # 1. FIX ZA ROW OBJECT: Eksplicitni pristup indeksu  za COUNT(*) (Izvor [6])
     cursor.execute("SELECT COUNT(*) FROM competition_results")
     res = cursor.fetchone()
-    sessions_count = res[0] if res else 0  # <--- Ovde izvlačimo čistu vrednost
+    sessions_count = res[0] if res else 0  # <--- Ovde izvlacimo cistu vrednost
 
     # 2. KONSTRUKCIJA LISTE (Conflict Resolution - Izvor [4, 7])
     cursor.execute("SELECT * FROM techniques ORDER BY confidence DESC")
     all_techs = [dict(row) for row in cursor.fetchall()]
 
-    # Eliminacija duplikata, zadržavanje top rezultata (Izvor [8])
+    # Eliminacija duplikata, zadrzavanje top rezultata (Izvor [8])
     resolved_techs = {}
     for tech in all_techs:
         # Ensure 'name' is in the tech dictionary and its value is hashable
@@ -2240,44 +2240,44 @@ def final_robust_report_v2(db_path):
 
     final_list = list(resolved_techs.values())
 
-    print(f"🚀 KAGGLE INTELLIGENCE SYSTEM - FINALNI REZIME")
-    print(f"📊 Uspešne Feedback sesije: {sessions_count}")
+    print(f" KAGGLE INTELLIGENCE SYSTEM - FINALNI REZIME")
+    print(f" Uspesne Feedback sesije: {sessions_count}")
     print("=" * 75)
     print(f"{'TEHNIKA':<20} | {'CONF':<6} | {'OPTIMALNA VREDNOST'}")
     print("-" * 75)
 
     for tech in final_list:
-        print(f"✅ {tech['name']:<18} | {tech['confidence']:.2f} | {tech['value']}")
+        print(f"PASS {tech['name']:<18} | {tech['confidence']:.2f} | {tech['value']}")
 
     conn.close()
     return final_list
 
-# --- IZVRŠAVANJE SA ISPRAVKOM PRISTUPA LISTI ---
+# --- IZVRSAVANJE SA ISPRAVKOM PRISTUPA LISTI ---
 db_path = 'kaggle_intelligence_final.db'
 final_techs = final_robust_report_v2(db_path)
 
 # 3. FIX ZA TYPEERROR: final_techs je LISTA, pristupamo prvom elementu preko indeksa  (Izvor [3])
 if final_techs and len(final_techs) > 0:
-    top_tech = final_techs[0]  # <--- KLJUČNA ISPRAVKA: Pristup prvom elementu liste
+    top_tech = final_techs[0]  # <--- KLJUCNA ISPRAVKA: Pristup prvom elementu liste
 
-    print(f"\n📝 RICH CONTEXT ZA TOP TEHNIKU ({top_tech['name']}):")
-    print(f"   🔹 Originalni kod: {top_tech.get('context', 'N/A')}")
+    print(f"\n RICH CONTEXT ZA TOP TEHNIKU ({top_tech['name']}):")
+    print(f"    Originalni kod: {top_tech.get('context', 'N/A')}")
 
-    # Parsiranje obogaćenog konteksta iz JSON polja (Izvor [2, 3])
+    # Parsiranje obogacenog konteksta iz JSON polja (Izvor [2, 3])
     if top_tech.get('rich_context'):
         try:
             rc = json.loads(top_tech['rich_context'])
             if 'author_comments' in rc:
-                print(f"   🔹 Uvid autora: {rc['author_comments']}")
+                print(f"    Uvid autora: {rc['author_comments']}")
             if 'notebook_cell_index' in rc:
-                print(f"   🔹 Cell Index: {rc['notebook_cell_index']}")
+                print(f"    Cell Index: {rc['notebook_cell_index']}")
         except:
-            print("   🔹 Rich context format je nevalidan.")
+            print("    Rich context format je nevalidan.")
     else:
         # Fallback ako rich_context nije u bazi (Izvor [5])
-        print("   🔹 Rich context nije dostupan (osnovna ekstrakcija).")
+        print("    Rich context nije dostupan (osnovna ekstrakcija).")
 else:
-    print("\n⚠️ Baza je prazna. Nema detektovanih tehnika.")
+    print("\n Baza je prazna. Nema detektovanih tehnika.")
 
 # --- CELL ---
 
@@ -2305,4 +2305,4 @@ if final_techs:
         else:
             print("  Rich context: Not Available.")
 else:
-    print("\n⚠️ The `final_techs` list is empty. No techniques were found for analysis.")
+    print("\n The `final_techs` list is empty. No techniques were found for analysis.")

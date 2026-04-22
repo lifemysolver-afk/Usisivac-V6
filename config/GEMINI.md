@@ -1,4 +1,4 @@
-# Gemini CLI — Konfiguracija za Usisivac V6
+# Gemini CLI - Konfiguracija za Usisivac V6
 
 ## Instalacija Gemini CLI
 
@@ -11,7 +11,7 @@ pip install google-generativeai
 
 ## Pokretanje iz terminala
 
-### Non-stop mod (beskonačna petlja)
+### Non-stop mod (beskonacna petlja)
 ```bash
 cd /path/to/Usisivac-V6
 python orchestrator/orchestrator.py "Predict house prices" --domain tabular --delay 30
@@ -30,14 +30,14 @@ python orchestrator/orchestrator.py "Predict churn" --domain tabular --data "Cus
 ### A2A serveri (svi agenti na HTTP)
 ```bash
 python orchestrator/a2a_servers.py
-# Orchestrator → http://localhost:8081
-# CoderAgent   → http://localhost:8082
-# Guardian     → http://localhost:8083
-# Research     → http://localhost:8084
-# Critic       → http://localhost:8085
-# Cleaner      → http://localhost:8086
-# Feature      → http://localhost:8087
-# Relay        → http://localhost:8088
+# Orchestrator  http://localhost:8081
+# CoderAgent    http://localhost:8082
+# Guardian      http://localhost:8083
+# Research      http://localhost:8084
+# Critic        http://localhost:8085
+# Cleaner       http://localhost:8086
+# Feature       http://localhost:8087
+# Relay         http://localhost:8088
 ```
 
 ## Gemini CLI u VS Code terminalu
@@ -60,8 +60,8 @@ curl -X POST http://localhost:8088/relay \
 
 ## Environment Variables
 
-Kopiraj `.env.example` u `.env` i popuni ključeve:
+Kopiraj `.env.example` u `.env` i popuni kljuceve:
 ```bash
 cp .env.example .env
-# Edituj .env sa svojim API ključevima
+# Edituj .env sa svojim API kljucevima
 ```

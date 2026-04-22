@@ -1,7 +1,7 @@
 """
-Analizira Loptica.ipynb i izvlači sve relevantne informacije:
-- Sve code ćelije
-- Sve markdown ćelije (objašnjenja)
+Analizira Loptica.ipynb i izvlaci sve relevantne informacije:
+- Sve code celije
+- Sve markdown celije (objasnjenja)
 - Biblioteke koje se koriste
 - Modeli i tehnike
 - Metrike
@@ -15,7 +15,7 @@ with open(nb_path) as f:
     nb = json.load(f)
 
 cells = nb.get("cells", [])
-print(f"Ukupno ćelija: {len(cells)}")
+print(f"Ukupno celija: {len(cells)}")
 
 code_cells = [c for c in cells if c["cell_type"] == "code"]
 md_cells   = [c for c in cells if c["cell_type"] == "markdown"]
@@ -35,7 +35,7 @@ for c in md_cells:
     src = "".join(c.get("source", []))
     all_md.append(src)
 
-# Pronađi imports
+# Pronadi imports
 imports = []
 for line in full_code.split("\n"):
     if line.strip().startswith("import ") or line.strip().startswith("from "):
@@ -45,7 +45,7 @@ print("\n=== IMPORTS ===")
 for imp in sorted(set(imports)):
     print(f"  {imp}")
 
-# Pronađi modele
+# Pronadi modele
 model_patterns = [
     r'(XGBClassifier|XGBRegressor|xgb\.)',
     r'(LGBMClassifier|LGBMRegressor|lgb\.)',
@@ -73,7 +73,7 @@ for pat in model_patterns:
             found_models.add(m)
             print(f"  FOUND: {m}")
 
-# Pronađi metrike
+# Pronadi metrike
 metric_patterns = [
     r'(roc_auc_score|auc|AUC)',
     r'(accuracy_score|accuracy)',
@@ -94,29 +94,29 @@ for pat in metric_patterns:
             found_metrics.add(m)
             print(f"  FOUND: {m}")
 
-# Pronađi dataset info
+# Pronadi dataset info
 print("\n=== DATASET CLUES ===")
 for line in full_code.split("\n"):
     if any(kw in line.lower() for kw in ["read_csv", "read_excel", "load_dataset", "pd.read", "columns", "shape", "target", "label"]):
         print(f"  {line.strip()[:120]}")
 
-# Pronađi neuronske mreže
-print("\n=== NEURONSKE MREŽE ===")
+# Pronadi neuronske mreze
+print("\n=== NEURONSKE MREZE ===")
 for line in full_code.split("\n"):
     if any(kw in line.lower() for kw in ["dense", "lstm", "conv", "embedding", "dropout", "relu", "sigmoid", "softmax", "torch", "tensorflow", "keras"]):
         print(f"  {line.strip()[:120]}")
 
-# Sačuvaj ceo kod u fajl
+# Sacuvaj ceo kod u fajl
 out_code = Path("/home/ubuntu/Usisivac-V6/data/loptica_extracted_code.py")
 out_code.write_text(full_code)
 print(f"\n=== SAVED: {out_code} ({len(full_code)} chars) ===")
 
-# Sačuvaj markdown
+# Sacuvaj markdown
 out_md = Path("/home/ubuntu/Usisivac-V6/data/loptica_extracted_md.md")
 out_md.write_text("\n\n---\n\n".join(all_md))
 print(f"=== SAVED: {out_md} ===")
 
-# Sačuvaj analizu
+# Sacuvaj analizu
 analysis = {
     "total_cells": len(cells),
     "code_cells": len(code_cells),

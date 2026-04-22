@@ -1,16 +1,16 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  LopticaKnowledgeBase — SQLite + Rich Context + Self-Learning       ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-║  Integrisano iz: Trinity_AIMO_Loptica_Final / Copy_of_Loptica.ipynb ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  LopticaKnowledgeBase - SQLite + Rich Context + Self-Learning       |
+|  Usisivac V6 | Trinity Protocol                                     |
+|  Integrisano iz: Trinity_AIMO_Loptica_Final / Copy_of_Loptica.ipynb |
++----------------------------------------------------------------------+
 
 Komponente:
-  KnowledgeBase     → SQLite baza tehnika sa rich_context JSON
-  ConflictResolver  → Winner-takes-all po confidence score-u
-  FeedbackTracker   → Self-learning: boost/downgrade confidence
-  NotebookParser    → AST ekstrakcija hiperparametara iz .ipynb
-  HarvesterAnalytics→ Agregacija i izveštaji
+  KnowledgeBase      SQLite baza tehnika sa rich_context JSON
+  ConflictResolver   Winner-takes-all po confidence score-u
+  FeedbackTracker    Self-learning: boost/downgrade confidence
+  NotebookParser     AST ekstrakcija hiperparametara iz .ipynb
+  HarvesterAnalytics Agregacija i izvestaji
 """
 
 import sqlite3, json, ast, logging
@@ -21,12 +21,12 @@ from difflib import SequenceMatcher
 logger = logging.getLogger(__name__)
 
 
-# ─── KnowledgeBase ───────────────────────────────────────────────────────────
+# -- KnowledgeBase ----------------------------------------------------------
 
 class KnowledgeBase:
     """
-    SQLite baza za tehnike sa punim semantičkim kontekstom.
-    Podržava: solutions, techniques, board_reviews, competition_results.
+    SQLite baza za tehnike sa punim semantickim kontekstom.
+    Podrzava: solutions, techniques, board_reviews, competition_results.
     """
 
     def __init__(self, db_path: str = None):
@@ -134,11 +134,11 @@ class KnowledgeBase:
         return {"solutions": n_sol, "techniques": n_tech, "avg_confidence": round(avg_conf, 3)}
 
 
-# ─── ConflictResolver ────────────────────────────────────────────────────────
+# -- ConflictResolver --------------------------------------------------------
 
 class ConflictResolver:
     """
-    Rešava sukobe između nekompatibilnih tehnika.
+    Resava sukobe izmedu nekompatibilnih tehnika.
     Winner-takes-all po confidence score-u za HARD konflikte.
     """
 
@@ -173,7 +173,7 @@ class ConflictResolver:
         return None
 
     def resolve_batch(self, techniques: list) -> list:
-        """Filtrira listu tehnika, uklanja HARD konflikte. Zadržava veći confidence."""
+        """Filtrira listu tehnika, uklanja HARD konflikte. Zadrzava veci confidence."""
         resolved = []
         sorted_techs = sorted(techniques, key=lambda x: x.get("confidence", 0), reverse=True)
 
@@ -182,7 +182,7 @@ class ConflictResolver:
             for accepted in resolved:
                 conflict = self.check_compatibility(tech, accepted)
                 if conflict and conflict["type"] == "HARD":
-                    logger.info(f"CONFLICT: {tech['name']} vs {accepted['name']} → {conflict['reason']}")
+                    logger.info(f"CONFLICT: {tech['name']} vs {accepted['name']}  {conflict['reason']}")
                     compatible = False
                     break
             if compatible:
@@ -191,12 +191,12 @@ class ConflictResolver:
         return resolved
 
 
-# ─── FeedbackTracker ─────────────────────────────────────────────────────────
+# -- FeedbackTracker --------------------------------------------------------
 
 class FeedbackTracker:
     """
-    Self-learning: prilagođava confidence tehnika na osnovu stvarnih rezultata.
-    Top 10% → +0.10 | Ostalo → -0.05
+    Self-learning: prilagodava confidence tehnika na osnovu stvarnih rezultata.
+    Top 10%  +0.10 | Ostalo  -0.05
     """
 
     def __init__(self, kb: KnowledgeBase):
@@ -218,11 +218,11 @@ class FeedbackTracker:
         return {"competition": competition, "rank": rank, "adjustment": adjustment}
 
 
-# ─── NotebookParser ──────────────────────────────────────────────────────────
+# -- NotebookParser ----------------------------------------------------------
 
 class NotebookParser:
     """
-    Ekstrahuje hiperparametre i tehnike iz .ipynb fajlova koristeći AST.
+    Ekstrahuje hiperparametre i tehnike iz .ipynb fajlova koristeci AST.
     """
 
     KNOWN_PARAMS = {
@@ -274,7 +274,7 @@ class NotebookParser:
         return None
 
 
-# ─── HarvesterAnalytics ──────────────────────────────────────────────────────
+# -- HarvesterAnalytics ------------------------------------------------------
 
 class HarvesterAnalytics:
     """Agregira i prikazuje statistike iz KnowledgeBase."""

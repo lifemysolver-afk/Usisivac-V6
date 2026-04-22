@@ -1,9 +1,9 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Pickle Rick Extension Integration Module                           ║
-║  Usisivac V6 | Gemini CLI Extension Integration                     ║
-║  Anti-Simulation Enforced: All integration logged to proof_registry ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Pickle Rick Extension Integration Module                           |
+|  Usisivac V6 | Gemini CLI Extension Integration                     |
+|  Anti-Simulation Enforced: All integration logged to proof_registry |
++----------------------------------------------------------------------+
 
 Integrates the Pickle Rick extension (autonomous coding loop) with
 Usisivac V6 system for iterative, self-improving code development.

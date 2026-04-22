@@ -1,9 +1,9 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  BrainMassIngest — Masovni ChromaDB Ingest                          ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-║  Integrisano iz: Trinity_AIMO_Loptica_Final / brain_mass_ingest.py  ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  BrainMassIngest - Masovni ChromaDB Ingest                          |
+|  Usisivac V6 | Trinity Protocol                                     |
+|  Integrisano iz: Trinity_AIMO_Loptica_Final / brain_mass_ingest.py  |
++----------------------------------------------------------------------+
 
 Usisava sve .py, .md, .json, .yaml fajlove iz zadatog direktorijuma
 u ChromaDB kolekciju "massive_brain".
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class BrainMassIngest:
     """
     Masovni ingest fajlova u ChromaDB.
-    Podržava chunking, deduplication i batch upload.
+    Podrzava chunking, deduplication i batch upload.
     """
 
     SUPPORTED_EXTENSIONS = {".py", ".md", ".json", ".yaml", ".yml", ".txt", ".ipynb"}
@@ -47,13 +47,13 @@ class BrainMassIngest:
         )
 
     def scan_directory(self, root_dir: str) -> tuple:
-        """Skenira direktorijum i vraća (documents, metadatas, ids)."""
+        """Skenira direktorijum i vraca (documents, metadatas, ids)."""
         documents, metadatas, ids = [], [], []
         root = Path(root_dir)
         file_idx = 0
 
         for file_path in root.rglob("*"):
-            # Preskoči isključene direktorijume
+            # Preskoci iskljucene direktorijume
             if any(ex in file_path.parts for ex in self.EXCLUDE_DIRS):
                 continue
             if not file_path.is_file():
@@ -91,7 +91,7 @@ class BrainMassIngest:
         return documents, metadatas, ids
 
     def ingest(self, root_dir: str) -> dict:
-        """Glavni ingest. Vraća statistike."""
+        """Glavni ingest. Vraca statistike."""
         logger.info(f"Starting BrainMassIngest from: {root_dir}")
         docs, metas, ids = self.scan_directory(root_dir)
 
@@ -120,7 +120,7 @@ class BrainMassIngest:
         return result
 
     def query(self, query_text: str, n_results: int = 5) -> list:
-        """Pretražuje massive_brain kolekciju."""
+        """Pretrazuje massive_brain kolekciju."""
         results = self.collection.query(
             query_texts=[query_text],
             n_results=min(n_results, self.collection.count() or 1)

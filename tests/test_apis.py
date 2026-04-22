@@ -39,7 +39,7 @@ def test_github_models():
             resp_json = response.json()
             text = resp_json["choices"][0]["message"]["content"]
             print(f"  Response: {text[:100]}")
-            print(f"  OK ✓")
+            print(f"  OK ")
             return True
         else:
             print(f"  ERROR: {response.status_code}")
@@ -56,5 +56,5 @@ if __name__ == "__main__":
     results["github_models"] = test_github_models()
     
     print("\n=== SUMMARY ===")
-    status = "OK ✓" if results["github_models"] else "FAIL ✗"
+    status = "OK " if results["github_models"] else "FAIL "
     print(f"  GitHub Models: {status}")

@@ -1,11 +1,11 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  CriticAgent — Čuvar Kvaliteta                                      ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  CriticAgent - Cuvar Kvaliteta                                      |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Identifikuje zablude, anti-patterne, zamke.
-Sprečava overfitting, data leakage, loše prakse.
+Sprecava overfitting, data leakage, lose prakse.
 Radi za BILO KOJI domen.
 """
 
@@ -22,7 +22,7 @@ from core import state_manager as SM
 
 AGENT = "CriticAgent"
 
-# ─── Kritični anti-paterni za detekciju ───────────────────────────────────────
+# -- Kriticni anti-paterni za detekciju --------------------------------------
 CRITICAL_CHECKS = {
     "data_leakage": [
         "fit_transform on full data before split",
@@ -84,7 +84,7 @@ def critique_code(code: str, context: dict = None) -> dict:
     """
     log_work(AGENT, "CRITIQUE_CODE_START", f"code_len={len(code)}")
 
-    # 1. Statička provjera anti-paterna
+    # 1. Staticka provjera anti-paterna
     static_issues = []
     code_lower = code.lower()
 
@@ -94,7 +94,7 @@ def critique_code(code: str, context: dict = None) -> dict:
             if all(kw in code_lower for kw in keywords[:3]):
                 static_issues.append(f"[{category}] Possible: {pattern}")
 
-    # Specifične provjere
+    # Specificne provjere
     if "fit_transform" in code and "train_test_split" in code:
         idx_fit = code.index("fit_transform")
         idx_split = code.index("train_test_split")
@@ -113,8 +113,8 @@ def critique_code(code: str, context: dict = None) -> dict:
 
     # 3. LLM deep analysis
     system = (
-        "Ti si CriticAgent — strogi reviewer koda. "
-        "Pronađi SVE probleme: data leakage, overfitting rizike, loše prakse. "
+        "Ti si CriticAgent - strogi reviewer koda. "
+        "Pronadi SVE probleme: data leakage, overfitting rizike, lose prakse. "
         "Format: JSON lista objekata sa severity (CRITICAL/WARNING/INFO) i description."
     )
     prompt = f"CODE:\n```python\n{code[:3000]}\n```\n\nKNOWN ANTI-PATTERNS:\n{rag_context}\n\nKritikuj:"
@@ -146,9 +146,9 @@ def critique_features(features: list, target_info: dict = None) -> dict:
 
     issues = []
     if len(features) > 500:
-        issues.append("WARNING: Previše feature-a (>500), rizik od overfitting-a")
+        issues.append("WARNING: Previse feature-a (>500), rizik od overfitting-a")
     if len(features) < 3:
-        issues.append("WARNING: Premalo feature-a (<3), možda nedovoljno informacija")
+        issues.append("WARNING: Premalo feature-a (<3), mozda nedovoljno informacija")
 
     result = {
         "status": "CRITIQUE_DONE",

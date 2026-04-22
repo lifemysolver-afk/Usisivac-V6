@@ -1,11 +1,11 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  LLM Client — Multi-Provider (Groq, Mistral, Gemini, OpenRouter)    ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  LLM Client - Multi-Provider (Groq, Mistral, Gemini, OpenRouter)    |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
 Prioritet: configurable preko PRIMARY_LLM.
-Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
+Ako je ONLY_PRIMARY_LLM=true, koristi se iskljucivo primarni provider.
 """
 
 import os, json, time
@@ -119,8 +119,8 @@ def call(prompt: str,
          model: str = None,
          retries: int = 2) -> str:
     """
-    Poziva LLM sa automatskim fallback-om između providera.
-    Redosled: groq → mistral → gemini → openrouter
+    Poziva LLM sa automatskim fallback-om izmedu providera.
+    Redosled: groq  mistral  gemini  openrouter
     """
     all_providers = ["groq", "mistral", "gemini", "openrouter", "huggingface"]
     only_primary_llm = os.getenv("ONLY_PRIMARY_LLM", "false").lower() in {"1", "true", "yes", "on"}

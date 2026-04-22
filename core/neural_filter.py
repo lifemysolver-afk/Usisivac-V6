@@ -1,17 +1,17 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Neural Knowledge Filter — "Veliki Filter"                          ║
-║  Usisivac V6 | Trinity Protocol                                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Neural Knowledge Filter - "Veliki Filter"                          |
+|  Usisivac V6 | Trinity Protocol                                     |
++----------------------------------------------------------------------+
 
-Neuronska mreža koja filtrira i rangira znanje iz ChromaDB-a.
-Cilj: izvući MAKSIMUM relevantnog znanja za dati problem.
+Neuronska mreza koja filtrira i rangira znanje iz ChromaDB-a.
+Cilj: izvuci MAKSIMUM relevantnog znanja za dati problem.
 
 Arhitektura:
   1. SentenceTransformer embedding (384-dim)
-  2. 3-slojni MLP scorer (384 → 128 → 64 → 1)
-  3. Relevance score [0.0 – 1.0]
-  4. Diversity filter (MMR — Maximal Marginal Relevance)
+  2. 3-slojni MLP scorer (384  128  64  1)
+  3. Relevance score [0.0  1.0]
+  4. Diversity filter (MMR - Maximal Marginal Relevance)
   5. Quality gate (odbacuje score < 0.3)
 """
 
@@ -25,7 +25,7 @@ BASE_DIR   = Path(__file__).parent.parent
 MODEL_PATH = BASE_DIR / "models" / "neural_filter_weights.npz"
 
 
-# ─── Lightweight MLP (pure numpy, no GPU needed) ─────────────────────────────
+# -- Lightweight MLP (pure numpy, no GPU needed) ----------------------------
 class MLPScorer:
     """
     3-slojni MLP za scoring relevantnosti.
@@ -62,7 +62,7 @@ class MLPScorer:
         return out.flatten()
 
     def update(self, x: np.ndarray, target: float, lr: float = 0.001):
-        """Online learning — ažurira težine na osnovu feedback-a."""
+        """Online learning - azurira tezine na osnovu feedback-a."""
         h1 = self._relu(x @ self.W1 + self.b1)
         h2 = self._relu(h1 @ self.W2 + self.b2)
         out = self._sigmoid(h2 @ self.W3 + self.b3)
@@ -79,7 +79,7 @@ class MLPScorer:
                  W2=self.W2, b2=self.b2, W3=self.W3, b3=self.b3)
 
 
-# ─── Embedding Engine ─────────────────────────────────────────────────────────
+# -- Embedding Engine --------------------------------------------------------
 _embedder = None
 
 def _get_embedder():
@@ -99,14 +99,14 @@ def embed_batch(texts: List[str]) -> np.ndarray:
     return _get_embedder().encode(texts, normalize_embeddings=True, batch_size=32)
 
 
-# ─── MMR Diversity Filter ─────────────────────────────────────────────────────
+# -- MMR Diversity Filter ----------------------------------------------------
 def mmr_select(query_emb: np.ndarray,
                doc_embs: np.ndarray,
                docs: List[dict],
                top_k: int = 5,
                lambda_mmr: float = 0.7) -> List[dict]:
     """
-    Maximal Marginal Relevance — balansira relevantnost i raznovrsnost.
+    Maximal Marginal Relevance - balansira relevantnost i raznovrsnost.
     Vectorized implementation using NumPy.
     """
     if len(docs) == 0:
@@ -141,7 +141,7 @@ def mmr_select(query_emb: np.ndarray,
     return [docs[i] for i in selected_idx]
 
 
-# ─── Main Filter API ──────────────────────────────────────────────────────────
+# -- Main Filter API ----------------------------------------------------------
 _scorer = None
 
 def get_scorer() -> MLPScorer:
@@ -158,13 +158,13 @@ def filter_knowledge(query: str,
                      use_mmr: bool = True,
                      query_emb: Optional[np.ndarray] = None) -> List[Dict]:
     """
-    Glavni filter — prima sirove ChromaDB rezultate,
-    vraća top_k najrelevantnijih i najraznovrsnijih dokumenata.
+    Glavni filter - prima sirove ChromaDB rezultate,
+    vraca top_k najrelevantnijih i najraznovrsnijih dokumenata.
 
     Pipeline:
       1. Embed query + docs (reuse if available)
-      2. MLP scorer → relevance score
-      3. Quality gate (score < threshold → odbaci)
+      2. MLP scorer  relevance score
+      3. Quality gate (score < threshold  odbaci)
       4. MMR diversity filter
       5. Vrati rangirane dokumente sa score-ovima
     """
@@ -228,8 +228,8 @@ def filter_knowledge(query: str,
 
 def feedback_update(query: str, doc_content: str, was_useful: bool):
     """
-    Online learning — agent daje feedback da li je dokument bio koristan.
-    Ažurira MLP težine.
+    Online learning - agent daje feedback da li je dokument bio koristan.
+    Azurira MLP tezine.
     """
     scorer = get_scorer()
     d_emb  = embed(doc_content)

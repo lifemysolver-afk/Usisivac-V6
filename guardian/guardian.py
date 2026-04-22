@@ -1,16 +1,16 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Guardian — QA Auditor & Drift Detector                             ║
-║  Usisivac V6 | Trinity Protocol | JudgeGuard v2.1                   ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Guardian - QA Auditor & Drift Detector                             |
+|  Usisivac V6 | Trinity Protocol | JudgeGuard v2.1                   |
++----------------------------------------------------------------------+
 
 Audit pipeline:
-  1. Semantic drift scoring (0.0 – 1.0, limit: 0.4)
+  1. Semantic drift scoring (0.0  1.0, limit: 0.4)
   2. Artifact integrity verification (SHA-256)
   3. Anti-simulation enforcement
   4. Proof registry validation
   5. Work log audit trail
-  6. Self-healing: ako drift > 0.4, šalje feedback za korekciju
+  6. Self-healing: ako drift > 0.4, salje feedback za korekciju
 """
 
 import sys, json, datetime, hashlib
@@ -34,9 +34,9 @@ AUDIT_LOG = BASE / "logs" / "guardian_audit.jsonl"
 
 def compute_drift_score(action_description: str, project_essence: str) -> float:
     """
-    Izračunava semantički drift score.
+    Izracunava semanticki drift score.
     Koristi embedding cosine similarity + LLM procenu.
-    Score: 0.0 (potpuno usklađen) → 1.0 (potpuno devijiran)
+    Score: 0.0 (potpuno uskladen)  1.0 (potpuno devijiran)
     """
     try:
         from core.neural_filter import embed
@@ -60,7 +60,7 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
 def verify_proof_registry() -> dict:
     """
     Verifikuje sve proof-ove u registru.
-    Provjerava da li su fajlovi još uvek na disku i hash-evi validni.
+    Provjerava da li su fajlovi jos uvek na disku i hash-evi validni.
     """
     log_work(AGENT, "PROOF_VERIFY_START", str(PROOF_REG))
 
@@ -97,7 +97,7 @@ def verify_proof_registry() -> dict:
                     invalid_details.append({
                         "agent": proof.get("agent"),
                         "claim": proof.get("claim"),
-                        "reason": f"Hash mismatch: {stored_hash} → {current_hash}",
+                        "reason": f"Hash mismatch: {stored_hash}  {current_hash}",
                     })
                     continue
 
@@ -170,7 +170,7 @@ def audit_work_log() -> dict:
 def full_audit(pipeline_results: dict) -> dict:
     """
     Kompletan Guardian audit.
-    ANTI-SIM: Stvarno izračunava drift, verifikuje proof-ove, piše audit log.
+    ANTI-SIM: Stvarno izracunava drift, verifikuje proof-ove, pise audit log.
     """
     log_work(AGENT, "FULL_AUDIT_START", "")
     SM.set_status("GUARDIAN_AUDITING", AGENT)
@@ -218,7 +218,7 @@ def full_audit(pipeline_results: dict) -> dict:
         "verdict": "APPROVED" if passed else "REJECTED",
     }
 
-    # Piši audit log
+    # Pisi audit log
     AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
     with open(AUDIT_LOG, "a", encoding="utf-8") as f:
         f.write(json.dumps(audit_record, ensure_ascii=False, default=str) + "\n")
@@ -240,7 +240,7 @@ def full_audit(pipeline_results: dict) -> dict:
 
 def self_heal(audit_result: dict) -> dict:
     """
-    Self-healing: ako audit ne prođe, generiše feedback za korekciju.
+    Self-healing: ako audit ne prode, generise feedback za korekciju.
     """
     if audit_result.get("overall_passed"):
         return {"status": "NO_HEALING_NEEDED"}

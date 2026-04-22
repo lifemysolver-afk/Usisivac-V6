@@ -1,12 +1,12 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  Loop Controller — Autonomous Coding Loop Orchestrator              ║
-║  Usisivac V6 | Gemini Orchestrator Extension                        ║
-║  Anti-Simulation Enforced: All iterations logged to proof_registry  ║
-╚══════════════════════════════════════════════════════════════════════╝
++----------------------------------------------------------------------+
+|  Loop Controller - Autonomous Coding Loop Orchestrator              |
+|  Usisivac V6 | Gemini Orchestrator Extension                        |
+|  Anti-Simulation Enforced: All iterations logged to proof_registry  |
++----------------------------------------------------------------------+
 
 The Loop Controller manages the persistent autonomous coding loop:
-  plan → implement → test → debug → review → commit → reflect → improve
+  plan  implement  test  debug  review  commit  reflect  improve
 
 Each iteration is logged to proof_registry.jsonl with cryptographic hash.
 """
