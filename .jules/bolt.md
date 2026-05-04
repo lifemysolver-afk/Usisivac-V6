@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-05-22 - PR Hygiene and Resource Unification
+**Learning:** Shared heavy resources (like embedding models) must be unified to avoid memory bloat and slow startup. Additionally, PRs must be strictly cleaned of ephemeral artifacts like `chroma_db/`, `logs/`, and `.agent/` state files, which are auto-generated during verification but should never be committed.
+**Action:** Use a standardized cleanup routine (`rm -rf chroma_db logs .agent`) before final submission. Use `@functools.lru_cache` for both heavy models and API clients to ensure singleton behavior across the application.

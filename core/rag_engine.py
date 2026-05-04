@@ -34,6 +34,11 @@ def _client():
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
 @functools.lru_cache(maxsize=1)
+def _get_model():
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer(EMBED_MODEL)
+
+@functools.lru_cache(maxsize=1)
 def _ef():
     from chromadb.utils import embedding_functions
     return embedding_functions.SentenceTransformerEmbeddingFunction(
