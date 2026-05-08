@@ -33,17 +33,19 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        self.db_path = db_path or "/home/ubuntu/Usisivac-V6/chroma_db"
 
-        import chromadb
-        from chromadb.utils import embedding_functions
-        self.client = chromadb.PersistentClient(path=self.db_path)
-        ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
+        # Reuse shared resources from rag_engine
+        from core.rag_engine import _client, _ef, CHROMA_PATH
+
+        if db_path:
+            import chromadb
+            self.client = chromadb.PersistentClient(path=db_path)
+        else:
+            self.client = _client()
+
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
-            embedding_function=ef
+            embedding_function=_ef()
         )
 
     def scan_directory(self, root_dir: str) -> tuple:
