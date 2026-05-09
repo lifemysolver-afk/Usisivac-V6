@@ -31,7 +31,9 @@ class KnowledgeBase:
 
     def __init__(self, db_path: str = None):
         if db_path is None:
-            db_path = str(Path("/home/ubuntu/Usisivac-V6/db/loptica_kb.db"))
+            # Use relative path based on repository root
+            from core.rag_engine import BASE_DIR
+            db_path = str(BASE_DIR / "db" / "loptica_kb.db")
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         self.db_path = db_path
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
