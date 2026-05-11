@@ -2,13 +2,19 @@ import chromadb
 from chromadb.config import Settings
 import os
 import json
+from core.rag_engine import _ef
 from datetime import datetime
 
 class DiscussionEngine:
     def __init__(self, persist_directory="./db/discussion_db"):
         os.makedirs(persist_directory, exist_ok=True)
+        # We reuse only the shared embedding function to save ~700MB RAM
+        # but keep the local PersistentClient to avoid breaking path changes.
         self.client = chromadb.PersistentClient(path=persist_directory)
-        self.collection = self.client.get_or_create_collection(name="discussions")
+        self.collection = self.client.get_or_create_collection(
+            name="discussions",
+            embedding_function=_ef()
+        )
         self.log_path = "logs/discussion_log.jsonl"
         os.makedirs("logs", exist_ok=True)
 
