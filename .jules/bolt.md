@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-05-25 - Unified Shared Resources for Multi-Component RAG
+**Learning:** Embedding model initialization (SentenceTransformer) is extremely slow (~18s). Initializing separate standard ChromaDB `SentenceTransformerEmbeddingFunction` instances in different modules (RAG, Discussion, Ingest) causes massive redundant delays and RAM usage.
+**Action:** Use a centralized, memoized `_get_model()` and a custom `FastSharedEF` in `core/rag_engine.py` that all other modules must reuse. This reduces component initialization from ~10s to ~0.2s.
