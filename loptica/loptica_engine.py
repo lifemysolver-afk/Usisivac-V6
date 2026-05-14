@@ -29,8 +29,9 @@ class LopticaEngine:
     CHECKPOINT_SEQUENCE = [3, 6, 2, 1]  # koraci po fazi
 
     def __init__(self, mission_name: str, state_dir: str = None):
+        from core.rag_engine import BASE_DIR
         self.mission_name = mission_name
-        self.state_dir = Path(state_dir or "/home/ubuntu/Usisivac-V6/logs/loptica_states")
+        self.state_dir = Path(state_dir or BASE_DIR / "logs" / "loptica_states")
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / f"{mission_name}_state.json"
 

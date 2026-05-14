@@ -144,7 +144,8 @@ class LopticaModule:
 
     def brain_ingest(self, root_dir: str = None) -> dict:
         """Masovni ChromaDB ingest iz direktorijuma."""
-        root = root_dir or "/home/ubuntu/Usisivac-V6"
+        from core.rag_engine import BASE_DIR
+        root = root_dir or str(BASE_DIR)
         ingestor = BrainMassIngest()
         result = ingestor.ingest(root)
         self._brain_ingest_done = True
