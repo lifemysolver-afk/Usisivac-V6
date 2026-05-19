@@ -29,15 +29,29 @@ COLLECTIONS = [
 
 # ─── ChromaDB Client ──────────────────────────────────────────────────────────
 @functools.lru_cache(maxsize=1)
+def _get_model():
+    """Shared SentenceTransformer instance to save RAM and boot time."""
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer(EMBED_MODEL)
+
+class FastSharedEF:
+    """Custom ChromaDB EmbeddingFunction that reuses the shared model."""
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        # model.encode returns numpy array, ChromaDB expects list of lists
+        embeddings = _get_model().encode(input, normalize_embeddings=False)
+        return embeddings.tolist()
+
+    def name(self) -> str:
+        return "FastSharedEF"
+
+@functools.lru_cache(maxsize=1)
 def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
 @functools.lru_cache(maxsize=1)
 def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    return FastSharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
