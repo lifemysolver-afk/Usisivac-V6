@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-05-25 - Cross-Module Embedding Model Sharing
+**Learning:** Standard ChromaDB `SentenceTransformerEmbeddingFunction` instances do not share underlying models even if the model name is identical, leading to 700MB RAM overhead and 18s load time per instance. Custom wrappers are required to enforce singleton behavior across a multi-component RAG system.
+**Action:** Use a memoized `_get_model()` provider and a lightweight `EmbeddingFunction` wrapper (e.g., `FastSharedEF`) to unify heavy neural resources across the codebase.
