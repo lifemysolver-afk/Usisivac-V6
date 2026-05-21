@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2026-05-21 - Global Embedding Model Memoization
+**Learning:** Initializing 'all-MiniLM-L6-v2' via SentenceTransformer takes ~18s and consumes ~700MB RAM. Redundant initialization across RAG, Discussion, and Ingest components is a massive bottleneck. Standard ChromaDB EFs re-load models even if parameters match.
+**Action:** Use a centralized, memoized _get_model() and a custom FastSharedEF class to share a single model instance across the entire application process.
