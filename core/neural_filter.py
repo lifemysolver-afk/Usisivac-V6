@@ -80,14 +80,15 @@ class MLPScorer:
 
 
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
-_embedder = None
+@functools.lru_cache(maxsize=1)
+def _get_model():
+    """Shared SentenceTransformer instance across the application."""
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer("all-MiniLM-L6-v2")
+
 
 def _get_embedder():
-    global _embedder
-    if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    return _embedder
+    return _get_model()
 
 
 @functools.lru_cache(maxsize=128)
