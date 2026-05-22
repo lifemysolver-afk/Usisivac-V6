@@ -33,11 +33,27 @@ def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
+
+class FastSharedEF:
+    """
+    Custom ChromaDB Embedding Function that re-uses the shared
+    SentenceTransformer model from neural_filter.
+    Avoids redundant model loads (~18s) and saves ~700MB RAM.
+    """
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        from core.neural_filter import _get_model
+        model = _get_model()
+        # Ensure we return a list of lists (floats)
+        embeddings = model.encode(input, normalize_embeddings=True)
+        return embeddings.tolist()
+
+    def name(self) -> str:
+        return "FastSharedEF"
+
+
 @functools.lru_cache(maxsize=1)
 def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    return FastSharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
