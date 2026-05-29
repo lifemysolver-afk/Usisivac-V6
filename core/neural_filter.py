@@ -80,14 +80,10 @@ class MLPScorer:
 
 
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
-_embedder = None
-
 def _get_embedder():
-    global _embedder
-    if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    return _embedder
+    """Reuse shared model from rag_engine to avoid redundant load (~18s)."""
+    from core.rag_engine import _get_model
+    return _get_model()
 
 
 @functools.lru_cache(maxsize=128)
