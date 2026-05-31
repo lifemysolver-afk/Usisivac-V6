@@ -85,8 +85,8 @@ _embedder = None
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        from core.rag_engine import _get_model
+        _embedder = _get_model()
     return _embedder
 
 
