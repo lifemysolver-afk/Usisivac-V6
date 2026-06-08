@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-06-08 - Memoizing LLM Client Instantiation
+**Learning:** Instantiating LLM clients (Groq, OpenAI, Google GenAI) repeatedly across different agent modules adds ~100-250ms of overhead per call. In a multi-agent system like Usisivac V6, this accumulates to seconds of unnecessary latency.
+**Action:** Use `@functools.lru_cache` to memoize client instances keyed by API key and endpoint. This reduces retrieval overhead from milliseconds to sub-microsecond levels.
