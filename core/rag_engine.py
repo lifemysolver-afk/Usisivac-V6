@@ -34,10 +34,25 @@ def _client():
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
 @functools.lru_cache(maxsize=1)
+def _get_model():
+    """Shared SentenceTransformer model instance."""
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer(EMBED_MODEL)
+
+class FastSharedEF:
+    """Custom ChromaDB EmbeddingFunction that reuses the memoized model."""
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        return _get_model().encode(list(input)).tolist()
+
+    def _get_model(self):
+        return _get_model()
+
+    def name(self) -> str:
+        return "FastSharedEF"
+
+@functools.lru_cache(maxsize=1)
 def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    return FastSharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
