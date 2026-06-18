@@ -82,8 +82,8 @@ class MLPScorer:
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
 def _get_embedder():
     """Bolt: Reusing shared model from rag_engine to save RAM and init time."""
-    from core.rag_engine import get_shared_model
-    return get_shared_model()
+    from core.rag_engine import _ef
+    return _ef()._model
 
 
 @functools.lru_cache(maxsize=128)

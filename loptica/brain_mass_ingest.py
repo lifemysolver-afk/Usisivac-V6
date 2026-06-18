@@ -37,9 +37,9 @@ class BrainMassIngest:
         self.db_path = db_path or str(Path(__file__).parent.parent / "chroma_db")
 
         import chromadb
-        from core.rag_engine import FastSharedEF
+        from core.rag_engine import _ef
         self.client = chromadb.PersistentClient(path=self.db_path)
-        ef = FastSharedEF()
+        ef = _ef()
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
             embedding_function=ef

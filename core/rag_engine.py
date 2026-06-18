@@ -31,39 +31,20 @@ COLLECTIONS = [
 
 # ─── Shared Embedding Engine (Bolt Optimized) ────────────────────────────────
 @functools.lru_cache(maxsize=1)
-def get_shared_model():
-    """Shared SentenceTransformer instance to save RAM and initialization time."""
-    from sentence_transformers import SentenceTransformer
-    logger.info(f"⚡ Loading shared SentenceTransformer: {EMBED_MODEL}")
-    return SentenceTransformer(EMBED_MODEL)
-
-class FastSharedEF:
+def _ef():
     """
-    Custom ChromaDB Embedding Function that reuses the shared model instance.
-    Saves ~700MB RAM and ~15s per additional instance.
+    Shared SentenceTransformer Embedding Function.
+    Memoized to save ~700MB RAM and ~15s startup time per instance.
     """
-    def __init__(self):
-        self._model = get_shared_model()
-
-    def __call__(self, input: List[str]) -> List[List[float]]:
-        # ChromaDB expects a list of embeddings
-        return self._model.encode(input, convert_to_numpy=True).tolist()
-
-    def embed_query(self, query: str) -> List[float]:
-        return self._model.encode([query])[0].tolist()
-
-    def name(self) -> str:
-        return "FastSharedEF"
+    from chromadb.utils import embedding_functions
+    logger.info(f"⚡ Initializing shared embedding function: {EMBED_MODEL}")
+    return embedding_functions.SentenceTransformerEmbeddingFunction(model_name=EMBED_MODEL)
 
 # ─── ChromaDB Client ──────────────────────────────────────────────────────────
 @functools.lru_cache(maxsize=1)
 def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
-
-@functools.lru_cache(maxsize=1)
-def _ef():
-    return FastSharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
