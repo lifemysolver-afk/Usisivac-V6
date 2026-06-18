@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2026-06-18 - Model Singleton and LLM Client Memoization
+**Learning:** Initializing heavy models (like SentenceTransformer) across multiple independent modules consumes massive RAM (~700MB each) and compounds startup latency. Similarly, instantiating LLM clients on every request adds ~35-100ms of unnecessary overhead.
+**Action:** Consolidate heavy model loading into a shared, memoized singleton. Use `@functools.lru_cache` to reuse LLM client instances, reducing retrieval overhead to <1µs.

@@ -12,9 +12,11 @@ Kolekcije:
   domain_specific  — znanje specifično za trenutni problem
 """
 
-import json, datetime, functools
+import json, datetime, functools, logging
 from pathlib import Path
 from typing import List, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR     = Path(__file__).parent.parent
 CHROMA_PATH  = BASE_DIR / "chroma_db"
@@ -27,17 +29,22 @@ COLLECTIONS = [
 ]
 
 
+# ─── Shared Embedding Engine (Bolt Optimized) ────────────────────────────────
+@functools.lru_cache(maxsize=1)
+def _ef():
+    """
+    Shared SentenceTransformer Embedding Function.
+    Memoized to save ~700MB RAM and ~15s startup time per instance.
+    """
+    from chromadb.utils import embedding_functions
+    logger.info(f"⚡ Initializing shared embedding function: {EMBED_MODEL}")
+    return embedding_functions.SentenceTransformerEmbeddingFunction(model_name=EMBED_MODEL)
+
 # ─── ChromaDB Client ──────────────────────────────────────────────────────────
 @functools.lru_cache(maxsize=1)
 def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
-
-@functools.lru_cache(maxsize=1)
-def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
