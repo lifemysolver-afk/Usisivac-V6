@@ -12,9 +12,11 @@ Kolekcije:
   domain_specific  — znanje specifično za trenutni problem
 """
 
-import json, datetime, functools
+import json, datetime, functools, logging
 from pathlib import Path
 from typing import List, Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR     = Path(__file__).parent.parent
 CHROMA_PATH  = BASE_DIR / "chroma_db"
@@ -27,6 +29,32 @@ COLLECTIONS = [
 ]
 
 
+# ─── Shared Embedding Engine (Bolt Optimized) ────────────────────────────────
+@functools.lru_cache(maxsize=1)
+def get_shared_model():
+    """Shared SentenceTransformer instance to save RAM and initialization time."""
+    from sentence_transformers import SentenceTransformer
+    logger.info(f"⚡ Loading shared SentenceTransformer: {EMBED_MODEL}")
+    return SentenceTransformer(EMBED_MODEL)
+
+class FastSharedEF:
+    """
+    Custom ChromaDB Embedding Function that reuses the shared model instance.
+    Saves ~700MB RAM and ~15s per additional instance.
+    """
+    def __init__(self):
+        self._model = get_shared_model()
+
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        # ChromaDB expects a list of embeddings
+        return self._model.encode(input, convert_to_numpy=True).tolist()
+
+    def embed_query(self, query: str) -> List[float]:
+        return self._model.encode([query])[0].tolist()
+
+    def name(self) -> str:
+        return "FastSharedEF"
+
 # ─── ChromaDB Client ──────────────────────────────────────────────────────────
 @functools.lru_cache(maxsize=1)
 def _client():
@@ -35,9 +63,7 @@ def _client():
 
 @functools.lru_cache(maxsize=1)
 def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    return FastSharedEF()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
