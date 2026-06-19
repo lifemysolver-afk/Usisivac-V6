@@ -301,7 +301,7 @@ class HarvesterAnalytics:
 
     def export_snapshot(self, output_path: str = None) -> str:
         if output_path is None:
-            output_path = "/home/ubuntu/Usisivac-V6/db/loptica_snapshot.db"
+            output_path = str(Path(__file__).parent.parent / "db" / "loptica_snapshot.db")
         import shutil
         with sqlite3.connect(output_path) as backup:
             self.kb.conn.backup(backup)
