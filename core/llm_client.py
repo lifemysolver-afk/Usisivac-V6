@@ -8,7 +8,8 @@ Prioritet: configurable preko PRIMARY_LLM.
 Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
-import os, json, time, functools
+import os, json, time
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 import requests
@@ -20,19 +21,19 @@ except Exception:
     pass
 
 
-@functools.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def _get_groq_client(api_key: str):
     from groq import Groq
     return Groq(api_key=api_key)
 
 
-@functools.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def _get_openai_client(api_key: str, base_url: str):
     from openai import OpenAI
     return OpenAI(api_key=api_key, base_url=base_url)
 
 
-@functools.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def _get_gemini_client(api_key: str):
     from google import genai
     return genai.Client(api_key=api_key)
@@ -159,7 +160,7 @@ def call(prompt: str,
                 kwargs = {"prompt": prompt, "system": system}
                 chosen_model = model or os.getenv("PRIMARY_MODEL")
                 if not chosen_model and prov == "gemini":
-                    chosen_model = "gemini-2.5-flash" # Default for Gemini if not specified
+                    chosen_model = "gemini-1.5-flash" # Default for Gemini if not specified
                 if chosen_model:
                     kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)

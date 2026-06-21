@@ -51,7 +51,7 @@ def test_call_sets_default_gemini_model_when_missing(monkeypatch):
         llm_client.PROVIDERS = original
 
     assert result == "ok-gemini"
-    assert calls[0]["model"] == "gemini-2.5-flash"
+    assert calls[0]["model"] == "gemini-1.5-flash"
 
 
 def test_call_uses_huggingface_provider(monkeypatch):
