@@ -34,8 +34,9 @@ def _client():
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
 @functools.lru_cache(maxsize=1)
-def _ef():
+def get_shared_ef():
     from chromadb.utils import embedding_functions
+    # This returns a singleton EF which also holds a singleton SentenceTransformer model
     return embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name=EMBED_MODEL)
 
@@ -45,7 +46,7 @@ def ingest(documents: List[str], metadatas: List[dict],
            ids: List[str], collection: str) -> dict:
     """Stvarni ChromaDB upsert. Nikad ne simulira."""
     try:
-        col = _client().get_or_create_collection(name=collection, embedding_function=_ef())
+        col = _client().get_or_create_collection(name=collection, embedding_function=get_shared_ef())
         col.upsert(documents=documents, metadatas=metadatas, ids=ids)
         return {"ok":True, "upserted":len(documents),
                 "total":col.count(), "collection":collection, "backend":"chromadb"}
@@ -70,7 +71,7 @@ def _json_ingest(documents, metadatas, ids, collection, err) -> dict:
 def query_raw(text: str, collection: str, n: int = 20, query_embeddings: Optional[List[float]] = None) -> List[dict]:
     """Vraća sirove rezultate — neural_filter ih dalje obrađuje."""
     try:
-        col = _client().get_collection(name=collection, embedding_function=_ef())
+        col = _client().get_collection(name=collection, embedding_function=get_shared_ef())
         kwargs = {"n_results": min(n, col.count() or 1), "include": ["documents", "metadatas", "embeddings"]}
         if query_embeddings is not None:
             kwargs["query_embeddings"] = [query_embeddings]
@@ -120,7 +121,7 @@ def stats() -> dict:
     out = {}
     try:
         cli = _client()
-        ef  = _ef()
+        ef  = get_shared_ef()
         for c in COLLECTIONS:
             try:
                 col = cli.get_collection(name=c, embedding_function=ef)
