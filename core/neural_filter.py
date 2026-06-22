@@ -85,8 +85,10 @@ _embedder = None
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        # Optimization: use the shared embedding model from RAG engine
+        # This saves ~18s load time and ~700MB RAM
+        from core.rag_engine import get_shared_ef
+        _embedder = get_shared_ef()._model
     return _embedder
 
 

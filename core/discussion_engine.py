@@ -6,9 +6,13 @@ from datetime import datetime
 
 class DiscussionEngine:
     def __init__(self, persist_directory="./db/discussion_db"):
+        from core.rag_engine import get_shared_ef
         os.makedirs(persist_directory, exist_ok=True)
         self.client = chromadb.PersistentClient(path=persist_directory)
-        self.collection = self.client.get_or_create_collection(name="discussions")
+        self.collection = self.client.get_or_create_collection(
+            name="discussions",
+            embedding_function=get_shared_ef()
+        )
         self.log_path = "logs/discussion_log.jsonl"
         os.makedirs("logs", exist_ok=True)
 
