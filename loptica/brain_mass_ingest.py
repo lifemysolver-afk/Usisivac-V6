@@ -33,14 +33,12 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        self.db_path = db_path or "/home/ubuntu/Usisivac-V6/chroma_db"
+        self.db_path = db_path or str(Path(__file__).parent.parent / "chroma_db")
 
         import chromadb
-        from chromadb.utils import embedding_functions
+        from core.rag_engine import get_embedding_function
         self.client = chromadb.PersistentClient(path=self.db_path)
-        ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
+        ef = get_embedding_function()
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
             embedding_function=ef
