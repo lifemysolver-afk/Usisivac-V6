@@ -7,8 +7,17 @@ from datetime import datetime
 class DiscussionEngine:
     def __init__(self, persist_directory="./db/discussion_db"):
         os.makedirs(persist_directory, exist_ok=True)
+        from core.rag_engine import get_embedding_function
         self.client = chromadb.PersistentClient(path=persist_directory)
-        self.collection = self.client.get_or_create_collection(name="discussions")
+        try:
+            self.collection = self.client.get_or_create_collection(
+                name="discussions",
+                embedding_function=get_embedding_function()
+            )
+        except ValueError:
+            # Handle conflict if collection exists with different EF (e.g. 'default')
+            # Fallback to existing collection without overriding EF to avoid data loss.
+            self.collection = self.client.get_collection(name="discussions")
         self.log_path = "logs/discussion_log.jsonl"
         os.makedirs("logs", exist_ok=True)
 
