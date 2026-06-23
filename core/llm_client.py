@@ -147,7 +147,7 @@ def call(prompt: str,
                 kwargs = {"prompt": prompt, "system": system}
                 chosen_model = model or os.getenv("PRIMARY_MODEL")
                 if not chosen_model and prov == "gemini":
-                    chosen_model = "gemini-2.5-flash" # Default for Gemini if not specified
+                    chosen_model = "gemini-2.0-flash" # Default for Gemini if not specified
                 if chosen_model:
                     kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)
