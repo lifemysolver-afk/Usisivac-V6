@@ -30,7 +30,8 @@ class LopticaEngine:
 
     def __init__(self, mission_name: str, state_dir: str = None):
         self.mission_name = mission_name
-        self.state_dir = Path(state_dir or "/home/ubuntu/Usisivac-V6/logs/loptica_states")
+        base_dir = Path(__file__).parent.parent
+        self.state_dir = Path(state_dir or base_dir / "logs" / "loptica_states")
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / f"{mission_name}_state.json"
 
