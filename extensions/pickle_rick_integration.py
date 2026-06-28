@@ -43,7 +43,8 @@ class PickleRickIntegration:
         Args:
             extension_root: Root directory of pickle-rick-extension
         """
-        self.extension_root = extension_root or "/home/ubuntu/pickle-rick-extension"
+        default_root = str(BASE.parent / "pickle-rick-extension")
+        self.extension_root = extension_root or default_root
         self.extension_path = Path(self.extension_root)
         
         if not self.extension_path.exists():
