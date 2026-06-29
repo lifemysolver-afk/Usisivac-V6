@@ -14,6 +14,22 @@ from typing import Optional
 from functools import lru_cache
 import requests
 
+# Conditional imports for LLM SDKs
+try:
+    from groq import Groq
+except ImportError:
+    Groq = None
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
+
+try:
+    from google import genai
+except ImportError:
+    genai = None
+
 try:
     from dotenv import load_dotenv
     load_dotenv(Path(__file__).parent.parent / ".env")
@@ -27,17 +43,20 @@ except Exception:
 
 @lru_cache(maxsize=10)
 def _get_groq_client(api_key: str):
-    from groq import Groq
+    if Groq is None:
+        raise ImportError("groq package not installed")
     return Groq(api_key=api_key)
 
 @lru_cache(maxsize=10)
 def _get_openai_client(api_key: str, base_url: str):
-    from openai import OpenAI
+    if OpenAI is None:
+        raise ImportError("openai package not installed")
     return OpenAI(api_key=api_key, base_url=base_url)
 
 @lru_cache(maxsize=10)
 def _get_gemini_client(api_key: str):
-    from google import genai
+    if genai is None:
+        raise ImportError("google-genai package not installed")
     return genai.Client(api_key=api_key)
 
 
@@ -163,7 +182,7 @@ def call(prompt: str,
                 kwargs = {"prompt": prompt, "system": system}
                 chosen_model = model or os.getenv("PRIMARY_MODEL")
                 if not chosen_model and prov == "gemini":
-                    chosen_model = "gemini-2.5-flash" # Default for Gemini if not specified
+                    chosen_model = "gemini-2.0-flash" # Default for Gemini if not specified
                 if chosen_model:
                     kwargs["model"] = chosen_model
                 return cfg["call"](**kwargs)

@@ -10,7 +10,7 @@ import json, re
 from pathlib import Path
 from collections import Counter
 
-base_dir = Path(__file__).parent.parent
+base_dir = Path(__file__).resolve().parent.parent
 nb_path = base_dir / "data" / "Loptica.ipynb"
 with open(nb_path) as f:
     nb = json.load(f)

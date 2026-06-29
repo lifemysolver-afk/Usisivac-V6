@@ -33,7 +33,7 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        base_dir = Path(__file__).parent.parent
+        base_dir = Path(__file__).resolve().parent.parent
         self.db_path = db_path or str(base_dir / "chroma_db")
 
         import chromadb

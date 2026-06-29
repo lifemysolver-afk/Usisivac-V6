@@ -31,7 +31,7 @@ class LopticaEngine:
     def __init__(self, mission_name: str, state_dir: str = None):
         self.mission_name = mission_name
         # Use relative path instead of hardcoded /home/ubuntu/ for CI compatibility
-        base_dir = Path(__file__).parent.parent
+        base_dir = Path(__file__).resolve().parent.parent
         self.state_dir = Path(state_dir or base_dir / "logs" / "loptica_states")
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / f"{mission_name}_state.json"
