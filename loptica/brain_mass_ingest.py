@@ -33,7 +33,8 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        self.db_path = db_path or "/home/ubuntu/Usisivac-V6/chroma_db"
+        # ⚡ Bolt: Use relative path for portability
+        self.db_path = db_path or str(Path(__file__).resolve().parent.parent / "chroma_db")
 
         import chromadb
         from chromadb.utils import embedding_functions

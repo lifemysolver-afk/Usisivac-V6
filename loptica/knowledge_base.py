@@ -31,7 +31,8 @@ class KnowledgeBase:
 
     def __init__(self, db_path: str = None):
         if db_path is None:
-            db_path = str(Path("/home/ubuntu/Usisivac-V6/db/loptica_kb.db"))
+            # ⚡ Bolt: Use relative path for portability
+            db_path = str(Path(__file__).resolve().parent.parent / "db" / "loptica_kb.db")
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         self.db_path = db_path
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
@@ -301,7 +302,8 @@ class HarvesterAnalytics:
 
     def export_snapshot(self, output_path: str = None) -> str:
         if output_path is None:
-            output_path = "/home/ubuntu/Usisivac-V6/db/loptica_snapshot.db"
+            # ⚡ Bolt: Use relative path for portability
+            output_path = str(Path(__file__).resolve().parent.parent / "db" / "loptica_snapshot.db")
         import shutil
         with sqlite3.connect(output_path) as backup:
             self.kb.conn.backup(backup)
