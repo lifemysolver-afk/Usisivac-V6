@@ -144,8 +144,8 @@ class LopticaModule:
 
     def brain_ingest(self, root_dir: str = None) -> dict:
         """Masovni ChromaDB ingest iz direktorijuma."""
-        # ⚡ Bolt: Use relative path for portability
-        root = root_dir or Path(__file__).parent.parent
+        # ⚡ Bolt: Use relative path for portability (ensure string for json.dumps)
+        root = root_dir or str(Path(__file__).resolve().parent.parent)
         ingestor = BrainMassIngest()
         result = ingestor.ingest(root)
         self._brain_ingest_done = True

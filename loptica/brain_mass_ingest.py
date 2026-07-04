@@ -34,7 +34,7 @@ class BrainMassIngest:
                  db_path: str = None):
         self.collection_name = collection_name
         # ⚡ Bolt: Use relative path for portability
-        self.db_path = db_path or str(Path(__file__).parent.parent / "chroma_db")
+        self.db_path = db_path or str(Path(__file__).resolve().parent.parent / "chroma_db")
 
         import chromadb
         from chromadb.utils import embedding_functions
