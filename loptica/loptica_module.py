@@ -148,14 +148,14 @@ class LopticaModule:
         ingestor = BrainMassIngest()
         result = ingestor.ingest(root)
         self._brain_ingest_done = True
-        log_work(AGENT, "BRAIN_INGEST", json.dumps(result))
+        log_work(AGENT, "BRAIN_INGEST", json.dumps(result, default=str))
         return result
 
     def log_competition_result(self, competition: str, rank: int,
                                techniques_used: list) -> dict:
         """Loguje rezultat takmičenja i prilagođava confidence."""
         result = self.tracker.log_result(competition, rank, techniques_used)
-        log_work(AGENT, "FEEDBACK_LOGGED", json.dumps(result))
+        log_work(AGENT, "FEEDBACK_LOGGED", json.dumps(result, default=str))
         return result
 
     def get_best_techniques(self, domain: str = None,
