@@ -7,7 +7,7 @@ def test_call_uses_only_primary_provider_when_enabled(monkeypatch):
     monkeypatch.setenv("ONLY_PRIMARY_LLM", "true")
     monkeypatch.setenv("PRIMARY_LLM", "gemini")
     monkeypatch.setenv("GEMINI_KEY_1", "dummy-key")
-    monkeypatch.setenv("PRIMARY_MODEL", "gemini-2.5-flash")
+    monkeypatch.setenv("PRIMARY_MODEL", "gemini-2.0-flash")
 
     original = llm_client.PROVIDERS
     llm_client.PROVIDERS = {
@@ -27,7 +27,7 @@ def test_call_uses_only_primary_provider_when_enabled(monkeypatch):
 
     assert result == "ok-gemini"
     assert len(calls) == 1
-    assert calls[0]["model"] == "gemini-2.5-flash"
+    assert calls[0]["model"] == "gemini-2.0-flash"
 
 
 def test_call_sets_default_gemini_model_when_missing(monkeypatch):
@@ -51,7 +51,7 @@ def test_call_sets_default_gemini_model_when_missing(monkeypatch):
         llm_client.PROVIDERS = original
 
     assert result == "ok-gemini"
-    assert calls[0]["model"] == "gemini-2.5-flash"
+    assert calls[0]["model"] == "gemini-2.0-flash"
 
 
 def test_call_uses_huggingface_provider(monkeypatch):
