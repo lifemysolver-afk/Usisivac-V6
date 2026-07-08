@@ -1,0 +1,109 @@
+{
+  "version": "V6",
+  "protocol": "Trinity Protocol",
+  "global_status": "GUARDIAN_AUDITING",
+  "project": "test_project",
+  "goal": "test goal",
+  "domain": "universal",
+  "current_phase": null,
+  "current_agent": "Guardian",
+  "loop_iteration": 0,
+  "max_iterations": 100,
+  "created_at": "2026-07-08T17:32:13.706688",
+  "updated_at": "2026-07-08T17:32:22.323445",
+  "phases": {},
+  "checklist": [],
+  "agent_outputs": {
+    "ResearchAgent": {
+      "data": {
+        "query": "feature engineering best practices",
+        "results_count": 0
+      },
+      "ts": "2026-07-08T17:32:21.085081"
+    },
+    "CriticAgent": {
+      "data": {
+        "status": "CRITIQUE_DONE",
+        "issues": [
+          "CRITICAL: Plan nema strategiju validacije"
+        ],
+        "warnings": [
+          "WARNING: Plan nema baseline model",
+          "WARNING: Plan ne pominje provjeru data leakage-a"
+        ],
+        "pass": false
+      },
+      "ts": "2026-07-08T17:32:21.091721"
+    },
+    "Guardian": {
+      "data": {
+        "timestamp": "2026-07-08T17:32:22.315356",
+        "drift_score": 0.0,
+        "drift_per_agent": {},
+        "drift_threshold": 0.4,
+        "drift_passed": true,
+        "proof_verification": {
+          "status": "VERIFIED",
+          "total": 4,
+          "valid": 2,
+          "invalid": 2,
+          "invalid_details": [
+            {
+              "agent": "TestAgent",
+              "claim": "test claim",
+              "reason": "INGEST_COUNT_ZERO"
+            },
+            {
+              "agent": "ResearchAgent",
+              "claim": "Universal knowledge ingested",
+              "reason": "INGEST_COUNT_ZERO"
+            }
+          ]
+        },
+        "artifact_verification": {
+          "status": "VERIFIED",
+          "found": [],
+          "missing": [],
+          "all_present": true
+        },
+        "work_log_audit": {
+          "status": "AUDITED",
+          "entries": 17,
+          "anti_sim_blocks": 1,
+          "errors": 0,
+          "health": "NEEDS_ATTENTION"
+        },
+        "overall_passed": false,
+        "verdict": "REJECTED",
+        "proof": {
+          "timestamp": "2026-07-08T17:32:22.315787",
+          "agent": "Guardian",
+          "claim": "Full audit: REJECTED",
+          "proof_valid": true,
+          "proofs": {
+            "artifact_hash": "eb497dc90a2b2288"
+          },
+          "blocked_reason": null
+        }
+      },
+      "ts": "2026-07-08T17:32:22.316113"
+    }
+  },
+  "proof_hashes": {},
+  "drift_scores": {
+    "TestAgent": {
+      "score": 0.25,
+      "passed": true,
+      "ts": "2026-07-08T17:32:13.707894"
+    }
+  },
+  "relay_messages": [
+    {
+      "from": "gemini",
+      "to": "claude",
+      "message": "Test message from test suite",
+      "ts": "2026-07-08T17:32:22.323434"
+    }
+  ],
+  "knowledge_stats": {}
+}

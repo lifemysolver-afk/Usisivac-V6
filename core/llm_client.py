@@ -8,7 +8,7 @@ Prioritet: configurable preko PRIMARY_LLM.
 Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
-import os, json, time
+import os, json, time, threading
 from pathlib import Path
 from typing import Optional
 from functools import lru_cache
@@ -45,12 +45,15 @@ def _get_gemini_client(api_key: str):
 
 
 _hf_session = None
+_hf_lock = threading.Lock()
 
 def _get_hf_session():
-    """Returns a shared requests.Session for connection pooling."""
+    """Returns a shared requests.Session for connection pooling (thread-safe)."""
     global _hf_session
     if _hf_session is None:
-        _hf_session = requests.Session()
+        with _hf_lock:
+            if _hf_session is None:
+                _hf_session = requests.Session()
     return _hf_session
 
 
