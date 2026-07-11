@@ -45,7 +45,8 @@ def write(state: dict):
     with _lock:
         state["updated_at"] = datetime.datetime.now().isoformat()
         STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+        # Use default=str to handle Path objects during serialization
+        STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False, default=str))
 
 
 def init(project: str, goal: str, domain: str = "universal") -> dict:

@@ -30,7 +30,7 @@ class LopticaEngine:
 
     def __init__(self, mission_name: str, state_dir: str = None):
         self.mission_name = mission_name
-        self.state_dir = Path(state_dir or "/home/ubuntu/Usisivac-V6/logs/loptica_states")
+        self.state_dir = Path(state_dir or str(Path(__file__).resolve().parent.parent / "logs" / "loptica_states"))
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.state_file = self.state_dir / f"{mission_name}_state.json"
 
@@ -66,7 +66,7 @@ class LopticaEngine:
             "updated_at": datetime.now().isoformat()
         }
         with open(self.state_file, "w") as f:
-            json.dump(state, f, indent=2)
+            json.dump(state, f, indent=2, default=str)
 
     # ── Phase Control ────────────────────────────────────────────────────────
 
