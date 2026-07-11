@@ -66,7 +66,7 @@ class LopticaEngine:
             "updated_at": datetime.now().isoformat()
         }
         with open(self.state_file, "w") as f:
-            json.dump(state, f, indent=2)
+            json.dump(state, f, indent=2, default=str)
 
     # ── Phase Control ────────────────────────────────────────────────────────
 

@@ -8,7 +8,7 @@ Prioritet: configurable preko PRIMARY_LLM.
 Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
-import os, json, time, functools
+import os, json, time, functools, threading
 from pathlib import Path
 from typing import Optional
 import requests
@@ -19,9 +19,18 @@ try:
 except Exception:
     pass
 
-# Shared session for Hugging Face and other raw requests
-# Saves ~10-50ms per call by reusing TCP/TLS connections
-_session = requests.Session()
+# Thread-safe session management
+_session = None
+_session_lock = threading.Lock()
+
+def _get_session():
+    """Lazy-initializes a shared requests.Session for connection pooling."""
+    global _session
+    if _session is None:
+        with _session_lock:
+            if _session is None:
+                _session = requests.Session()
+    return _session
 
 # ─── Memoized Client Helpers ──────────────────────────────────────────────────
 
@@ -115,7 +124,7 @@ def _call_huggingface(prompt: str, model: str = "HuggingFaceH4/zephyr-7b-beta", 
         "parameters": {"max_new_tokens": 4096}
     }
     # Using shared session for connection pooling
-    response = _session.post(API_URL, headers=headers, json=payload)
+    response = _get_session().post(API_URL, headers=headers, json=payload)
     response.raise_for_status()
     return response.json()[0]["generated_text"]
 

@@ -238,6 +238,12 @@ class PickleRickIntegration:
             "completion_promise": completion_promise,
             "started_at": datetime.datetime.utcnow().isoformat()
         }
+        # Scrub potential absolute paths from state if they contain home dir
+        home_str = str(Path.home())
+        if home_str in state["working_dir"]:
+            state["working_dir"] = state["working_dir"].replace(home_str, "~")
+        if home_str in state["session_dir"]:
+            state["session_dir"] = state["session_dir"].replace(home_str, "~")
         
         state_file = session_dir / "state.json"
         with open(state_file, "w") as f:
