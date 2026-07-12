@@ -71,7 +71,7 @@ The `pickle_rick_integration.py` module was executed to create a test session. T
     "state_file": "/home/ubuntu/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c/state.json",
     "state": {
       "active": true,
-      "working_dir": "/home/ubuntu/Usisivac-V6",
+      "working_dir": "./",
       "step": "prd",
       "iteration": 1,
       "max_iterations": 3,
