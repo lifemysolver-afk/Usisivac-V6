@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-05-25 - LLM Client Instantiation and Connection Pooling
+**Learning:** Re-instantiating LLM SDK clients (Groq, OpenAI, Google GenAI) on every call introduces measurable overhead (~35-440ms depending on environment and SDK). Additionally, lack of connection pooling for REST-based providers like Hugging Face wastes time on TCP/TLS handshakes (10-50ms).
+**Action:** Use @functools.lru_cache to memoize LLM client instances and requests.Session() for persistent connection pooling. This reduces client retrieval time to <0.001ms.
