@@ -71,7 +71,7 @@ A test script was executed to verify the integration of the autonomous loop into
 ubuntu@sandbox:~ $ python3 -c "
 import sys
 from pathlib import Path
-BASE = Path(\'/home/ubuntu/Usisivac-V6\')
+BASE = Path(\'./\')
 sys.path.insert(0, str(BASE))
 
 from loptica.loptica_module import LopticaModule
