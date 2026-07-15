@@ -20,7 +20,7 @@ Analysis of the `package.json` file indicated a Node.js/TypeScript project with 
 
 *   `extension/src/services/pickle-utils.ts`: Contains utility functions for text formatting, shell command execution (`run_cmd`, `spawn_cmd`), and session root directory retrieval.
 *   `extension/src/services/session-state.ts`: Manages the persistence and retrieval of session states, including active status, working directory, iteration count, and original prompt.
-*   `extension/src/bin/spawn-rick.ts`: The main entry point for initiating a new Pickle Rick session, responsible for setting up the session directory and initial state.
+*   `extension/src./bin/spawn-rick.ts`: The main entry point for initiating a new Pickle Rick session, responsible for setting up the session directory and initial state.
 
 The core concept of the Pickle Rick extension is to create a self-referential feedback loop using a `AfterAgent` hook that intercepts Gemini's exit attempts, feeding the same prompt back until a completion promise is fulfilled or limits are reached.
 
