@@ -6,7 +6,7 @@ This report details the successful cloning, analysis, and integration of the `pi
 
 ## 2. Repository Cloning and Inspection
 
-The repository was successfully cloned to `/home/ubuntu/pickle-rick-extension`. Initial inspection revealed a TypeScript project structure with `package.json` for dependency management and `src` directory containing the core logic.
+The repository was successfully cloned to `~/pickle-rick-extension`. Initial inspection revealed a TypeScript project structure with `package.json` for dependency management and `src` directory containing the core logic.
 
 ```bash
 ubuntu@sandbox:~ $ gh repo clone kizabgd123/pickle-rick-extension
@@ -20,7 +20,7 @@ Analysis of the `package.json` file indicated a Node.js/TypeScript project with 
 
 *   `extension/src/services/pickle-utils.ts`: Contains utility functions for text formatting, shell command execution (`run_cmd`, `spawn_cmd`), and session root directory retrieval.
 *   `extension/src/services/session-state.ts`: Manages the persistence and retrieval of session states, including active status, working directory, iteration count, and original prompt.
-*   `extension/src/bin/spawn-rick.ts`: The main entry point for initiating a new Pickle Rick session, responsible for setting up the session directory and initial state.
+*   `extension/src./bin/spawn-rick.ts`: The main entry point for initiating a new Pickle Rick session, responsible for setting up the session directory and initial state.
 
 The core concept of the Pickle Rick extension is to create a self-referential feedback loop using a `AfterAgent` hook that intercepts Gemini's exit attempts, feeding the same prompt back until a completion promise is fulfilled or limits are reached.
 
@@ -31,9 +31,9 @@ The core concept of the Pickle Rick extension is to create a self-referential fe
 Node.js dependencies were installed using `npm` and the TypeScript project was built successfully.
 
 ```bash
-ubuntu@sandbox:~ $ cd /home/ubuntu/pickle-rick-extension/extension && npm install
+ubuntu@sandbox:~ $ cd ~/pickle-rick-extension/extension && npm install
 ...
-ubuntu@sandbox:~ $ cd /home/ubuntu/pickle-rick-extension/extension && npm run build
+ubuntu@sandbox:~ $ cd ~/pickle-rick-extension/extension && npm run build
 ...
 ```
 
@@ -42,7 +42,7 @@ ubuntu@sandbox:~ $ cd /home/ubuntu/pickle-rick-extension/extension && npm run bu
 The provided test suite for the `pickle-rick-extension` was executed, and all tests passed, confirming the integrity and functionality of the extension.
 
 ```bash
-ubuntu@sandbox:~ $ cd /home/ubuntu/pickle-rick-extension/extension && npm test
+ubuntu@sandbox:~ $ cd ~/pickle-rick-extension/extension && npm test
 ...
  Test Files  11 passed (11)
       Tests  34 passed (34)
@@ -67,18 +67,18 @@ The `pickle_rick_integration.py` module was executed to create a test session. T
   "status": "success",
   "session": {
     "session_id": "2026-04-12-c022093c",
-    "session_dir": "/home/ubuntu/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c",
-    "state_file": "/home/ubuntu/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c/state.json",
+    "session_dir": "~/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c",
+    "state_file": "~/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c/state.json",
     "state": {
       "active": true,
-      "working_dir": "/home/ubuntu/Usisivac-V6",
+      "working_dir": "./",
       "step": "prd",
       "iteration": 1,
       "max_iterations": 3,
       "max_time_minutes": 30,
       "start_time_epoch": 1776023868,
       "original_prompt": "Test Pickle Rick integration with Usisivac V6",
-      "session_dir": "/home/ubuntu/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c",
+      "session_dir": "~/pickle-rick-extension/.gemini/extensions/pickle-rick/sessions/2026-04-12-c022093c",
       "completion_promise": null,
       "started_at": "2026-04-12T19:57:48.818500"
     }
