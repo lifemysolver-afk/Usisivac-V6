@@ -12,7 +12,7 @@ The autonomous coding loop operates on a persistent, iterative cycle: **plan →
 
 The following diagram illustrates the flow of the autonomous coding loop:
 
-![Autonomous Coding Loop Flow](/app/docs/autonomous_coding_loop_flow.png)
+![Autonomous Coding Loop Flow](./docs/autonomous_coding_loop_flow.png)
 
 ### 2.2. Key Components and Agents
 
@@ -56,12 +56,12 @@ All actions within the autonomous coding loop are subject to the Trinity Protoco
 
 ### 4.1. Implemented Components
 
-*   **Loop Controller**: `/app/orchestrator/loop_controller.py`
-*   **Reflection Agent**: `/app/agents/reflection_agent.py`
-*   **Autonomous Loop Manager**: `/app/orchestrator/autonomous_loop.py`
-*   **LopticaModule Integration**: `/app/loptica/loptica_module.py` (added `_phase_autonomous_loop` and updated `run_mission`)
-*   **LopticaEngine Update**: `/app/loptica/loptica_engine.py` (added `AUTONOMOUS_LOOP` to `PHASES`)
-*   **Anti-Simulation Logging**: `/app/core/anti_simulation.py` (added `log_proof` convenience function)
+*   **Loop Controller**: `./orchestrator/loop_controller.py`
+*   **Reflection Agent**: `./agents/reflection_agent.py`
+*   **Autonomous Loop Manager**: `./orchestrator/autonomous_loop.py`
+*   **LopticaModule Integration**: `./loptica/loptica_module.py` (added `_phase_autonomous_loop` and updated `run_mission`)
+*   **LopticaEngine Update**: `./loptica/loptica_engine.py` (added `AUTONOMOUS_LOOP` to `PHASES`)
+*   **Anti-Simulation Logging**: `./core/anti_simulation.py` (added `log_proof` convenience function)
 
 ### 4.2. Verification Test
 
@@ -71,7 +71,7 @@ A test script was executed to verify the integration of the autonomous loop into
 ubuntu@sandbox:~ $ python3 -c "
 import sys
 from pathlib import Path
-BASE = Path(\'/app\')
+BASE = Path(\'.\')
 sys.path.insert(0, str(BASE))
 
 from loptica.loptica_module import LopticaModule
