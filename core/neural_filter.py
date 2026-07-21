@@ -85,8 +85,14 @@ _embedder = None
 def _get_embedder():
     global _embedder
     if _embedder is None:
+        import os
         from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        hf_token = os.environ.pop("HF_TOKEN", None)
+        try:
+            _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        finally:
+            if hf_token is not None:
+                os.environ["HF_TOKEN"] = hf_token
     return _embedder
 
 
