@@ -73,14 +73,15 @@ class VetoBoard:
                     reasonings[persona] = reasoning
                 except Exception as e:
                     votes[persona] = "PASS"
-                    reasonings[persona] = f"Thread error (defaulting PASS): {e}"
+                    reasonings[persona] = f"Thread error: {e}"
 
         # 3. LEGAL veto check (iz LLM odgovora) - mora biti prioritet
         if votes.get("LEGAL") == "VETO":
             return {
                 "verdict": "VETO",
-                "reason": f"LEGAL VETO: {reasonings.get('LEGAL', 'No reason provided')}",
+                "reason": f"LEGAL VETO: {reasonings.get('LEGAL')}",
                 "votes": votes,
+                "reasonings": reasonings,
                 "quorum_reached": False
             }
 
