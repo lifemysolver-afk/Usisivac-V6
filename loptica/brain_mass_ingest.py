@@ -38,9 +38,15 @@ class BrainMassIngest:
         import chromadb
         from chromadb.utils import embedding_functions
         self.client = chromadb.PersistentClient(path=self.db_path)
-        ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
+        import os
+        token = os.environ.pop("HF_TOKEN", None)
+        try:
+            ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name="all-MiniLM-L6-v2"
+            )
+        finally:
+            if token is not None:
+                os.environ["HF_TOKEN"] = token
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
             embedding_function=ef
