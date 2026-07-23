@@ -8,10 +8,45 @@ Prioritet: configurable preko PRIMARY_LLM.
 Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
-import os, json, time
+import os, json, time, functools, threading
 from pathlib import Path
 from typing import Optional
 import requests
+
+# ─── Thread-Safe Connection Pool for Hugging Face Inference API ───────────────
+_session_lock = threading.Lock()
+_hf_session = None
+
+def _get_hf_session() -> requests.Session:
+    global _hf_session
+    if _hf_session is None:
+        with _session_lock:
+            if _hf_session is None:
+                session = requests.Session()
+                # Enable connection pooling to reuse keep-alive TCP connections
+                adapter = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=50)
+                session.mount("https://", adapter)
+                _hf_session = session
+    return _hf_session
+
+
+# ─── Memoized LLM Client Instantiations to Minimize Latency ───────────────────
+@functools.lru_cache(maxsize=10)
+def _get_groq_client(api_key: str):
+    from groq import Groq
+    return Groq(api_key=api_key)
+
+
+@functools.lru_cache(maxsize=10)
+def _get_openai_client(api_key: str, base_url: Optional[str] = None):
+    from openai import OpenAI
+    return OpenAI(api_key=api_key, base_url=base_url)
+
+
+@functools.lru_cache(maxsize=10)
+def _get_gemini_client(api_key: str):
+    from google import genai
+    return genai.Client(api_key=api_key)
 
 try:
     from dotenv import load_dotenv
@@ -21,8 +56,7 @@ except Exception:
 
 
 def _call_groq(prompt: str, model: str = "llama-3.3-70b-versatile", system: str = "") -> str:
-    from groq import Groq
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    client = _get_groq_client(os.getenv("GROQ_API_KEY"))
     msgs = []
     if system:
         msgs.append({"role": "system", "content": system})
@@ -32,8 +66,7 @@ def _call_groq(prompt: str, model: str = "llama-3.3-70b-versatile", system: str 
 
 
 def _call_mistral(prompt: str, model: str = "mistral-small-latest", system: str = "") -> str:
-    from openai import OpenAI
-    client = OpenAI(
+    client = _get_openai_client(
         api_key=os.getenv("MISTRAL_API_KEY"),
         base_url="https://api.mistral.ai/v1"
     )
@@ -47,8 +80,6 @@ def _call_mistral(prompt: str, model: str = "mistral-small-latest", system: str 
 
 def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "") -> str:
     """Uses new google-genai SDK with key rotation."""
-    from google import genai
-    
     # Try all available Gemini keys
     keys = []
     for i in range(1, 5):
@@ -63,7 +94,7 @@ def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "")
     
     for key in keys:
         try:
-            client = genai.Client(api_key=key)
+            client = _get_gemini_client(api_key=key)
             resp = client.models.generate_content(model=model, contents=full_prompt)
             return resp.text
         except Exception:
@@ -73,11 +104,10 @@ def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "")
 
 
 def _call_openrouter(prompt: str, model: str = "mistralai/mistral-7b-instruct:free", system: str = "") -> str:
-    from openai import OpenAI
     key = os.getenv("OPENROUTER_API_KEY", "")
     if "\\n" in key:
         key = key.split("\\n")[0]
-    client = OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1")
+    client = _get_openai_client(api_key=key, base_url="https://openrouter.ai/api/v1")
     msgs = []
     if system:
         msgs.append({"role": "system", "content": system})
@@ -98,7 +128,7 @@ def _call_huggingface(prompt: str, model: str = "HuggingFaceH4/zephyr-7b-beta", 
         "inputs": f"{system}\n\n{prompt}",
         "parameters": {"max_new_tokens": 4096}
     }
-    response = requests.post(API_URL, headers=headers, json=payload)
+    response = _get_hf_session().post(API_URL, headers=headers, json=payload)
     response.raise_for_status()
     return response.json()[0]["generated_text"]
 
