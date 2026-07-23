@@ -33,14 +33,25 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        self.db_path = db_path or "/home/ubuntu/Usisivac-V6/chroma_db"
+        self.db_path = db_path or str(Path(__file__).resolve().parent.parent / "chroma_db")
 
-        import chromadb
-        from chromadb.utils import embedding_functions
-        self.client = chromadb.PersistentClient(path=self.db_path)
-        ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
+        import os
+        # Temporarily remove HF tokens to prevent 401 on downloading sentence-transformers model
+        hf_token = os.environ.pop("HF_TOKEN", None)
+        hf_api_key = os.environ.pop("HF_API_KEY", None)
+        try:
+            import chromadb
+            from chromadb.utils import embedding_functions
+            self.client = chromadb.PersistentClient(path=self.db_path)
+            ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name="all-MiniLM-L6-v2"
+            )
+        finally:
+            if hf_token is not None:
+                os.environ["HF_TOKEN"] = hf_token
+            if hf_api_key is not None:
+                os.environ["HF_API_KEY"] = hf_api_key
+
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
             embedding_function=ef
