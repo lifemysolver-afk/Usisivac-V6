@@ -1,8 +1,16 @@
+# Usisivac V6
+.env
 __pycache__/
 *.pyc
-.agent/
 chroma_db/
+models/*.npz
+*.egg-info/
+dist/
+build/
+.agent/
 logs/
 src/generated/
 .pytest_cache/
 catboost_info/
+data/
+notebooks/.ipynb_checkpoints/
