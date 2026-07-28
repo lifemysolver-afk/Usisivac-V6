@@ -77,7 +77,10 @@ models/*.npz
 dist/
 build/
 .agent/
-logs/*.jsonl
+logs/
+src/generated/
+.pytest_cache/
+catboost_info/
 data/
 notebooks/.ipynb_checkpoints/
 """
