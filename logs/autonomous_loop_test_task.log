@@ -1,11 +1,11 @@
-{"timestamp": "2026-07-31T17:12:26.699717", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
-{"timestamp": "2026-07-31T17:12:26.700142", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 1", "data": {"iteration_id": "iter_1"}}
-{"timestamp": "2026-07-31T17:12:26.700227", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_1"}}
-{"timestamp": "2026-07-31T17:12:26.700289", "level": "INFO", "task_id": "test_task", "message": "Tests passed, proceeding to review.", "data": {"iteration_id": "iter_1"}}
-{"timestamp": "2026-07-31T17:12:26.702256", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
-{"timestamp": "2026-07-31T17:12:26.703601", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
-{"timestamp": "2026-07-31T17:12:26.753472", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 2", "data": {"iteration_id": "iter_3"}}
-{"timestamp": "2026-07-31T17:12:26.753597", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3"}}
-{"timestamp": "2026-07-31T17:12:26.757300", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 1", "data": {"iteration_id": "iter_3"}}
-{"timestamp": "2026-07-31T17:12:26.757404", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3"}}
-{"timestamp": "2026-07-31T17:12:26.760877", "level": "INFO", "task_id": "test_task", "message": "Tests passed, proceeding to review.", "data": {"iteration_id": "iter_3"}}
+{"timestamp": "2026-07-31T17:29:46.564289", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-07-31T17:29:46.564677", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 1", "data": {"iteration_id": "iter_1"}}
+{"timestamp": "2026-07-31T17:29:46.564758", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_1"}}
+{"timestamp": "2026-07-31T17:29:46.564818", "level": "INFO", "task_id": "test_task", "message": "Tests passed, proceeding to review.", "data": {"iteration_id": "iter_1"}}
+{"timestamp": "2026-07-31T17:29:46.567766", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-07-31T17:29:46.569397", "level": "INFO", "task_id": "test_task", "message": "Autonomous Loop Manager initialized for task: test_task", "data": {}}
+{"timestamp": "2026-07-31T17:29:46.619780", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 2", "data": {"iteration_id": "iter_3"}}
+{"timestamp": "2026-07-31T17:29:46.620005", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3"}}
+{"timestamp": "2026-07-31T17:29:46.623582", "level": "INFO", "task_id": "test_task", "message": "Tests failed. Attempting debug. Retries left: 1", "data": {"iteration_id": "iter_3"}}
+{"timestamp": "2026-07-31T17:29:46.623785", "level": "INFO", "task_id": "test_task", "message": "Retrying implement/test after debug", "data": {"iteration_id": "iter_3"}}
+{"timestamp": "2026-07-31T17:29:46.627228", "level": "INFO", "task_id": "test_task", "message": "Tests passed, proceeding to review.", "data": {"iteration_id": "iter_3"}}
