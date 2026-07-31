@@ -9,8 +9,8 @@
   "current_agent": "Guardian",
   "loop_iteration": 0,
   "max_iterations": 100,
-  "created_at": "2026-07-31T16:58:30.996979",
-  "updated_at": "2026-07-31T16:58:36.098898",
+  "created_at": "2026-07-31T17:12:51.259755",
+  "updated_at": "2026-07-31T17:12:55.976157",
   "phases": {},
   "checklist": [],
   "agent_outputs": {
@@ -19,7 +19,7 @@
         "query": "feature engineering best practices",
         "results_count": 5
       },
-      "ts": "2026-07-31T16:58:34.890498"
+      "ts": "2026-07-31T17:12:54.778004"
     },
     "CriticAgent": {
       "data": {
@@ -33,34 +33,29 @@
         ],
         "pass": false
       },
-      "ts": "2026-07-31T16:58:34.894548"
+      "ts": "2026-07-31T17:12:54.781708"
     },
     "CoderAgent": {
       "data": {
-        "file": "/app/src/generated/generated_solution_20260731_165836.py",
+        "file": "/app/src/generated/generated_solution_20260731_171255.py",
         "hash": "75b98ec60b361fea",
         "lines": 6
       },
-      "ts": "2026-07-31T16:58:36.086820"
+      "ts": "2026-07-31T17:12:55.965274"
     },
     "Guardian": {
       "data": {
-        "timestamp": "2026-07-31T16:58:36.093487",
+        "timestamp": "2026-07-31T17:12:55.971177",
         "drift_score": 0.0,
         "drift_per_agent": {},
         "drift_threshold": 0.4,
         "drift_passed": true,
         "proof_verification": {
           "status": "VERIFIED",
-          "total": 9,
-          "valid": 7,
-          "invalid": 2,
+          "total": 4,
+          "valid": 3,
+          "invalid": 1,
           "invalid_details": [
-            {
-              "agent": "TestAgent",
-              "claim": "test claim",
-              "reason": "INGEST_COUNT_ZERO"
-            },
             {
               "agent": "TestAgent",
               "claim": "test claim",
@@ -76,25 +71,25 @@
         },
         "work_log_audit": {
           "status": "AUDITED",
-          "entries": 35,
-          "anti_sim_blocks": 2,
+          "entries": 15,
+          "anti_sim_blocks": 1,
           "errors": 0,
           "health": "NEEDS_ATTENTION"
         },
         "overall_passed": false,
         "verdict": "REJECTED",
         "proof": {
-          "timestamp": "2026-07-31T16:58:36.093771",
+          "timestamp": "2026-07-31T17:12:55.971856",
           "agent": "Guardian",
           "claim": "Full audit: REJECTED",
           "proof_valid": true,
           "proofs": {
-            "artifact_hash": "8195cdb431701f2a"
+            "artifact_hash": "27971a88e53c37f4"
           },
           "blocked_reason": null
         }
       },
-      "ts": "2026-07-31T16:58:36.094115"
+      "ts": "2026-07-31T17:12:55.972229"
     }
   },
   "proof_hashes": {},
@@ -102,7 +97,7 @@
     "TestAgent": {
       "score": 0.25,
       "passed": true,
-      "ts": "2026-07-31T16:58:30.998422"
+      "ts": "2026-07-31T17:12:51.260899"
     }
   },
   "relay_messages": [
@@ -110,7 +105,7 @@
       "from": "gemini",
       "to": "claude",
       "message": "Test message from test suite",
-      "ts": "2026-07-31T16:58:36.098888"
+      "ts": "2026-07-31T17:12:55.976148"
     }
   ],
   "knowledge_stats": {}
