@@ -33,8 +33,11 @@ class BrainMassIngest:
     def __init__(self, collection_name: str = "massive_brain",
                  db_path: str = None):
         self.collection_name = collection_name
-        self.db_path = db_path or "/home/ubuntu/Usisivac-V6/chroma_db"
+        self.db_path = db_path or str(Path(__file__).resolve().parent.parent / "chroma_db")
 
+        import os
+        os.environ.pop("HF_TOKEN", None)
+        os.environ.pop("HF_API_KEY", None)
         import chromadb
         from chromadb.utils import embedding_functions
         self.client = chromadb.PersistentClient(path=self.db_path)

@@ -35,6 +35,9 @@ def _client():
 
 @functools.lru_cache(maxsize=1)
 def _ef():
+    import os
+    os.environ.pop("HF_TOKEN", None)
+    os.environ.pop("HF_API_KEY", None)
     from chromadb.utils import embedding_functions
     return embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name=EMBED_MODEL)
