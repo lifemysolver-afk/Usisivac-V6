@@ -8,7 +8,14 @@ class DiscussionEngine:
     def __init__(self, persist_directory="./db/discussion_db"):
         os.makedirs(persist_directory, exist_ok=True)
         self.client = chromadb.PersistentClient(path=persist_directory)
-        self.collection = self.client.get_or_create_collection(name="discussions")
+
+        # Centralized embedding function reuse to prevent separate loading of SentenceTransformer model,
+        # saving ~800MB RAM and avoiding startup latency (~19s).
+        from core.rag_engine import _ef
+        self.collection = self.client.get_or_create_collection(
+            name="discussions",
+            embedding_function=_ef()
+        )
         self.log_path = "logs/discussion_log.jsonl"
         os.makedirs("logs", exist_ok=True)
 
