@@ -166,7 +166,7 @@ def test_llm_legal_veto_reason_string_contains_reasoning():
         return ("VETO", legal_reasoning) if persona == "LEGAL" else ("PASS", "ok")
 
     with patch.object(board, "_get_vote", side_effect=_get_vote_fn):
-        result = board.evaluate_action("Read file at ../../secret.txt")
+        result = board.evaluate_action("Read file at unclassified_data.txt")
 
     assert legal_reasoning in result["reason"], (
         "LEGAL reasoning text should appear in the result 'reason' field"
@@ -297,8 +297,8 @@ def test_exactly_quorum_of_3_passes():
     personas = list(VetoBoard.PERSONAS.keys())  # 5 total
 
     def _get_vote_fn(persona, persona_prompt, action, context):
-        # First 3 personas pass, last 2 veto
-        if persona in personas[:3]:
+        # 3 personas (including LEGAL) pass, other 2 veto to test quorum with LEGAL voting PASS
+        if persona in ["CEO", "CTO", "LEGAL"]:
             return "PASS", "ok"
         return "VETO", "no"
 
