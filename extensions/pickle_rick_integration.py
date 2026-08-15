@@ -43,8 +43,8 @@ class PickleRickIntegration:
         Args:
             extension_root: Root directory of pickle-rick-extension
         """
-        self.extension_root = extension_root or "/home/ubuntu/pickle-rick-extension"
-        self.extension_path = Path(self.extension_root)
+        self.extension_root = extension_root or str(Path.home() / "pickle-rick-extension")
+        self.extension_path = Path(self.extension_root).expanduser().resolve()
         
         if not self.extension_path.exists():
             raise ValueError(f"Pickle Rick extension not found at {self.extension_root}")
