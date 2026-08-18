@@ -39,6 +39,10 @@ def _ef():
     return embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name=EMBED_MODEL)
 
+def get_embedding_function():
+    """Public helper returning the shared memoized SentenceTransformer embedding function."""
+    return _ef()
+
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
 def ingest(documents: List[str], metadatas: List[dict],
