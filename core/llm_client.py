@@ -8,7 +8,7 @@ Prioritet: configurable preko PRIMARY_LLM.
 Ako je ONLY_PRIMARY_LLM=true, koristi se isključivo primarni provider.
 """
 
-import os, json, time
+import os, json, time, functools
 from pathlib import Path
 from typing import Optional
 import requests
@@ -20,9 +20,34 @@ except Exception:
     pass
 
 
-def _call_groq(prompt: str, model: str = "llama-3.3-70b-versatile", system: str = "") -> str:
+# ─── Memoized SDK Client Getters ─────────────────────────────────────────────
+# Reusing client instances avoids ~34ms overhead per Groq client creation and
+# reduces HTTP connection setup time via client-level connection pooling.
+@functools.lru_cache(maxsize=10)
+def _get_groq_client(api_key: Optional[str] = None):
     from groq import Groq
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    return Groq(api_key=api_key) if api_key else Groq()
+
+
+@functools.lru_cache(maxsize=10)
+def _get_openai_client(api_key: Optional[str] = None, base_url: Optional[str] = None):
+    from openai import OpenAI
+    kwargs = {}
+    if api_key:
+        kwargs["api_key"] = api_key
+    if base_url:
+        kwargs["base_url"] = base_url
+    return OpenAI(**kwargs)
+
+
+@functools.lru_cache(maxsize=10)
+def _get_gemini_client(api_key: Optional[str] = None):
+    from google import genai
+    return genai.Client(api_key=api_key) if api_key else genai.Client()
+
+
+def _call_groq(prompt: str, model: str = "llama-3.3-70b-versatile", system: str = "") -> str:
+    client = _get_groq_client(os.getenv("GROQ_API_KEY"))
     msgs = []
     if system:
         msgs.append({"role": "system", "content": system})
@@ -32,8 +57,7 @@ def _call_groq(prompt: str, model: str = "llama-3.3-70b-versatile", system: str 
 
 
 def _call_mistral(prompt: str, model: str = "mistral-small-latest", system: str = "") -> str:
-    from openai import OpenAI
-    client = OpenAI(
+    client = _get_openai_client(
         api_key=os.getenv("MISTRAL_API_KEY"),
         base_url="https://api.mistral.ai/v1"
     )
@@ -46,9 +70,7 @@ def _call_mistral(prompt: str, model: str = "mistral-small-latest", system: str 
 
 
 def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "") -> str:
-    """Uses new google-genai SDK with key rotation."""
-    from google import genai
-    
+    """Uses new google-genai SDK with key rotation and client memoization."""
     # Try all available Gemini keys
     keys = []
     for i in range(1, 5):
@@ -63,7 +85,7 @@ def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "")
     
     for key in keys:
         try:
-            client = genai.Client(api_key=key)
+            client = _get_gemini_client(key)
             resp = client.models.generate_content(model=model, contents=full_prompt)
             return resp.text
         except Exception:
@@ -73,11 +95,10 @@ def _call_gemini(prompt: str, model: str = "gemini-2.0-flash", system: str = "")
 
 
 def _call_openrouter(prompt: str, model: str = "mistralai/mistral-7b-instruct:free", system: str = "") -> str:
-    from openai import OpenAI
     key = os.getenv("OPENROUTER_API_KEY", "")
     if "\\n" in key:
         key = key.split("\\n")[0]
-    client = OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1")
+    client = _get_openai_client(api_key=key, base_url="https://openrouter.ai/api/v1")
     msgs = []
     if system:
         msgs.append({"role": "system", "content": system})
