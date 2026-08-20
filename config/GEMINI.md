@@ -6,7 +6,7 @@
 npm install -g @anthropic-ai/claude-code  # Cline alternative
 npm install -g @anthropic-ai/gemini-cli   # Ako postoji
 # ILI koristi Google AI Studio CLI:
-pip install google-generativeai
+pip install google-genai
 ```
 
 ## Pokretanje iz terminala
