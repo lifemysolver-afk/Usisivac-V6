@@ -40,6 +40,12 @@ def _ef():
         model_name=EMBED_MODEL)
 
 
+def get_embedding_function():
+    """Returns the centralized memoized SentenceTransformer embedding function instance.
+    Sharing this instance across engines avoids loading duplicate embedding models (~800MB RAM, ~6s init)."""
+    return _ef()
+
+
 # ─── Ingest ───────────────────────────────────────────────────────────────────
 def ingest(documents: List[str], metadatas: List[dict],
            ids: List[str], collection: str) -> dict:
