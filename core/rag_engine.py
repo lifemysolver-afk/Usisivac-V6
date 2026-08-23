@@ -40,6 +40,11 @@ def _ef():
         model_name=EMBED_MODEL)
 
 
+def get_embedding_function():
+    """Public accessor for memoized SentenceTransformer embedding function."""
+    return _ef()
+
+
 # ─── Ingest ───────────────────────────────────────────────────────────────────
 def ingest(documents: List[str], metadatas: List[dict],
            ids: List[str], collection: str) -> dict:
