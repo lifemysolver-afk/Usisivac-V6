@@ -1,4 +1,14 @@
+import pytest
 from core import llm_client
+
+
+@pytest.fixture(autouse=True)
+def clear_llm_client_caches():
+    llm_client._get_groq_client.cache_clear()
+    llm_client._get_openai_client.cache_clear()
+    yield
+    llm_client._get_groq_client.cache_clear()
+    llm_client._get_openai_client.cache_clear()
 
 
 def test_call_uses_only_primary_provider_when_enabled(monkeypatch):
