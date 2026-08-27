@@ -14,6 +14,7 @@ i u .agent/work_share_state.json → relay_messages[]
 """
 
 import sys, json, datetime, threading
+from collections import deque
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
@@ -73,25 +74,34 @@ def broadcast(from_agent: str, message: str) -> dict:
 
 
 def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+    """
+    Vraća istoriju poruka.
+    Optimized streaming implementation using deque to limit memory footprint and parse overhead.
+    """
     if not CHAT_LOG.exists():
         return []
 
-    messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    p = participant.lower() if participant else None
+    buf = deque(maxlen=limit)
 
-    return messages[-limit:]
+    # Stream lines to avoid loading full log file string into memory
+    with open(CHAT_LOG, "r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                msg = json.loads(line)
+                if p:
+                    msg_from = str(msg.get("from", "")).lower()
+                    msg_to = str(msg.get("to", "")).lower()
+                    if msg_from == p or msg_to == p:
+                        buf.append(msg)
+                else:
+                    buf.append(msg)
+            except Exception:
+                continue
+
+    return list(buf)
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:
