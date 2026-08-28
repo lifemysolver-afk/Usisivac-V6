@@ -13,7 +13,7 @@ Poruke se čuvaju u logs/agent_conversation.jsonl
 i u .agent/work_share_state.json → relay_messages[]
 """
 
-import sys, json, datetime, threading
+import sys, json, datetime, threading, collections
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
@@ -73,25 +73,31 @@ def broadcast(from_agent: str, message: str) -> dict:
 
 
 def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+    """
+    Vraća istoriju poruka.
+    ⚡ Bolt Optimization: Line-by-line file streaming + collections.deque(maxlen=limit)
+    Reduces memory footprint to O(limit) instead of loading the entire CHAT_LOG into RAM.
+    """
     if not CHAT_LOG.exists():
         return []
 
-    messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    q = collections.deque(maxlen=limit)
+    with open(CHAT_LOG, "r", encoding="utf-8") as f:
+        for line in f:
+            line_str = line.strip()
+            if not line_str:
+                continue
+            try:
+                msg = json.loads(line_str)
+                if participant:
+                    if msg.get("from") == participant or msg.get("to") == participant:
+                        q.append(msg)
+                else:
+                    q.append(msg)
+            except Exception:
+                continue
 
-    return messages[-limit:]
+    return list(q)
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:
