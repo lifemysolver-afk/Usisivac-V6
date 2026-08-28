@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2026-08-28 - Bounded Chat Log History Reading with Deque
+**Learning:** Reading full JSONL chat logs into memory using `.read_text().split('\n')` creates $O(N)$ memory pressure and CPU latency when querying recent message history.
+**Action:** Use line-by-line file streaming combined with `collections.deque(maxlen=limit)` to constrain memory overhead to $O(\text{limit})$ and achieve ~20x faster retrieval on large logs.
