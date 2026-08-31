@@ -72,26 +72,54 @@ def broadcast(from_agent: str, message: str) -> dict:
     return {"status": "BROADCAST", "sent_to": len(results)}
 
 
-def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+def get_history(limit: int = 50, participant: str = None, chunk_size: int = 8192) -> list:
+    """
+    Vraća istoriju poruka.
+    Optimized: Reads log file in reverse byte chunks from end of file to avoid O(N) full log reading.
+    """
     if not CHAT_LOG.exists():
         return []
 
     messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    buffer = ""
 
-    return messages[-limit:]
+    # Open binary file and seek to end for reverse reading
+    with open(CHAT_LOG, "rb") as f:
+        f.seek(0, 2)  # os.SEEK_END
+        pointer = f.tell()
+
+        while pointer > 0 and len(messages) < limit:
+            read_size = min(chunk_size, pointer)
+            pointer -= read_size
+            f.seek(pointer)
+            chunk = f.read(read_size).decode("utf-8", errors="ignore")
+            buffer = chunk + buffer
+            lines = buffer.split("\n")
+
+            # Keep the first potentially incomplete line segment in buffer unless at start of file
+            if pointer > 0:
+                buffer = lines.pop(0)
+            else:
+                buffer = ""
+
+            for line in reversed(lines):
+                line_str = line.strip()
+                if not line_str:
+                    continue
+                try:
+                    msg = json.loads(line_str)
+                    if participant:
+                        if msg.get("from") == participant or msg.get("to") == participant:
+                            messages.append(msg)
+                    else:
+                        messages.append(msg)
+                    if len(messages) >= limit:
+                        break
+                except Exception:
+                    continue
+
+    messages.reverse()
+    return messages
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:
