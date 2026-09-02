@@ -32,18 +32,20 @@ DRIFT_THRESHOLD = 0.4
 AUDIT_LOG = BASE / "logs" / "guardian_audit.jsonl"
 
 
-def compute_drift_score(action_description: str, project_essence: str) -> float:
+def compute_drift_score(action_description: str, project_essence: str,
+                        essence_emb=None) -> float:
     """
     Izračunava semantički drift score.
     Koristi embedding cosine similarity + LLM procenu.
     Score: 0.0 (potpuno usklađen) → 1.0 (potpuno devijiran)
+    Supports optional pre-embedded project_essence array to avoid re-embedding.
     """
     try:
         from core.neural_filter import embed
         import numpy as np
 
         emb_action  = embed(action_description)
-        emb_essence = embed(project_essence)
+        emb_essence = essence_emb if essence_emb is not None else embed(project_essence)
         cos_sim = float(np.dot(emb_action, emb_essence))
         drift = 1.0 - max(0.0, min(1.0, cos_sim))
         return round(drift, 4)
@@ -178,14 +180,38 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
+    # 1. Drift score za svaki agent output (batched and vectorized for speed)
     drift_scores = {}
+    agent_names = []
+    agent_descs = []
+
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
             desc = json.dumps(result, default=str)[:500]
+            agent_names.append(agent_name)
+            agent_descs.append(desc)
+
+    if agent_descs:
+        try:
+            from core.neural_filter import embed, embed_batch
+
+            essence_emb = embed(project_essence) if project_essence else None
+            if essence_emb is not None:
+                action_embs = embed_batch(agent_descs)
+                cos_sims = action_embs @ essence_emb
+                for name, cs in zip(agent_names, cos_sims):
+                    drift = round(1.0 - max(0.0, min(1.0, float(cs))), 4)
+                    drift_scores[name] = drift
+                    SM.set_drift(name, drift)
+        except Exception:
+            pass
+
+    # Fallback for any agents not covered by batch calculation
+    for name, desc in zip(agent_names, agent_descs):
+        if name not in drift_scores:
             score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+            drift_scores[name] = score
+            SM.set_drift(name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
