@@ -13,7 +13,7 @@ Poruke se čuvaju u logs/agent_conversation.jsonl
 i u .agent/work_share_state.json → relay_messages[]
 """
 
-import sys, json, datetime, threading
+import sys, json, datetime, threading, os
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
@@ -73,25 +73,54 @@ def broadcast(from_agent: str, message: str) -> dict:
 
 
 def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+    """
+    Vraća istoriju poruka.
+    Optimizovano sa obrnutim čitanjem fajlova u blokovima (reverse chunk reading via SEEK_END)
+    kako se ne bi učitavao i parsirao ceo fajl u memoriju.
+    O(limit) vremenska i memorijska složenost umesto O(N_lines).
+    """
     if not CHAT_LOG.exists():
         return []
 
     messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    buffer_size = 8192
+    with open(CHAT_LOG, "rb") as f:
+        f.seek(0, os.SEEK_END)
+        file_size = f.tell()
+        buffer = bytearray()
+        pointer = file_size
 
-    return messages[-limit:]
+        while pointer > 0 and len(messages) < limit:
+            read_size = min(buffer_size, pointer)
+            pointer -= read_size
+            f.seek(pointer)
+            chunk = f.read(read_size)
+            buffer = chunk + buffer
+
+            lines = buffer.split(b"\n")
+            if pointer > 0:
+                buffer = lines.pop(0)
+            else:
+                buffer = bytearray()
+
+            for line in reversed(lines):
+                line_str = line.decode("utf-8", errors="replace").strip()
+                if not line_str:
+                    continue
+                try:
+                    msg = json.loads(line_str)
+                    if participant:
+                        if msg.get("from") == participant or msg.get("to") == participant:
+                            messages.append(msg)
+                    else:
+                        messages.append(msg)
+                    if len(messages) == limit:
+                        break
+                except Exception:
+                    continue
+
+    messages.reverse()
+    return messages
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:
