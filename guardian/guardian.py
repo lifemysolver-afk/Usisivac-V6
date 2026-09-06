@@ -70,8 +70,8 @@ def compute_drift_scores_batch(descriptions: List[str], project_essence: str) ->
         from core.neural_filter import embed, embed_batch
         import numpy as np
 
-        emb_essence = embed(project_essence)
-        emb_actions = embed_batch(descriptions)
+        emb_essence = np.asarray(embed(project_essence))
+        emb_actions = np.asarray(embed_batch(descriptions))
         # Cosine similarity matrix-vector product: (N, D) @ (D,) -> (N,)
         cos_sims = emb_actions @ emb_essence
         drifts = [round(1.0 - max(0.0, min(1.0, float(cs))), 4) for cs in cos_sims]
