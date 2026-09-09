@@ -19,7 +19,7 @@ import sys, json, time, datetime, subprocess, os
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import enforce, log_work, log_proof
@@ -43,7 +43,7 @@ class PickleRickIntegration:
         Args:
             extension_root: Root directory of pickle-rick-extension
         """
-        self.extension_root = extension_root or "/home/ubuntu/pickle-rick-extension"
+        self.extension_root = extension_root or str(Path.home() / "pickle-rick-extension")
         self.extension_path = Path(self.extension_root)
         
         if not self.extension_path.exists():

@@ -1,10 +1,10 @@
 """Test GitHub Models API"""
 import sys, os
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from dotenv import load_dotenv
-load_dotenv(Path(__file__).parent.parent / ".env")
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 PROMPT = "Say exactly: HELLO_GITHUB_MODELS_OK"
 

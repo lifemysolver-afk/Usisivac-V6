@@ -8,7 +8,7 @@
 import json, threading, datetime
 from pathlib import Path
 
-BASE_DIR   = Path(__file__).parent.parent
+BASE_DIR   = Path(__file__).resolve().parent.parent
 STATE_FILE = BASE_DIR / ".agent" / "work_share_state.json"
 _lock      = threading.Lock()
 

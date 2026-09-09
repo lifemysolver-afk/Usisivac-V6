@@ -12,7 +12,7 @@ ANTI-SIM: Stvarno izvršava skripte, verifikuje output.
 import sys, json, datetime, subprocess
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import enforce, register_proof, log_work, file_hash

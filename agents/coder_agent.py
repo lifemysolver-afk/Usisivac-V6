@@ -13,7 +13,7 @@ ANTI-SIM: Kod se STVARNO piše na disk, ne simulira.
 import sys, json, datetime, os
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import enforce, register_proof, log_work, file_hash
