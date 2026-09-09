@@ -133,10 +133,17 @@ def test_coder_agent():
 
 # ─── Test 10: Guardian ───────────────────────────────────────────────────────
 def test_guardian():
-    from guardian.guardian import run
-    r = run({"action": "full_audit", "pipeline_results": {}})
+    from guardian import guardian
+    r = guardian.run({"action": "full_audit", "pipeline_results": {}})
     assert "drift_score" in r, "Should have drift_score"
     assert "verdict" in r, "Should have verdict"
+
+    # Verify batch drift score calculation
+    essence = "Build an autonomous AI pipeline"
+    descriptions = ["Agent 1 task", "Agent 2 task"]
+    seq_scores = [guardian.compute_drift_score(d, essence) for d in descriptions]
+    batch_scores = guardian.compute_drift_scores_batch(descriptions, essence)
+    assert seq_scores == batch_scores, "Batch drift scores should match sequential scores"
     return True
 
 # ─── Test 11: Relay ──────────────────────────────────────────────────────────
