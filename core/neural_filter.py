@@ -21,7 +21,7 @@ import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
 
-BASE_DIR   = Path(__file__).parent.parent
+BASE_DIR   = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "models" / "neural_filter_weights.npz"
 
 

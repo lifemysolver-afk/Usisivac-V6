@@ -18,7 +18,7 @@ import sys, json, time, datetime, traceback
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Callable
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import enforce, log_work, log_proof

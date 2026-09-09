@@ -16,7 +16,7 @@ i u .agent/work_share_state.json → relay_messages[]
 import sys, json, datetime, threading
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import log_work
