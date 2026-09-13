@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2025-05-22 - Efficient JSONL Log History Retrieval
+**Learning:** Reading and parsing entire append-only JSONL files sequentially in Python to fetch the last `N` entries scales poorly ($O(\text{Total Lines})$ time and memory). Using file pointer seeking (`os.SEEK_END`) with a chunked reverse generator enables $O(\text{limit})$ reading and early termination.
+**Action:** Always use reverse chunk seeking when retrieving the tail end of large log or state files.
