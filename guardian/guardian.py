@@ -15,7 +15,8 @@ Audit pipeline:
 
 import sys, json, datetime, hashlib
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
+import numpy as np
 
 BASE = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE))
@@ -32,7 +33,7 @@ DRIFT_THRESHOLD = 0.4
 AUDIT_LOG = BASE / "logs" / "guardian_audit.jsonl"
 
 
-def compute_drift_score(action_description: str, project_essence: str) -> float:
+def compute_drift_score(action_description: str, project_essence: str, essence_emb: Optional[np.ndarray] = None) -> float:
     """
     Izračunava semantički drift score.
     Koristi embedding cosine similarity + LLM procenu.
@@ -40,10 +41,9 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
     """
     try:
         from core.neural_filter import embed
-        import numpy as np
 
         emb_action  = embed(action_description)
-        emb_essence = embed(project_essence)
+        emb_essence = essence_emb if essence_emb is not None else embed(project_essence)
         cos_sim = float(np.dot(emb_action, emb_essence))
         drift = 1.0 - max(0.0, min(1.0, cos_sim))
         return round(drift, 4)
@@ -178,14 +178,34 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
+    # 1. Drift score za svaki agent output (pre-embedded + vectorized batching)
     drift_scores = {}
+    valid_agents = []
+    descs = []
+
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
-            desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+            valid_agents.append(agent_name)
+            descs.append(json.dumps(result, default=str)[:500])
+
+    if valid_agents:
+        try:
+            from core.neural_filter import embed, embed_batch
+
+            emb_essence = embed(project_essence)
+            action_embs = embed_batch(descs)
+            cos_sims = action_embs @ emb_essence
+            drifts = 1.0 - np.clip(cos_sims, 0.0, 1.0)
+
+            for agent_name, drift in zip(valid_agents, drifts):
+                score = round(float(drift), 4)
+                drift_scores[agent_name] = score
+                SM.set_drift(agent_name, score)
+        except Exception:
+            for agent_name, desc in zip(valid_agents, descs):
+                score = compute_drift_score(desc, project_essence)
+                drift_scores[agent_name] = score
+                SM.set_drift(agent_name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
@@ -283,7 +303,8 @@ def run(task: dict) -> dict:
         return {
             "drift_score": compute_drift_score(
                 task.get("description", ""),
-                task.get("essence", "")
+                task.get("essence", ""),
+                essence_emb=task.get("essence_emb")
             )
         }
     elif action == "verify_proofs":

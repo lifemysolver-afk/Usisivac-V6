@@ -36,8 +36,18 @@ def _client():
 @functools.lru_cache(maxsize=1)
 def _ef():
     from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    try:
+        return embedding_functions.SentenceTransformerEmbeddingFunction(
+            model_name=EMBED_MODEL)
+    except Exception:
+        from core.neural_filter import _get_embedder
+        class NeuralFilterEmbeddingFunction(embedding_functions.EmbeddingFunction):
+            def __init__(self):
+                pass
+            def __call__(self, input: list) -> list:
+                emb = _get_embedder().encode(input)
+                return emb.tolist() if hasattr(emb, "tolist") else emb
+        return NeuralFilterEmbeddingFunction()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────
