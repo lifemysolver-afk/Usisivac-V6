@@ -85,26 +85,8 @@ _embedder = None
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        try:
-            from sentence_transformers import SentenceTransformer
-            _embedder = SentenceTransformer("all-MiniLM-L6-v2", token=False)
-        except Exception:
-            class FallbackEmbedder:
-                def encode(self, sentences, normalize_embeddings=True, batch_size=32):
-                    is_single = isinstance(sentences, str)
-                    if is_single:
-                        sentences = [sentences]
-                    out = []
-                    for s in sentences:
-                        import hashlib
-                        h = hashlib.sha256(s.encode("utf-8")).digest()
-                        vec = np.frombuffer(h * 12, dtype=np.uint8)[:384].astype(np.float32) - 128.0
-                        norm = np.linalg.norm(vec)
-                        if norm > 0:
-                            vec /= norm
-                        out.append(vec)
-                    return out[0] if is_single else np.array(out)
-            _embedder = FallbackEmbedder()
+        from sentence_transformers import SentenceTransformer
+        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
     return _embedder
 
 
