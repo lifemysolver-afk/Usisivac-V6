@@ -188,7 +188,7 @@ def full_audit(pipeline_results: dict) -> dict:
             from core.neural_filter import embed, embed_batch
             import numpy as np
 
-            essence_emb = embed(project_essence)
+            essence_emb = np.asarray(embed(project_essence))
             agent_names = []
             descs = []
             for agent_name, result in pipeline_results.items():
@@ -197,7 +197,7 @@ def full_audit(pipeline_results: dict) -> dict:
                     descs.append(json.dumps(result, default=str)[:500])
 
             if agent_names:
-                descs_embs = embed_batch(descs)
+                descs_embs = np.asarray(embed_batch(descs))
                 cos_sims = descs_embs @ essence_emb
                 for i, name in enumerate(agent_names):
                     drift = round(float(1.0 - max(0.0, min(1.0, cos_sims[i]))), 4)
