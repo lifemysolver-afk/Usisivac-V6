@@ -204,11 +204,16 @@ def full_audit(pipeline_results: dict) -> dict:
                     drift_scores[name] = drift
                     SM.set_drift(name, drift)
         except Exception:
-            # Fallback if batching or vectorization encounters issues
+            # Fallback using pre-embedded essence_emb if batching encounters issues
+            try:
+                from core.neural_filter import embed
+                essence_emb = embed(project_essence) if project_essence else None
+            except Exception:
+                essence_emb = None
             for agent_name, result in pipeline_results.items():
                 if isinstance(result, dict):
                     desc = json.dumps(result, default=str)[:500]
-                    score = compute_drift_score(desc, project_essence)
+                    score = compute_drift_score(desc, project_essence, essence_emb=essence_emb)
                     drift_scores[agent_name] = score
                     SM.set_drift(agent_name, score)
 
