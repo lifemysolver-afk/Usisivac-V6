@@ -10,7 +10,7 @@ import json, re
 from pathlib import Path
 from collections import Counter
 
-nb_path = Path("/home/ubuntu/Usisivac-V6/data/Loptica.ipynb")
+nb_path = Path("./data/Loptica.ipynb")
 with open(nb_path) as f:
     nb = json.load(f)
 
@@ -107,12 +107,12 @@ for line in full_code.split("\n"):
         print(f"  {line.strip()[:120]}")
 
 # Sačuvaj ceo kod u fajl
-out_code = Path("/home/ubuntu/Usisivac-V6/data/loptica_extracted_code.py")
+out_code = Path("./data/loptica_extracted_code.py")
 out_code.write_text(full_code)
 print(f"\n=== SAVED: {out_code} ({len(full_code)} chars) ===")
 
 # Sačuvaj markdown
-out_md = Path("/home/ubuntu/Usisivac-V6/data/loptica_extracted_md.md")
+out_md = Path("./data/loptica_extracted_md.md")
 out_md.write_text("\n\n---\n\n".join(all_md))
 print(f"=== SAVED: {out_md} ===")
 
@@ -125,6 +125,6 @@ analysis = {
     "models_found": sorted(found_models),
     "metrics_found": sorted(found_metrics),
 }
-out_analysis = Path("/home/ubuntu/Usisivac-V6/data/loptica_analysis.json")
+out_analysis = Path("./data/loptica_analysis.json")
 out_analysis.write_text(json.dumps(analysis, indent=2))
 print(f"=== SAVED: {out_analysis} ===")

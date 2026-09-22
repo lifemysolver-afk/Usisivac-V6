@@ -1,0 +1,28 @@
+{
+  "version": "V6",
+  "protocol": "Trinity Protocol",
+  "global_status": "INITIALIZED",
+  "project": null,
+  "goal": null,
+  "domain": null,
+  "current_phase": null,
+  "current_agent": null,
+  "loop_iteration": 0,
+  "max_iterations": 100,
+  "created_at": null,
+  "updated_at": "2026-09-22T17:16:49.054910",
+  "phases": {},
+  "checklist": [],
+  "agent_outputs": {},
+  "proof_hashes": {},
+  "drift_scores": {},
+  "relay_messages": [
+    {
+      "from": "gemini",
+      "to": "claude",
+      "message": "Test message from test suite",
+      "ts": "2026-09-22T17:16:49.054900"
+    }
+  ],
+  "knowledge_stats": {}
+}

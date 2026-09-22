@@ -4,7 +4,7 @@ from scipy.stats import rankdata
 from sklearn.metrics import roc_auc_score
 from pathlib import Path
 
-BASE = Path("/home/ubuntu/Usisivac-V6")
+BASE = Path(".")
 # We don't have the OOF arrays in memory, but we can re-run a simple mean blend 
 # or use the best individual model if we had saved them.
 # Since we killed the process, let's write a script that does a simple 
