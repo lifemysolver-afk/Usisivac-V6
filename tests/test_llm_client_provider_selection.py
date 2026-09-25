@@ -77,3 +77,14 @@ def test_call_uses_huggingface_provider(monkeypatch):
     assert result == "ok-hf"
     assert len(calls) == 1
     assert calls[0]["model"] == "some-hf-model"
+
+
+def test_client_memoization():
+    """Verify that _get_groq_client and _get_openai_client memoize client instances."""
+    client1 = llm_client._get_groq_client("test-groq-key")
+    client2 = llm_client._get_groq_client("test-groq-key")
+    assert client1 is client2
+
+    openai_client1 = llm_client._get_openai_client("test-key", "https://api.mistral.ai/v1")
+    openai_client2 = llm_client._get_openai_client("test-key", "https://api.mistral.ai/v1")
+    assert openai_client1 is openai_client2
