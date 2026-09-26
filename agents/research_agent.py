@@ -47,16 +47,19 @@ UNIVERSAL_KNOWLEDGE = {
 }
 
 
+import time
+
 def ingest_universal_knowledge() -> dict:
     """Ingestuje svu univerzalnu bazu znanja u ChromaDB."""
     log_work(AGENT, "INGEST_START", "Universal knowledge base")
     total = 0
     results = {}
 
+    ts = time.time()
     for category, docs in UNIVERSAL_KNOWLEDGE.items():
         doc_texts = [d["content"] for d in docs]
         doc_metas = [d["metadata"] for d in docs]
-        doc_ids   = [d["id"] for d in docs]
+        doc_ids   = [f"{d['id']}_{ts}" for d in docs]
 
         r = ingest(doc_texts, doc_metas, doc_ids, "knowledge_base")
         results[category] = r

@@ -26,7 +26,7 @@ FAIL = "❌ FAIL"
 results = []
 
 
-def test(name, fn):
+def run_test_step(name, fn):
     try:
         fn()
         results.append((name, True, ""))
@@ -273,15 +273,15 @@ if __name__ == "__main__":
     print("  Usisivac V6 | Trinity Protocol")
     print("="*60)
 
-    test("LopticaEngine (3-6-2 state machine)", t_loptica_engine)
-    test("KnowledgeBase (SQLite + rich_context)", t_knowledge_base)
-    test("ConflictResolver (HARD/SOFT conflicts)", t_conflict_resolver)
-    test("FeedbackTracker (self-learning)", t_feedback_tracker)
-    test("NotebookParser (AST extraction)", t_notebook_parser)
-    test("HarvesterAnalytics (report + snapshot)", t_harvester_analytics)
-    test("VetoBoard (5-persona quorum, no LLM)", t_veto_board)
-    test("LopticaModule (unified integration)", t_loptica_module)
-    test("BrainMassIngest (ChromaDB ingest)", t_brain_mass_ingest)
+    run_test_step("LopticaEngine (3-6-2 state machine)", t_loptica_engine)
+    run_test_step("KnowledgeBase (SQLite + rich_context)", t_knowledge_base)
+    run_test_step("ConflictResolver (HARD/SOFT conflicts)", t_conflict_resolver)
+    run_test_step("FeedbackTracker (self-learning)", t_feedback_tracker)
+    run_test_step("NotebookParser (AST extraction)", t_notebook_parser)
+    run_test_step("HarvesterAnalytics (report + snapshot)", t_harvester_analytics)
+    run_test_step("VetoBoard (5-persona quorum, no LLM)", t_veto_board)
+    run_test_step("LopticaModule (unified integration)", t_loptica_module)
+    run_test_step("BrainMassIngest (ChromaDB ingest)", t_brain_mass_ingest)
 
     print("\n" + "="*60)
     passed = sum(1 for _, ok, _ in results if ok)
