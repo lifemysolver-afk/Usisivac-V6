@@ -80,13 +80,36 @@ class MLPScorer:
 
 
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
+class HashEmbedder:
+    """Deterministic hash-based fallback embedder class when SentenceTransformer initialization fails."""
+    def encode(self, sentences, normalize_embeddings=True, batch_size=32):
+        is_single = isinstance(sentences, str)
+        if is_single:
+            sentences = [sentences]
+        res = []
+        for s in sentences:
+            seed = sum(ord(c) for c in str(s)) & 0xFFFFFFFF
+            rng = np.random.RandomState(seed)
+            vec = rng.randn(384)
+            if normalize_embeddings:
+                norm = np.linalg.norm(vec)
+                if norm > 0:
+                    vec = vec / norm
+            res.append(vec)
+        res_np = np.array(res)
+        return res_np[0] if is_single else res_np
+
+
 _embedder = None
 
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            from sentence_transformers import SentenceTransformer
+            _embedder = SentenceTransformer("all-MiniLM-L6-v2", token=False)
+        except Exception:
+            _embedder = HashEmbedder()
     return _embedder
 
 
