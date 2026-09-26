@@ -794,7 +794,7 @@ on:
       - 'technique/**'
 jobs:
   validate_and_submit:
-    runs-on: ubuntu-latest
+    runs-on: linux-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python

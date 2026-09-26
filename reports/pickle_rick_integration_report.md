@@ -9,7 +9,7 @@ This report details the successful cloning, analysis, and integration of the `pi
 The repository was successfully cloned to `..`. Initial inspection revealed a TypeScript project structure with `package.json` for dependency management and `src` directory containing the core logic.
 
 ```bash
-ubuntu@sandbox:~ $ gh repo clone kizabgd123/pickle-rick-extension
+user@sandbox:~ $ gh repo clone kizabgd123/pickle-rick-extension
 Cloning into 'pickle-rick-extension'...
 ...
 ```
@@ -31,9 +31,9 @@ The core concept of the Pickle Rick extension is to create a self-referential fe
 Node.js dependencies were installed using `npm` and the TypeScript project was built successfully.
 
 ```bash
-ubuntu@sandbox:~ $ cd ../extension && npm install
+user@sandbox:~ $ cd ../extension && npm install
 ...
-ubuntu@sandbox:~ $ cd ../extension && npm run build
+user@sandbox:~ $ cd ../extension && npm run build
 ...
 ```
 
@@ -42,7 +42,7 @@ ubuntu@sandbox:~ $ cd ../extension && npm run build
 The provided test suite for the `pickle-rick-extension` was executed, and all tests passed, confirming the integrity and functionality of the extension.
 
 ```bash
-ubuntu@sandbox:~ $ cd ../extension && npm test
+user@sandbox:~ $ cd ../extension && npm test
 ...
  Test Files  11 passed (11)
       Tests  34 passed (34)

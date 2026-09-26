@@ -68,7 +68,7 @@ All actions within the autonomous coding loop are subject to the Trinity Protoco
 A test script was executed to verify the integration of the autonomous loop into the `LopticaModule`. The script successfully advanced the `LopticaEngine` to the `AUTONOMOUS_LOOP` phase and initialized the `AutonomousLoopManager`, confirming the correct setup of the new extension.
 
 ```bash
-ubuntu@sandbox:~ $ python3 -c "
+user@sandbox:~ $ python3 -c "
 import sys
 from pathlib import Path
 BASE = Path(\'.\')
