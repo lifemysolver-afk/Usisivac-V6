@@ -178,14 +178,37 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
+    # 1. Vectorized batch drift score computation za svaki agent output
     drift_scores = {}
+    agent_names = []
+    agent_descs = []
+
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
-            desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+            agent_names.append(agent_name)
+            agent_descs.append(json.dumps(result, default=str)[:500])
+
+    if agent_descs:
+        try:
+            from core.neural_filter import embed, embed_batch
+            import numpy as np
+
+            # Pre-embed essence once and batch-embed action descriptions to avoid sequential calls
+            essence_emb = embed(project_essence)
+            action_embs = embed_batch(agent_descs)
+            cos_sims = action_embs @ essence_emb
+
+            for name, sim in zip(agent_names, cos_sims):
+                sim_val = float(sim)
+                drift = round(1.0 - max(0.0, min(1.0, sim_val)), 4)
+                drift_scores[name] = drift
+                SM.set_drift(name, drift)
+        except Exception:
+            # Fallback to compute_drift_score per item if embedding fails
+            for name, desc in zip(agent_names, agent_descs):
+                score = compute_drift_score(desc, project_essence)
+                drift_scores[name] = score
+                SM.set_drift(name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
