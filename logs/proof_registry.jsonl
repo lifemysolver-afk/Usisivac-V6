@@ -1,0 +1,5 @@
+{"timestamp": "2026-10-03T17:06:31.163526", "agent": "TestAgent", "claim": "test claim", "proof_valid": true, "proofs": {"ingest_count": 5}, "blocked_reason": null}
+{"timestamp": "2026-10-03T17:06:31.164457", "agent": "TestAgent", "claim": "test claim", "proof_valid": false, "proofs": {}, "blocked_reason": "INGEST_COUNT_ZERO"}
+{"timestamp": "2026-10-03T17:07:04.122123", "agent": "ResearchAgent", "claim": "Universal knowledge ingested", "proof_valid": true, "proofs": {"ingest_count": 10}, "blocked_reason": null}
+{"timestamp": "2026-10-03T17:07:05.433594", "agent": "CoderAgent", "claim": "Code generated and written to disk", "proof_valid": true, "proofs": {"file_hash": "75b98ec60b361fea", "file_path": "/app/src/generated/generated_solution_20261003_170705.py"}, "blocked_reason": null}
+{"timestamp": "2026-10-03T17:07:05.437586", "agent": "Guardian", "claim": "Full audit: REJECTED", "proof_valid": true, "proofs": {"artifact_hash": "588a5a489d6f6f52"}, "blocked_reason": null}
