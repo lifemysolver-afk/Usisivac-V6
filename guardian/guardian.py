@@ -59,16 +59,12 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
 
 def compute_drift_scores_batch(action_descriptions: List[str], project_essence: str) -> List[float]:
     """
-    Vektorizovani izračun semantičkog drift score-a za grupu akcija.
-    Pre-embedduje project_essence samo jednom i koristi batch embedding
-    za akcije, što eliminiše N pojedinačnih poziva i znatno ubrzava audit.
+    Vectorized calculation of semantic drift scores for a batch of action descriptions.
+    Pre-embeds project_essence once and uses batch embedding for action descriptions,
+    significantly accelerating full pipeline audits.
     """
     if not action_descriptions:
         return []
-
-    # Akocentuje mock-ovane pozive u testovima ako je compute_drift_score bio patched
-    if getattr(compute_drift_score, "return_value", None) is not None or getattr(compute_drift_score, "side_effect", None) is not None:
-        return [compute_drift_score(desc, project_essence) for desc in action_descriptions]
 
     try:
         from core.neural_filter import embed, embed_batch
