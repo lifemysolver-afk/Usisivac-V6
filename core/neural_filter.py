@@ -80,13 +80,41 @@ class MLPScorer:
 
 
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
+class DeterministicFallbackEmbedder:
+    """Fallback embedder using SHA-256 when SentenceTransformer is unavailable or offline."""
+    def encode(self, sentences, normalize_embeddings=True, batch_size=32):
+        import hashlib
+        if isinstance(sentences, str):
+            single = True
+            sentences = [sentences]
+        else:
+            single = False
+
+        embs = []
+        for text in sentences:
+            h = hashlib.sha256(text.encode("utf-8")).digest()
+            arr = np.frombuffer(h * 12, dtype=np.uint8)[:384].astype(np.float32)
+            norm = np.linalg.norm(arr)
+            if norm > 0:
+                arr = arr / norm
+            embs.append(arr)
+
+        embs_np = np.array(embs, dtype=np.float32)
+        return embs_np[0] if single else embs_np
+
+
 _embedder = None
 
 def _get_embedder():
     global _embedder
     if _embedder is None:
+        import logging
         from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        except Exception as e:
+            logging.warning(f"SentenceTransformer initialization failed ({e}). Using DeterministicFallbackEmbedder.")
+            _embedder = DeterministicFallbackEmbedder()
     return _embedder
 
 
