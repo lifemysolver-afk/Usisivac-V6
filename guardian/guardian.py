@@ -77,8 +77,15 @@ def compute_drift_scores_batch(action_descriptions: List[str], project_essence: 
         emb_essence = embed(project_essence)
         action_embs = embed_batch(action_descriptions)
 
-        # Vectorized dot products: (N, D) @ (D,) -> (N,)
-        cos_sims = np.asarray(action_embs) @ np.asarray(emb_essence)
+        # Normalize vectors for explicit cosine similarity
+        action_arr = np.asarray(action_embs)
+        essence_arr = np.asarray(emb_essence)
+        norm_a = np.linalg.norm(action_arr, axis=1, keepdims=True)
+        norm_a[norm_a == 0] = 1e-10
+        norm_e = np.linalg.norm(essence_arr)
+        norm_e = norm_e if norm_e != 0 else 1e-10
+
+        cos_sims = (action_arr / norm_a) @ (essence_arr / norm_e)
         cos_sims = np.clip(cos_sims, 0.0, 1.0)
         drifts = 1.0 - cos_sims
         return [round(float(d), 4) for d in drifts]
