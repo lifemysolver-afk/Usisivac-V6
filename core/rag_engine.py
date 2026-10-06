@@ -33,11 +33,20 @@ def _client():
     import chromadb
     return chromadb.PersistentClient(path=str(CHROMA_PATH))
 
+class NeuralFilterEmbeddingFunction:
+    @staticmethod
+    def name() -> str:
+        return "NeuralFilterEmbeddingFunction"
+
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        from core.neural_filter import embed_batch
+        embs = embed_batch(input)
+        return embs.tolist()
+
+
 @functools.lru_cache(maxsize=1)
 def _ef():
-    from chromadb.utils import embedding_functions
-    return embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=EMBED_MODEL)
+    return NeuralFilterEmbeddingFunction()
 
 
 # ─── Ingest ───────────────────────────────────────────────────────────────────

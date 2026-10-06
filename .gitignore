@@ -1,3 +1,7 @@
 __pycache__/
 *.pyc
-__pycache__/
+chroma_db/
+.agent/
+logs/
+src/generated/
+.pytest_cache/

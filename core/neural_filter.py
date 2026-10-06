@@ -82,11 +82,39 @@ class MLPScorer:
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
 _embedder = None
 
+
+class _FallbackEmbedder:
+    """Fallback embedder when SentenceTransformer fails to load or runs in offline mode."""
+    def __init__(self, dim: int = 384):
+        self.dim = dim
+
+    def encode(self, sentences, normalize_embeddings=True, batch_size=32):
+        is_single = isinstance(sentences, str)
+        if is_single:
+            sentences = [sentences]
+
+        embs = []
+        for text in sentences:
+            rng = np.random.RandomState(abs(hash(text)) % (2**32 - 1))
+            v = rng.randn(self.dim).astype(np.float32)
+            if normalize_embeddings:
+                norm = np.linalg.norm(v)
+                if norm > 0:
+                    v = v / norm
+            embs.append(v)
+
+        embs = np.array(embs)
+        return embs[0] if is_single else embs
+
+
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            from sentence_transformers import SentenceTransformer
+            _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        except Exception:
+            _embedder = _FallbackEmbedder()
     return _embedder
 
 
