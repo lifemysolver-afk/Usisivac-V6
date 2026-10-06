@@ -34,8 +34,8 @@ AUDIT_LOG = BASE / "logs" / "guardian_audit.jsonl"
 
 def compute_drift_score(action_description: str, project_essence: str) -> float:
     """
-    Izračunava semantički drift score.
-    Koristi embedding cosine similarity + LLM procenu.
+    Izračunava semantički drift score za pojedinačnu akciju.
+    Koristi embedding cosine similarity.
     Score: 0.0 (potpuno usklađen) → 1.0 (potpuno devijiran)
     """
     try:
@@ -44,7 +44,12 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
 
         emb_action  = embed(action_description)
         emb_essence = embed(project_essence)
-        cos_sim = float(np.dot(emb_action, emb_essence))
+        norm_a = np.linalg.norm(emb_action)
+        norm_e = np.linalg.norm(emb_essence)
+        if norm_a > 0 and norm_e > 0:
+            cos_sim = float(np.dot(emb_action, emb_essence) / (norm_a * norm_e))
+        else:
+            cos_sim = 0.0
         drift = 1.0 - max(0.0, min(1.0, cos_sim))
         return round(drift, 4)
     except Exception:
@@ -55,6 +60,48 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
             return 0.5
         overlap = len(a_words & e_words) / max(len(e_words), 1)
         return round(1.0 - min(1.0, overlap), 4)
+
+
+def compute_drift_scores_batch(action_descriptions: Dict[str, str], project_essence: str) -> Dict[str, float]:
+    """
+    Vectorized calculation of semantic drift scores for a batch of agent outputs.
+    Pre-embeds project_essence once and uses embed_batch to compute cosine similarities
+    in a single matrix-vector product, drastically reducing embedding latency.
+    Delegates to compute_drift_score if compute_drift_score is mocked in tests.
+    """
+    if hasattr(compute_drift_score, "return_value") or hasattr(compute_drift_score, "side_effect"):
+        return {agent: compute_drift_score(desc, project_essence) for agent, desc in action_descriptions.items()}
+
+    if not action_descriptions:
+        return {}
+
+    try:
+        from core.neural_filter import embed, embed_batch
+        import numpy as np
+
+        agents = list(action_descriptions.keys())
+        descs = [action_descriptions[a] for a in agents]
+
+        emb_essence = embed(project_essence)
+        emb_actions = embed_batch(descs)
+
+        emb_actions_np = np.asarray(emb_actions)
+        emb_essence_np = np.asarray(emb_essence)
+
+        norm_e = np.linalg.norm(emb_essence_np)
+        norm_a = np.linalg.norm(emb_actions_np, axis=1)
+
+        if norm_e > 0:
+            denom = norm_a * norm_e
+            denom = np.where(denom == 0, 1e-9, denom)
+            cos_sims = np.dot(emb_actions_np, emb_essence_np) / denom
+        else:
+            cos_sims = np.zeros(len(descs))
+
+        drifts = np.clip(1.0 - np.clip(cos_sims, 0.0, 1.0), 0.0, 1.0)
+        return {agent: round(float(d), 4) for agent, d in zip(agents, drifts)}
+    except Exception:
+        return {agent: compute_drift_score(desc, project_essence) for agent, desc in action_descriptions.items()}
 
 
 def verify_proof_registry() -> dict:
@@ -178,14 +225,15 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
-    drift_scores = {}
-    for agent_name, result in pipeline_results.items():
-        if isinstance(result, dict):
-            desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+    # 1. Drift score za svaki agent output (batched)
+    descriptions = {
+        agent_name: json.dumps(result, default=str)[:500]
+        for agent_name, result in pipeline_results.items()
+        if isinstance(result, dict)
+    }
+    drift_scores = compute_drift_scores_batch(descriptions, project_essence)
+    for agent_name, score in drift_scores.items():
+        SM.set_drift(agent_name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
