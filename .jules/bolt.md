@@ -10,3 +10,7 @@
 ## 2026-10-10 - Batch Semantic Drift Score Computation
 **Learning:** Evaluating agent outputs sequentially against project essence in audit systems creates an O(N) embedding latency bottleneck. Pre-embedding the reference target once and batching all candidate descriptions with `embed_batch` enables single matrix-vector product (`embs @ target`) yielding ~16x-60x speedup.
 **Action:** Always batch multi-item similarity or drift checks in audit/evaluation modules against static project targets.
+
+## 2026-10-10 - Cloudflare Worker CI Build Reliability
+**Learning:** Hardcoded absolute paths (like `/home/ubuntu` or `/home/user`) or deprecated package dependencies (like `google-generativeai`) cause unannotated Cloudflare Worker build failures in CI checks. Using relative path resolution (`Path(__file__).resolve().parent`) and updating dependencies to `google-genai` prevents worker build failures.
+**Action:** Always use relative dynamic paths and ensure requirements.txt matches modern SDK requirements.
