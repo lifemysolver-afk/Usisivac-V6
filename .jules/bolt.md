@@ -12,5 +12,5 @@
 **Action:** Always batch multi-item similarity or drift checks in audit/evaluation modules against static project targets.
 
 ## 2026-10-10 - Cloudflare Worker CI Build Reliability
-**Learning:** Hardcoded absolute paths (like `/home/ubuntu` or `/home/user`) or deprecated package dependencies (like `google-generativeai`) cause unannotated Cloudflare Worker build failures in CI checks. Using relative path resolution (`Path(__file__).resolve().parent`) and updating dependencies to `google-genai` prevents worker build failures.
+**Learning:** Hardcoded absolute paths (like `/home/user` or `/home/user`) or deprecated package dependencies (like `google-generativeai`) cause unannotated Cloudflare Worker build failures in CI checks. Using relative path resolution (`Path(__file__).resolve().parent`) and updating dependencies to `google-genai` prevents worker build failures.
 **Action:** Always use relative dynamic paths and ensure requirements.txt matches modern SDK requirements.
