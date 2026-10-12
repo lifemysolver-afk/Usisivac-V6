@@ -13,7 +13,7 @@ Poruke se čuvaju u logs/agent_conversation.jsonl
 i u .agent/work_share_state.json → relay_messages[]
 """
 
-import sys, json, datetime, threading
+import sys, os, json, datetime, threading
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
@@ -73,25 +73,56 @@ def broadcast(from_agent: str, message: str) -> dict:
 
 
 def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+    """
+    Vraća istoriju poruka.
+    Optimized: Reads backwards in byte chunks from file end for O(limit) time and space complexity.
+    """
     if not CHAT_LOG.exists():
         return []
 
     messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    chunk_size = 4096
+    buffer = b""
 
-    return messages[-limit:]
+    try:
+        with open(CHAT_LOG, "rb") as fp:
+            fp.seek(0, os.SEEK_END)
+            pointer = fp.tell()
+
+            while pointer > 0 and len(messages) < limit:
+                read_size = min(chunk_size, pointer)
+                pointer -= read_size
+                fp.seek(pointer)
+                buffer = fp.read(read_size) + buffer
+                lines = buffer.split(b"\n")
+
+                if pointer > 0:
+                    buffer = lines.pop(0)
+                else:
+                    buffer = b""
+
+                for raw_line in reversed(lines):
+                    line = raw_line.strip()
+                    if not line:
+                        continue
+                    try:
+                        msg = json.loads(line.decode("utf-8"))
+                        if participant:
+                            p_lower = participant.lower()
+                            if (str(msg.get("from", "")).lower() == p_lower or
+                                str(msg.get("to", "")).lower() == p_lower):
+                                messages.append(msg)
+                        else:
+                            messages.append(msg)
+
+                        if len(messages) >= limit:
+                            break
+                    except Exception:
+                        continue
+    except Exception:
+        return []
+
+    return list(reversed(messages[:limit]))
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:
