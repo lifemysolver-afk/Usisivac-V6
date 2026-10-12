@@ -15,7 +15,7 @@ os.chdir(BASE)
 PASS = 0
 FAIL = 0
 
-def test(name, fn):
+def run_test_step(name, fn):
     global PASS, FAIL
     try:
         result = fn()
@@ -51,11 +51,13 @@ def test_proof():
 
 # ─── Test 3: RAG Engine ──────────────────────────────────────────────────────
 def test_rag():
+    import time
     from core.rag_engine import ingest, query_raw, stats
+    doc_id = f"test_{int(time.time()*1000)}"
     r = ingest(
         ["Test document about machine learning"],
         [{"source": "test"}],
-        ["test_001"],
+        [doc_id],
         "knowledge_base"
     )
     assert r["ok"], f"Ingest should succeed: {r}"
@@ -148,6 +150,35 @@ def test_relay():
     assert len(h) > 0, "Should have at least 1 message"
     return True
 
+
+def test_get_history_chunk_reading():
+    import tempfile, json
+    from unittest.mock import patch
+    from relay import triway_relay
+
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".jsonl") as f:
+        temp_log = Path(f.name)
+        for i in range(100):
+            entry = {
+                "timestamp": f"2025-05-20T10:00:{i:02d}",
+                "from": "claude" if i % 2 == 0 else "gemini",
+                "to": "gemini" if i % 2 == 0 else "claude",
+                "message": f"Test message {i}",
+            }
+            f.write(json.dumps(entry) + "\n")
+
+    try:
+        with patch.object(triway_relay, "CHAT_LOG", temp_log):
+            h = triway_relay.get_history(limit=5, participant="claude")
+            assert len(h) == 5, f"Expected 5 messages, got {len(h)}"
+            assert h[-1]["message"] == "Test message 99"
+            for msg in h:
+                assert str(msg.get("from")).lower() == "claude" or str(msg.get("to")).lower() == "claude"
+    finally:
+        if temp_log.exists():
+            temp_log.unlink()
+    return True
+
 # ─── Test 12: File Structure ─────────────────────────────────────────────────
 def test_structure():
     required = [
@@ -171,18 +202,19 @@ if __name__ == "__main__":
     print("║  Usisivac V6 — End-to-End Tests          ║")
     print("╚══════════════════════════════════════════╝\n")
 
-    test("Anti-Simulation Enforcement", test_anti_sim)
-    test("Proof Registry", test_proof)
-    test("RAG Engine (ChromaDB)", test_rag)
-    test("Neural Filter (MLP + MMR)", test_neural_filter)
-    test("State Manager", test_state)
-    test("LLM Client (mock/real)", test_llm)
-    test("ResearchAgent (ingest + research)", test_research_agent)
-    test("CriticAgent (critique)", test_critic_agent)
-    test("CoderAgent (code generation)", test_coder_agent)
-    test("Guardian (audit + drift)", test_guardian)
-    test("Tri-Way Relay", test_relay)
-    test("File Structure Integrity", test_structure)
+    run_test_step("Anti-Simulation Enforcement", test_anti_sim)
+    run_test_step("Proof Registry", test_proof)
+    run_test_step("RAG Engine (ChromaDB)", test_rag)
+    run_test_step("Neural Filter (MLP + MMR)", test_neural_filter)
+    run_test_step("State Manager", test_state)
+    run_test_step("LLM Client (mock/real)", test_llm)
+    run_test_step("ResearchAgent (ingest + research)", test_research_agent)
+    run_test_step("CriticAgent (critique)", test_critic_agent)
+    run_test_step("CoderAgent (code generation)", test_coder_agent)
+    run_test_step("Guardian (audit + drift)", test_guardian)
+    run_test_step("Tri-Way Relay", test_relay)
+    run_test_step("Tri-Way Relay Chunk Reading", test_get_history_chunk_reading)
+    run_test_step("File Structure Integrity", test_structure)
 
     print(f"\n{'='*50}")
     print(f"  Results: {PASS} passed, {FAIL} failed, {PASS+FAIL} total")
