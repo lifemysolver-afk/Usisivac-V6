@@ -12,7 +12,7 @@ The autonomous coding loop operates on a persistent, iterative cycle: **plan →
 
 The following diagram illustrates the flow of the autonomous coding loop:
 
-![Autonomous Coding Loop Flow](/home/ubuntu/Usisivac-V6/docs/autonomous_coding_loop_flow.png)
+![Autonomous Coding Loop Flow](./docs/autonomous_coding_loop_flow.png)
 
 ### 2.2. Key Components and Agents
 
@@ -56,22 +56,22 @@ All actions within the autonomous coding loop are subject to the Trinity Protoco
 
 ### 4.1. Implemented Components
 
-*   **Loop Controller**: `/home/ubuntu/Usisivac-V6/orchestrator/loop_controller.py`
-*   **Reflection Agent**: `/home/ubuntu/Usisivac-V6/agents/reflection_agent.py`
-*   **Autonomous Loop Manager**: `/home/ubuntu/Usisivac-V6/orchestrator/autonomous_loop.py`
-*   **LopticaModule Integration**: `/home/ubuntu/Usisivac-V6/loptica/loptica_module.py` (added `_phase_autonomous_loop` and updated `run_mission`)
-*   **LopticaEngine Update**: `/home/ubuntu/Usisivac-V6/loptica/loptica_engine.py` (added `AUTONOMOUS_LOOP` to `PHASES`)
-*   **Anti-Simulation Logging**: `/home/ubuntu/Usisivac-V6/core/anti_simulation.py` (added `log_proof` convenience function)
+*   **Loop Controller**: `./orchestrator/loop_controller.py`
+*   **Reflection Agent**: `./agents/reflection_agent.py`
+*   **Autonomous Loop Manager**: `./orchestrator/autonomous_loop.py`
+*   **LopticaModule Integration**: `./loptica/loptica_module.py` (added `_phase_autonomous_loop` and updated `run_mission`)
+*   **LopticaEngine Update**: `./loptica/loptica_engine.py` (added `AUTONOMOUS_LOOP` to `PHASES`)
+*   **Anti-Simulation Logging**: `./core/anti_simulation.py` (added `log_proof` convenience function)
 
 ### 4.2. Verification Test
 
 A test script was executed to verify the integration of the autonomous loop into the `LopticaModule`. The script successfully advanced the `LopticaEngine` to the `AUTONOMOUS_LOOP` phase and initialized the `AutonomousLoopManager`, confirming the correct setup of the new extension.
 
 ```bash
-ubuntu@sandbox:~ $ python3 -c "
+user@sandbox:~ $ python3 -c "
 import sys
 from pathlib import Path
-BASE = Path(\'/home/ubuntu/Usisivac-V6\')
+BASE = Path(\'.\')
 sys.path.insert(0, str(BASE))
 
 from loptica.loptica_module import LopticaModule

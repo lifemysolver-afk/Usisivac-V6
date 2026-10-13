@@ -1,0 +1,64 @@
+{
+  "version": "V6",
+  "protocol": "Trinity Protocol",
+  "global_status": "GUARDIAN_AUDITING",
+  "project": null,
+  "goal": null,
+  "domain": null,
+  "current_phase": null,
+  "current_agent": "Guardian",
+  "loop_iteration": 0,
+  "max_iterations": 100,
+  "created_at": null,
+  "updated_at": "2026-10-13T17:14:13.423623",
+  "phases": {},
+  "checklist": [],
+  "agent_outputs": {
+    "Guardian": {
+      "data": {
+        "timestamp": "2026-10-13T17:14:13.422510",
+        "drift_score": 0.0,
+        "drift_per_agent": {},
+        "drift_threshold": 0.4,
+        "drift_passed": true,
+        "proof_verification": {
+          "status": "VERIFIED",
+          "total": 1,
+          "valid": 1,
+          "invalid": 0,
+          "invalid_details": []
+        },
+        "artifact_verification": {
+          "status": "VERIFIED",
+          "found": [],
+          "missing": [],
+          "all_present": true
+        },
+        "work_log_audit": {
+          "status": "AUDITED",
+          "entries": 10,
+          "anti_sim_blocks": 0,
+          "errors": 0,
+          "health": "GOOD"
+        },
+        "overall_passed": true,
+        "verdict": "APPROVED",
+        "proof": {
+          "timestamp": "2026-10-13T17:14:13.423020",
+          "agent": "Guardian",
+          "claim": "Full audit: APPROVED",
+          "proof_valid": true,
+          "proofs": {
+            "artifact_hash": "6acf3853e73c88c1"
+          },
+          "blocked_reason": null
+        }
+      },
+      "ts": "2026-10-13T17:14:13.423611"
+    }
+  },
+  "proof_hashes": {},
+  "drift_scores": {},
+  "relay_messages": [],
+  "knowledge_stats": {}
+}
