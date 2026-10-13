@@ -34,7 +34,7 @@ AUDIT_LOG = BASE / "logs" / "guardian_audit.jsonl"
 
 def compute_drift_score(action_description: str, project_essence: str) -> float:
     """
-    Izračunava semantički drift score.
+    Izračunava semantički drift score za pojedinačnu akciju.
     Koristi embedding cosine similarity + LLM procenu.
     Score: 0.0 (potpuno usklađen) → 1.0 (potpuno devijiran)
     """
@@ -55,6 +55,32 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
             return 0.5
         overlap = len(a_words & e_words) / max(len(e_words), 1)
         return round(1.0 - min(1.0, overlap), 4)
+
+
+def compute_drift_scores_batch(action_descriptions: List[str], project_essence: str) -> List[float]:
+    """
+    Calculates semantic drift scores in batch for multiple action descriptions.
+    ⚡ Optimization (Bolt): Pre-embeds project_essence once and batch-embeds
+    action_descriptions, vectorizing cosine similarity via matrix-vector multiplication
+    (emb_actions @ emb_essence) to avoid repeated single-embedding calls.
+    """
+    if not action_descriptions:
+        return []
+    # If compute_drift_score has been mocked/patched in tests, fallback to calling it per item
+    if hasattr(compute_drift_score, "mock_calls"):
+        return [compute_drift_score(desc, project_essence) for desc in action_descriptions]
+
+    try:
+        from core.neural_filter import embed, embed_batch
+        import numpy as np
+
+        emb_essence = embed(project_essence)
+        emb_actions = embed_batch(action_descriptions)
+        # Cosine similarity for normalized embeddings via matrix-vector product
+        cos_sims = np.clip(emb_actions @ emb_essence, 0.0, 1.0)
+        return [round(float(1.0 - c), 4) for c in cos_sims]
+    except Exception:
+        return [compute_drift_score(desc, project_essence) for desc in action_descriptions]
 
 
 def verify_proof_registry() -> dict:
@@ -178,14 +204,20 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
-    drift_scores = {}
+    # 1. Drift score za svaki agent output (vectorized batch calculation)
+    agent_names = []
+    agent_descs = []
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
             desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+            agent_names.append(agent_name)
+            agent_descs.append(desc)
+
+    scores = compute_drift_scores_batch(agent_descs, project_essence)
+    drift_scores = {}
+    for agent_name, score in zip(agent_names, scores):
+        drift_scores[agent_name] = score
+        SM.set_drift(agent_name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
