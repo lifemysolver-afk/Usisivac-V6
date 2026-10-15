@@ -1,7 +1,3 @@
 __pycache__/
 *.pyc
-chroma_db/
-logs/
-.agent/
-src/generated/
-db/discussion_db/
+__pycache__/
