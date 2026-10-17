@@ -133,10 +133,26 @@ def test_coder_agent():
 
 # ─── Test 10: Guardian ───────────────────────────────────────────────────────
 def test_guardian():
-    from guardian.guardian import run
+    from guardian.guardian import run, compute_drift_score, compute_drift_scores_batch
     r = run({"action": "full_audit", "pipeline_results": {}})
     assert "drift_score" in r, "Should have drift_score"
     assert "verdict" in r, "Should have verdict"
+
+    # Test batch drift score calculation
+    essence = "Machine learning dataset classification"
+    agents_descs = {
+        "AgentA": "Training decision tree model on tabular dataset",
+        "AgentB": "Feature selection and standard scaling preprocessing",
+    }
+    batch_scores = compute_drift_scores_batch(agents_descs, essence)
+    assert len(batch_scores) == 2, "Should return 2 drift scores"
+    score_a = compute_drift_score(agents_descs["AgentA"], essence)
+    assert abs(batch_scores["AgentA"] - score_a) < 1e-4, "Batch score should match sequential score"
+
+    # Test batch via run API action
+    r_batch = run({"action": "drift_scores_batch", "descriptions": agents_descs, "essence": essence})
+    assert "drift_scores" in r_batch
+    assert len(r_batch["drift_scores"]) == 2
     return True
 
 # ─── Test 11: Relay ──────────────────────────────────────────────────────────
