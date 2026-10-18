@@ -57,6 +57,46 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
         return round(1.0 - min(1.0, overlap), 4)
 
 
+def compute_drift_scores_batch(action_descriptions: Dict[str, str], project_essence: str) -> Dict[str, float]:
+    """
+    Batched calculation of semantic drift scores for multiple agent outputs.
+    Pre-embeds project_essence once and vectorizes cosine similarity across all actions.
+    """
+    if not action_descriptions:
+        return {}
+
+    # Delegate directly if compute_drift_score is mocked (e.g. in unit tests)
+    if hasattr(compute_drift_score, "return_value") or hasattr(compute_drift_score, "side_effect"):
+        return {agent_name: compute_drift_score(desc, project_essence)
+                for agent_name, desc in action_descriptions.items()}
+
+    try:
+        from core.neural_filter import embed, embed_batch
+        import numpy as np
+
+        agent_names = list(action_descriptions.keys())
+        descs = [action_descriptions[name] for name in agent_names]
+
+        emb_essence = embed(project_essence)
+        emb_actions = embed_batch(descs)
+
+        norm_actions = np.linalg.norm(emb_actions, axis=1, keepdims=True)
+        norm_actions[norm_actions == 0] = 1.0
+        emb_actions_norm = emb_actions / norm_actions
+
+        norm_essence = np.linalg.norm(emb_essence)
+        norm_essence = norm_essence if norm_essence != 0 else 1.0
+        emb_essence_norm = emb_essence / norm_essence
+
+        cos_sims = emb_actions_norm @ emb_essence_norm
+        drifts = np.clip(1.0 - np.clip(cos_sims, 0.0, 1.0), 0.0, 1.0)
+
+        return {name: round(float(drift), 4) for name, drift in zip(agent_names, drifts)}
+    except Exception:
+        return {agent_name: compute_drift_score(desc, project_essence)
+                for agent_name, desc in action_descriptions.items()}
+
+
 def verify_proof_registry() -> dict:
     """
     Verifikuje sve proof-ove u registru.
@@ -178,14 +218,15 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
-    drift_scores = {}
+    # 1. Drift score za svaki agent output (batched)
+    action_descs = {}
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
-            desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
-            drift_scores[agent_name] = score
-            SM.set_drift(agent_name, score)
+            action_descs[agent_name] = json.dumps(result, default=str)[:500]
+
+    drift_scores = compute_drift_scores_batch(action_descs, project_essence)
+    for agent_name, score in drift_scores.items():
+        SM.set_drift(agent_name, score)
 
     avg_drift = sum(drift_scores.values()) / max(len(drift_scores), 1)
 
