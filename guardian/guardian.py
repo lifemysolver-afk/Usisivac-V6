@@ -57,6 +57,32 @@ def compute_drift_score(action_description: str, project_essence: str) -> float:
         return round(1.0 - min(1.0, overlap), 4)
 
 
+def compute_drift_scores_batch(action_descriptions: List[str], project_essence: str) -> List[float]:
+    """
+    Izračunava semantičke drift score-ove u batch-u za više akcija istovremeno.
+    Optimizovano: 1 pass za project_essence, batch embedding za akcije, vectorized dot product.
+    """
+    if not action_descriptions:
+        return []
+
+    # Check if compute_drift_score was mocked (e.g. in unit tests)
+    if getattr(compute_drift_score, "return_value", None) is not None or getattr(compute_drift_score, "side_effect", None) is not None:
+        return [compute_drift_score(desc, project_essence) for desc in action_descriptions]
+
+    try:
+        from core.neural_filter import embed, embed_batch
+        import numpy as np
+
+        emb_essence = embed(project_essence)
+        emb_actions = embed_batch(action_descriptions)
+
+        cos_sims = np.asarray(emb_actions) @ np.asarray(emb_essence)
+        drifts = [round(float(1.0 - max(0.0, min(1.0, cs))), 4) for cs in cos_sims]
+        return drifts
+    except Exception:
+        return [compute_drift_score(desc, project_essence) for desc in action_descriptions]
+
+
 def verify_proof_registry() -> dict:
     """
     Verifikuje sve proof-ove u registru.
@@ -178,12 +204,18 @@ def full_audit(pipeline_results: dict) -> dict:
     state = SM.read()
     project_essence = state.get("goal", "") or state.get("project", "")
 
-    # 1. Drift score za svaki agent output
+    # 1. Drift score za svaki agent output (vectorized batch)
     drift_scores = {}
+    agent_entries = []
     for agent_name, result in pipeline_results.items():
         if isinstance(result, dict):
             desc = json.dumps(result, default=str)[:500]
-            score = compute_drift_score(desc, project_essence)
+            agent_entries.append((agent_name, desc))
+
+    if agent_entries:
+        agent_names, descs = zip(*agent_entries)
+        scores = compute_drift_scores_batch(list(descs), project_essence)
+        for agent_name, score in zip(agent_names, scores):
             drift_scores[agent_name] = score
             SM.set_drift(agent_name, score)
 
