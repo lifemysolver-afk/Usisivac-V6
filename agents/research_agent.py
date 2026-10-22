@@ -53,10 +53,11 @@ def ingest_universal_knowledge() -> dict:
     total = 0
     results = {}
 
+    ts = int(datetime.datetime.now().timestamp())
     for category, docs in UNIVERSAL_KNOWLEDGE.items():
         doc_texts = [d["content"] for d in docs]
         doc_metas = [d["metadata"] for d in docs]
-        doc_ids   = [d["id"] for d in docs]
+        doc_ids   = [f"{d['id']}_{ts}" for d in docs]
 
         r = ingest(doc_texts, doc_metas, doc_ids, "knowledge_base")
         results[category] = r
