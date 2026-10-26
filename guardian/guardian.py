@@ -86,7 +86,8 @@ def compute_drift_scores_batch(action_descriptions: Dict[str, str], project_esse
         norm_e = np.linalg.norm(essence_emb)
 
         # 2. Batch embed all agent descriptions
-        action_embs = embed_batch(descs) if hasattr(embed_batch, "__call__") else np.array([embed(d) for d in descs])
+        raw_embs = embed_batch(descs) if hasattr(embed_batch, "__call__") else [embed(d) for d in descs]
+        action_embs = np.asarray(raw_embs)
 
         # 3. Vectorized matrix-vector cosine similarity calculation
         norms_a = np.linalg.norm(action_embs, axis=1)
