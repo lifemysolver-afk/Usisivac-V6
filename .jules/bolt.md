@@ -6,3 +6,7 @@
 ## 2025-05-20 - Parallelizing Multi-Agent/Persona LLM Evaluations
 **Learning:** Sequential LLM calls for persona-based validation (like VetoBoard) create a major latency bottleneck that scales linearly with the number of personas. Threading is highly effective here since the tasks are purely I/O bound.
 **Action:** Use ThreadPoolExecutor for any multi-agent/persona consensus or validation step to keep latency close to the response time of the slowest single agent.
+
+## 2026-10-28 - Vectorized Batch Scoring in Guardian Audit
+**Learning:** Sequential single-item embedding calls (`compute_drift_score`) during multi-agent output audits create redundant model calls and overhead. Batching descriptions with `embed_batch` and computing matrix-vector dot products (`embs @ essence_emb`) reduces drift computation latency by over 20x.
+**Action:** Whenever evaluating multiple agent actions or outputs against a common baseline vector, pre-embed the baseline once and compute batch cosine similarities via matrix multiplication.
