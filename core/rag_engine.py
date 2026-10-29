@@ -118,22 +118,19 @@ def query_smart(text: str, collection: str,
 # ─── Stats ────────────────────────────────────────────────────────────────────
 def stats() -> dict:
     out = {}
-    try:
-        cli = _client()
-        ef  = _ef()
-        for c in COLLECTIONS:
-            try:
-                col = cli.get_collection(name=c, embedding_function=ef)
-                out[c] = {"count":col.count(),"backend":"chromadb"}
-            except Exception:
-                fp = FALLBACK_DIR / f"{c}.json"
-                if fp.exists():
-                    try:
-                        out[c] = {"count":len(json.loads(fp.read_text())),"backend":"json"}
-                    except Exception:
-                        out[c] = {"count":0,"backend":"error"}
-                else:
-                    out[c] = {"count":0,"backend":"empty"}
-    except Exception as e:
-        out["error"] = str(e)
+    for c in COLLECTIONS:
+        try:
+            cli = _client()
+            ef  = _ef()
+            col = cli.get_collection(name=c, embedding_function=ef)
+            out[c] = {"count":col.count(),"backend":"chromadb"}
+        except Exception:
+            fp = FALLBACK_DIR / f"{c}.json"
+            if fp.exists():
+                try:
+                    out[c] = {"count":len(json.loads(fp.read_text("utf-8"))),"backend":"json"}
+                except Exception:
+                    out[c] = {"count":0,"backend":"error"}
+            else:
+                out[c] = {"count":0,"backend":"empty"}
     return out
