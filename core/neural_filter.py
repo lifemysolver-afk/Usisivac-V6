@@ -82,11 +82,35 @@ class MLPScorer:
 # ─── Embedding Engine ─────────────────────────────────────────────────────────
 _embedder = None
 
+class FallbackEmbedder:
+    """Fallback embedder using SHA-256 hash vector when SentenceTransformer is unavailable."""
+    def encode(self, sentences, normalize_embeddings=True, batch_size=32):
+        import hashlib
+        is_single = isinstance(sentences, str)
+        if is_single:
+            sentences = [sentences]
+        embs = []
+        for s in sentences:
+            h = hashlib.sha256(s.encode("utf-8")).digest()
+            vec = np.frombuffer(h * 12, dtype=np.uint8).astype(np.float32) / 255.0
+            if normalize_embeddings:
+                norm = np.linalg.norm(vec)
+                if norm > 0:
+                    vec = vec / norm
+            embs.append(vec)
+        if is_single:
+            return embs[0]
+        return np.array(embs)
+
+
 def _get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            from sentence_transformers import SentenceTransformer
+            _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        except Exception:
+            _embedder = FallbackEmbedder()
     return _embedder
 
 
