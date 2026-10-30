@@ -72,25 +72,63 @@ def broadcast(from_agent: str, message: str) -> dict:
     return {"status": "BROADCAST", "sent_to": len(results)}
 
 
-def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka."""
+def get_history(limit: int = 50, participant: str = None, chunk_size: int = 8192) -> list:
+    """
+    Vraća istoriju poruka.
+    ⚡ OPTIMIZATION: Reads file backwards in byte chunks from end-of-file (O(limit) vs O(N)).
+    Prevents loading multi-MB log files into memory on every relay polling cycle.
+    """
     if not CHAT_LOG.exists():
         return []
 
-    messages = []
-    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
-        if not line.strip():
-            continue
-        try:
-            msg = json.loads(line)
-            if participant:
-                if msg.get("from") == participant or msg.get("to") == participant:
-                    messages.append(msg)
-            else:
-                messages.append(msg)
-        except Exception:
-            continue
+    try:
+        file_size = CHAT_LOG.stat().st_size
+    except Exception:
+        return []
 
+    if file_size == 0:
+        return []
+
+    messages = []
+    participant_filter = participant.lower() if participant else None
+
+    with open(CHAT_LOG, "rb") as f:
+        buffer = b""
+        pos = file_size
+        while pos > 0 and len(messages) < limit:
+            read_len = min(chunk_size, pos)
+            pos -= read_len
+            f.seek(pos)
+            chunk = f.read(read_len)
+            buffer = chunk + buffer
+            chunk_lines = buffer.split(b"\n")
+
+            if pos > 0:
+                # First element may be a partial line unless we've reached start of file
+                buffer = chunk_lines.pop(0)
+            else:
+                buffer = b""
+
+            for raw_line in reversed(chunk_lines):
+                if not raw_line.strip():
+                    continue
+                try:
+                    # errors="replace" prevents UnicodeDecodeError on byte chunk boundaries
+                    msg = json.loads(raw_line.decode("utf-8", errors="replace"))
+                    if participant_filter:
+                        fr = str(msg.get("from", "")).lower()
+                        to = str(msg.get("to", "")).lower()
+                        if fr == participant_filter or to == participant_filter:
+                            messages.append(msg)
+                    else:
+                        messages.append(msg)
+
+                    if len(messages) >= limit:
+                        break
+                except Exception:
+                    continue
+
+    messages.reverse()
     return messages[-limit:]
 
 
