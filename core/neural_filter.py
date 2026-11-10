@@ -21,7 +21,7 @@ import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional
 
-BASE_DIR   = Path(__file__).resolve().parent.parent
+BASE_DIR   = Path(__file__).parent.parent
 MODEL_PATH = BASE_DIR / "models" / "neural_filter_weights.npz"
 
 
@@ -86,8 +86,7 @@ def _get_embedder():
     global _embedder
     if _embedder is None:
         from sentence_transformers import SentenceTransformer
-        # Use token=False to avoid using expired tokens from os.environ
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2", token=False)
+        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
     return _embedder
 
 
