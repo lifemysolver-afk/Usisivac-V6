@@ -21,7 +21,7 @@ import hashlib, json, datetime, os
 from pathlib import Path
 from typing import Optional
 
-BASE_DIR   = Path(__file__).parent.parent
+BASE_DIR   = Path(__file__).resolve().parent.parent
 PROOF_REG  = BASE_DIR / "logs" / "proof_registry.jsonl"
 WORK_LOG   = BASE_DIR / "logs" / "work_log.md"
 

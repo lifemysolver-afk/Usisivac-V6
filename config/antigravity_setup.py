@@ -15,7 +15,7 @@ Automatski generiše sve konfiguracije za:
 import json, os, sys, shutil
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 
 
 def setup_env():

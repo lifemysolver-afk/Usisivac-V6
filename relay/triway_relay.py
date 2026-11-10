@@ -13,10 +13,10 @@ Poruke se čuvaju u logs/agent_conversation.jsonl
 i u .agent/work_share_state.json → relay_messages[]
 """
 
-import os, sys, json, datetime, threading
+import sys, json, datetime, threading
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from core.anti_simulation import log_work
@@ -73,62 +73,25 @@ def broadcast(from_agent: str, message: str) -> dict:
 
 
 def get_history(limit: int = 50, participant: str = None) -> list:
-    """Vraća istoriju poruka.
-
-    ⚡ Bolt Optimization:
-    Instead of reading the entire file into memory and parsing all JSON lines (O(N)),
-    seek backwards in 8KB chunks from EOF and decode only the lines needed (O(limit)).
-    Reduces latency from ~47ms (10k lines) to <0.25ms (>200x speedup), preventing memory
-    bloat and CPU bottlenecks in long-running agent loops.
-    """
-    if not CHAT_LOG.exists() or limit <= 0:
+    """Vraća istoriju poruka."""
+    if not CHAT_LOG.exists():
         return []
 
-    chunk_size = 8192
     messages = []
-    with open(CHAT_LOG, "rb") as f:
-        f.seek(0, os.SEEK_END)
-        pointer = f.tell()
-        remainder = b""
-
-        while pointer > 0 and len(messages) < limit:
-            read_size = min(chunk_size, pointer)
-            pointer -= read_size
-            f.seek(pointer)
-            chunk = f.read(read_size) + remainder
-            lines = chunk.split(b"\n")
-            remainder = lines[0]
-            chunk_lines = lines[1:]
-
-            for line in reversed(chunk_lines):
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    msg = json.loads(line.decode("utf-8", errors="replace"))
-                    if participant:
-                        if msg.get("from") == participant or msg.get("to") == participant:
-                            messages.append(msg)
-                    else:
-                        messages.append(msg)
-                    if len(messages) >= limit:
-                        break
-                except Exception:
-                    continue
-
-        if remainder.strip() and len(messages) < limit:
-            try:
-                msg = json.loads(remainder.decode("utf-8", errors="replace"))
-                if participant:
-                    if msg.get("from") == participant or msg.get("to") == participant:
-                        messages.append(msg)
-                else:
+    for line in CHAT_LOG.read_text("utf-8").strip().split("\n"):
+        if not line.strip():
+            continue
+        try:
+            msg = json.loads(line)
+            if participant:
+                if msg.get("from") == participant or msg.get("to") == participant:
                     messages.append(msg)
-            except Exception:
-                pass
+            else:
+                messages.append(msg)
+        except Exception:
+            continue
 
-    messages.reverse()
-    return messages
+    return messages[-limit:]
 
 
 def get_context_for_agent(agent_name: str, max_messages: int = 20) -> str:

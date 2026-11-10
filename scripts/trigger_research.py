@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-BASE = Path(__file__).parent.parent
+BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from agents.research_agent import run

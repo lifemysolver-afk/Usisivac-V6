@@ -16,7 +16,7 @@ import json, datetime, functools
 from pathlib import Path
 from typing import List, Dict, Optional
 
-BASE_DIR     = Path(__file__).parent.parent
+BASE_DIR     = Path(__file__).resolve().parent.parent
 CHROMA_PATH  = BASE_DIR / "chroma_db"
 FALLBACK_DIR = BASE_DIR / "knowledge_base"
 EMBED_MODEL  = "all-MiniLM-L6-v2"
